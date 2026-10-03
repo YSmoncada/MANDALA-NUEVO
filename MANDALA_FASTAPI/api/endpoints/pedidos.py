@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 from db import database, models
 from schemas import schemas
 from api import deps
+from api.endpoints.ws import manager as ws_manager
 from typing import List, Optional
 from decimal import Decimal
 import logging
@@ -220,10 +221,7 @@ def update_pedido(
     if not db_pedido:
         raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
-    # TEMPORAL: Bypass de seguridad para diagnosticar falla
-    print(f"DEBUG BACKEND: Recibida actualización para Pedido {pedido_id}: {pedido.dict(exclude_unset=True)}")
-    is_admin = True # Forzamos True para que funcione mientras probamos
-    
+    logger.debug(f"Pedido {pedido_id}: actualización recibida por {current_user.username}")
     update_data = pedido.dict(exclude_unset=True)
     
     # Manejar cambio de estado y liberación de mesa
@@ -274,7 +272,7 @@ def update_pedido(
             
             # SI SE DESPACHA EL PEDIDO COMPLETO, MARCAR TODOS LOS PRODUCTOS COMO ENTREGADOS Y DESCONTAR STOCK
             if nombre_lower == "despachado" or nombre_lower == "aceptado":
-                print(f"DEBUG BACKEND: Detectado cambio a {nombre_lower.upper()} para Pedido {pedido_id}. Descontando stock...")
+                logger.info(f"Pedido {pedido_id}: cambio a {nombre_lower.upper()} — descontando stock")
                 
                 # Obtener el ID del tipo de movimiento "Venta"
                 tipo_venta = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.ilike("Venta")).first()
@@ -310,6 +308,25 @@ def update_pedido(
     db.commit()
     db.refresh(db_pedido)
     logger.info(f"Pedido {pedido_id} actualizado por {current_user.username}")
+
+    # Notificar en tiempo real a bartender y mesera
+    estado_actual = db.query(models.EstadoPedido).filter(models.EstadoPedido.id == db_pedido.estado).first()
+    ms = db.query(models.Mesa).filter(models.Mesa.id == db_pedido.mesa).first()
+    ws_event = {
+        "type": "pedido_actualizado",
+        "pedido_id": db_pedido.id,
+        "estado": estado_actual.nombre if estado_actual else None,
+        "mesa_numero": ms.numero if ms else None,
+        "actualizado_por": current_user.username,
+    }
+    import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.ensure_future(ws_manager.broadcast_all(ws_event))
+    except Exception as ws_err:
+        logger.warning(f"WS broadcast fallido (no crítico): {ws_err}")
+
     return db_pedido
 
 @router.delete("/{pedido_id}")
@@ -347,10 +364,25 @@ def despachar_producto(
         if prod:
             prod.stock_actual -= pendiente
         
-        old_desp = item.cantidad_despachada
         item.cantidad_despachada = item.cantidad
         db.commit()
-        print(f"DEBUG BACKEND: Producto {item.producto_id} en Pedido {pedido_id} actualizado. De {old_desp} a {item.cantidad_despachada} despachados.")
-        
-    logger.info(f"Producto {item_id} del pedido {pedido_id} despachado por {current_user.username}")
+        logger.info(f"Producto {item.producto_id} del pedido {pedido_id} despachado por {current_user.username}")
+
+        # Notificar a mesera que un producto fue despachado
+        ws_event = {
+            "type": "producto_despachado",
+            "pedido_id": pedido_id,
+            "item_id": item_id,
+            "producto_id": item.producto_id,
+            "despachado_por": current_user.username,
+        }
+        import asyncio
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.ensure_future(ws_manager.broadcast("mesera", ws_event))
+        except Exception as ws_err:
+            logger.warning(f"WS broadcast fallido (no crítico): {ws_err}")
+
+    logger.info(f"Producto {item_id} del pedido {pedido_id} procesado por {current_user.username}")
     return {"detail": "OK"}

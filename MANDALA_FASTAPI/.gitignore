@@ -23,5 +23,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 mandala.db
+mandala_v2.db
+*.db
 mandala_api.log
 logs/
