@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore, getDashboardRoute } from '../../store/authStore';
@@ -25,15 +25,13 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      console.log("Intentando login para:", username);
-      const response = await apiClient.post("/login/", { 
-        username: username.trim(), 
-        password: password 
+      const response = await apiClient.post("/login/", {
+        username: username.trim(),
+        password: password
       });
-      
-      console.log("Respuesta login:", response.data);
+
       const { token, refresh, role, username: responseUsername, user_id } = response.data;
-      
+
       if (!token) {
         throw new Error("No se recibió el token de seguridad.");
       }
@@ -48,20 +46,20 @@ export default function LoginScreen() {
       // Redirección inmediata según el rol
       const dashboardRoute = getDashboardRoute(role);
       router.replace(dashboardRoute as any);
-      
+
     } catch (error: any) {
-      console.error("Login Error Details:", error.response?.data || error.message);
+      // El error de red o credenciales incorrectas ya es manejado por el interceptor de apiClient
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"} 
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           {/* Identidad de Marca de NoxOS */}
           <View style={styles.header}>
@@ -69,7 +67,7 @@ export default function LoginScreen() {
               <Text style={styles.logoText}>Nox<Text style={styles.logoAltText}>OS</Text></Text>
               <View style={styles.logoLine} />
             </View>
-            
+
           </View>
 
           {/* Campos del Formulario */}
@@ -78,11 +76,11 @@ export default function LoginScreen() {
               <Text style={styles.label}>Usuario</Text>
               <View style={styles.inputWrapper}>
                 <Ionicons name="person-outline" size={18} color={NoxColors.muted} style={styles.inputIcon} />
-                <TextInput 
-                  placeholder="Nombre de usuario" 
+                <TextInput
+                  placeholder="Nombre de usuario"
                   placeholderTextColor="#8A7BAF50"
-                  style={styles.input} 
-                  value={username} 
+                  style={styles.input}
+                  value={username}
                   onChangeText={setUsername}
                   autoCapitalize="none"
                 />
@@ -93,12 +91,12 @@ export default function LoginScreen() {
               <Text style={styles.label}>Clave de Seguridad</Text>
               <View style={styles.inputWrapper}>
                 <Ionicons name="lock-closed-outline" size={18} color={NoxColors.muted} style={styles.inputIcon} />
-                <TextInput 
-                  placeholder="••••••••••••" 
+                <TextInput
+                  placeholder="••••••••••••"
                   placeholderTextColor="#8A7BAF50"
-                  style={styles.input} 
-                  value={password} 
-                  onChangeText={setPassword} 
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
                   secureTextEntry={!showPassword}
                 />
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
@@ -107,8 +105,8 @@ export default function LoginScreen() {
               </View>
             </View>
 
-            <TouchableOpacity 
-              style={[styles.btn, (!username || !password) && styles.btnDisabled]} 
+            <TouchableOpacity
+              style={[styles.btn, (!username || !password) && styles.btnDisabled]}
               onPress={handleLogin}
               disabled={loading || !username || !password}
             >
@@ -119,7 +117,7 @@ export default function LoginScreen() {
               )}
             </TouchableOpacity>
 
-           
+
           </View>
         </View>
 
@@ -130,15 +128,15 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.deep },
-  card: { 
-    backgroundColor: NoxColors.container, 
+  card: {
+    backgroundColor: NoxColors.container,
     marginHorizontal: 20,
-    borderRadius: 40, 
-    padding: 35, 
+    borderRadius: 40,
+    padding: 35,
     borderWidth: 1,
     borderColor: NoxColors.border,
-    shadowColor: NoxColors.deep, 
-    shadowOpacity: 0.5, 
+    shadowColor: NoxColors.deep,
+    shadowOpacity: 0.5,
     shadowRadius: 30,
     elevation: 10
   },
@@ -147,16 +145,14 @@ const styles = StyleSheet.create({
   logoText: { fontSize: 48, fontWeight: '900', color: NoxColors.text, letterSpacing: 5 },
   logoAltText: { color: NoxColors.subtext },
   logoLine: { width: 60, height: 4, backgroundColor: NoxColors.aura, borderRadius: 2, marginTop: -5, opacity: 0.5 },
-  subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4 },
-  
   form: { width: '100%' },
   inputGroup: { marginBottom: 25 },
   label: { fontSize: 10, color: NoxColors.muted, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10, marginLeft: 5 },
-  inputWrapper: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: NoxColors.card, 
-    borderRadius: 20, 
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: NoxColors.card,
+    borderRadius: 20,
     paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: 'rgba(108, 63, 168, 0.3)'
@@ -164,12 +160,12 @@ const styles = StyleSheet.create({
   inputIcon: { marginRight: 12 },
   input: { flex: 1, paddingVertical: 18, fontSize: 14, color: NoxColors.text, fontWeight: '600' },
   eyeBtn: { padding: 10 },
-  
-  btn: { 
-    backgroundColor: '#441E73', 
-    padding: 22, 
-    borderRadius: 20, 
-    alignItems: 'center', 
+
+  btn: {
+    backgroundColor: '#441E73',
+    padding: 22,
+    borderRadius: 20,
+    alignItems: 'center',
     marginTop: 20,
     shadowColor: NoxColors.aura,
     shadowOpacity: 0.3,
@@ -177,12 +173,5 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   btnDisabled: { opacity: 0.4 },
-  btnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 3, fontSize: 11 },
-  
-  footerInfo: { marginTop: 30, alignItems: 'center' },
-  footerText: { color: 'rgba(138, 123, 175, 0.4)', fontSize: 8, fontWeight: 'bold', letterSpacing: 3 },
-  
-  devLinks: { marginTop: 40, alignItems: 'center' },
-  devBtn: { padding: 15 },
-  devText: { color: NoxColors.aura, fontSize: 10, fontWeight: 'bold', letterSpacing: 2, textDecorationLine: 'underline' }
+  btnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 3, fontSize: 11 }
 });
