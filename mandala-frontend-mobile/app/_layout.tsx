@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
@@ -59,7 +58,7 @@ export default function RootLayout() {
   }, [token, segments, user, navigationState?.key]);
 
   return (
-    <ThemeProvider value={DarkTheme}>
+    <>
       <Stack screenOptions={{ headerShown: false }} />
       <StatusBar style="auto" />
 
@@ -75,6 +74,6 @@ export default function RootLayout() {
           alert.hideAlert();
         }}
       />
-    </ThemeProvider>
+    </>
   );
 }
