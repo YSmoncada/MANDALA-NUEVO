@@ -3,9 +3,13 @@ import { useAuthStore } from '../store/authStore';
 import { useAlertStore } from '../store/alertStore';
 
 // En modo local (Expo Go) se usa la variable de entorno EXPO_PUBLIC_API_URL
-// En producción (Vercel) se usa la URL de Render como fallback
-const ENV_API_URL = typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_API_URL;
-export const API_URL = ENV_API_URL || "https://noxos-movil-backend.onrender.com/api";
+// En producción (Render / Vercel) se usa la URL configurada
+const rawEnvUrl = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_API_URL) || "https://noxos-movil-backend.onrender.com/api";
+let cleanUrl = rawEnvUrl.trim().replace(/\/+$/, '');
+if (!cleanUrl.endsWith('/api')) {
+  cleanUrl = `${cleanUrl}/api`;
+}
+export const API_URL = cleanUrl;
 
 const apiClient = axios.create({
   baseURL: API_URL,

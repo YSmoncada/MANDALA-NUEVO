@@ -82,6 +82,9 @@ app.include_router(usuarios.router, prefix="/api/usuarios", tags=["usuarios"])
 app.include_router(config.router, prefix="/api/config", tags=["config"])
 app.include_router(contabilidad.router, prefix="/api/contabilidad", tags=["contabilidad"])
 
+# Fallback por si el frontend hace peticiones a la raíz sin /api
+app.include_router(auth.router, tags=["auth_fallback"])
+
 @app.get("/")
 def read_root():
     return {"message": "Mandala FastAPI Backend - Version 2.2.3 (Validation Relaxed & Orders Fix)"}
