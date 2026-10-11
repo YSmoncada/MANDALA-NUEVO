@@ -12,17 +12,13 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
-      # Opcional: Descomenta si usas la base de datos PostgreSQL de abajo
-      # - key: DATABASE_URL
-      #   fromDatabase:
-      #     name: mandala-db
-      #     property: connectionString
 
   # ==========================================
   # 2. FRONTEND (Expo Web / React Native Web)
   # ==========================================
-  - type: static
+  - type: web
     name: mandala-frontend
+    runtime: static
     rootDir: mandala-frontend-mobile
     buildCommand: npm install && npm run build
     staticPublishPath: dist
@@ -32,4 +28,4 @@ services:
         destination: /index.html
     envVars:
       - key: EXPO_PUBLIC_API_URL
-        sync: false # Ingresa aquí https://mandala-backend.onrender.com/api
+        sync: false
