@@ -4,9 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import NoxAlert from '../../components/NoxAlert';
 import { NoxColors } from '../../constants/theme';
+import { useResponsive } from '../../utils/responsive';
 
 
 export default function BartenderPrepScreen() {
+  const { isDesktop, isLargeScreen } = useResponsive();
+  const numColumns = isLargeScreen ? 3 : (isDesktop ? 2 : 1);
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -240,10 +243,13 @@ export default function BartenderPrepScreen() {
         </View>
       ) : (
         <FlatList
+          key={numColumns}
+          numColumns={numColumns}
+          columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
           data={pedidos}
           keyExtractor={item => String(item.id)}
           renderItem={renderPedido}
-          contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+          contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchPending(true)} tintColor={NoxColors.aura} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
@@ -271,7 +277,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.deep },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 25, paddingTop: 60, paddingBottom: 20,
+    paddingHorizontal: 25, paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingBottom: 20,
+    maxWidth: 1200, width: '100%', alignSelf: 'center',
   },
   brandingNox: { fontSize: 28, fontWeight: '900', color: NoxColors.text, letterSpacing: 2 },
   brandingOS: { color: NoxColors.subtext },
@@ -284,11 +291,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(169,68,255,0.1)',
     paddingHorizontal: 16, paddingVertical: 10,
     borderRadius: 12, borderWidth: 1, borderColor: 'rgba(169,68,255,0.2)',
+    maxWidth: 1200, width: '100%', alignSelf: 'center',
   },
   countDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: NoxColors.aura },
   countText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
 
+  listContent: { padding: 20, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  columnWrapper: { gap: 16 },
   card: {
+    flex: 1,
     backgroundColor: NoxColors.card,
     borderRadius: 24, padding: 20, marginBottom: 20,
     borderLeftWidth: 4, borderLeftColor: NoxColors.aura,

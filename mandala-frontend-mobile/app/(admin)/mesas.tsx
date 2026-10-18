@@ -5,9 +5,12 @@ import { useFocusEffect } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import * as Linking from 'expo-linking';
 import { NoxColors } from '../../constants/theme';
+import { useResponsive } from '../../utils/responsive';
 
 
 export default function AdminMesasScreen() {
+  const { isDesktop, isLargeScreen } = useResponsive();
+  const numColumns = isLargeScreen ? 3 : (isDesktop ? 2 : 1);
   const [mesas, setMesas] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -101,6 +104,9 @@ export default function AdminMesasScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 50 }} />
       ) : (
         <FlatList 
+          key={numColumns}
+          numColumns={numColumns}
+          columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
           data={mesas} 
           keyExtractor={it => String(it.id)} 
           contentContainerStyle={styles.listContent}
@@ -224,23 +230,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
     alignItems: 'center', 
     paddingHorizontal: 25, 
-    paddingTop: Platform.OS === 'ios' ? 70 : 50,
-    paddingBottom: 30
+    paddingTop: Platform.OS === 'ios' ? 70 : 40,
+    paddingBottom: 25,
+    maxWidth: 1200,
+    width: '100%',
+    alignSelf: 'center',
   },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
   addBtn: { backgroundColor: NoxColors.aura, width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
 
-  listContent: { padding: 20, paddingBottom: 100 },
+  listContent: { padding: 20, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  columnWrapper: { gap: 16 },
   mesaCard: { 
+    flex: 1,
     backgroundColor: NoxColors.card, 
     borderRadius: 28, 
     padding: 16, 
     marginBottom: 16, 
     flexDirection: 'row', 
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 1, 
     borderColor: NoxColors.border
   },
   cardAccent: { position: 'absolute', left: 0, top: 25, bottom: 25, width: 4, backgroundColor: NoxColors.aura, borderTopRightRadius: 10, borderBottomRightRadius: 10 },
@@ -263,8 +274,8 @@ const styles = StyleSheet.create({
   iconBtnDanger: { width: 40, height: 40, borderRadius: 14, backgroundColor: 'rgba(255, 68, 68, 0.05)', justifyContent: 'center', alignItems: 'center' },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(5, 5, 16, 0.95)', justifyContent: 'center', padding: 25 },
-  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)' },
-  qrFrame: { backgroundColor: NoxColors.text, padding: 20, borderRadius: 30, marginBottom: 25, width: '100%', height: 280, justifyContent: 'center', alignItems: 'center' },
+  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)', maxWidth: 500, width: '100%', alignSelf: 'center' },
+  qrFrame: { backgroundColor: NoxColors.text, padding: 20, borderRadius: 30, marginBottom: 25, width: '100%', maxWidth: 320, height: 280, alignSelf: 'center', justifyContent: 'center', alignItems: 'center' },
   qrImage: { width: '100%', height: '100%' },
   qrInfo: { color: NoxColors.muted, fontSize: 12, textAlign: 'center', marginBottom: 30, lineHeight: 22 },
   shareBtn: { backgroundColor: NoxColors.aura, flexDirection: 'row', padding: 22, borderRadius: 25, alignItems: 'center', width: '100%', justifyContent: 'center' },

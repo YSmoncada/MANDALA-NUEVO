@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Dimensions, TouchableOpacity, Platform, RefreshControl, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Platform, RefreshControl, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,8 +7,7 @@ import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
 import LogoutModal from '../../components/LogoutModal';
 import { NoxColors } from '../../constants/theme';
-
-const { width } = Dimensions.get('window');
+import { useResponsive } from '../../utils/responsive';
 
 const MODULES = [
   { id: 'inventory', label: 'INVENTARIO', sub: 'Control de Stock', icon: 'cube-outline', path: '/(admin)/inventory', color: '#A944FF' },
@@ -80,7 +79,13 @@ export default function AdminDashboard() {
     router.replace("/(auth)/login");
   };
 
-  const cardWidth = (width - 62) / 2; // Cálculo responsivo para 2 columnas con padding horizontal y gap
+  const { width, isDesktop, isLargeScreen } = useResponsive();
+  const columns = isLargeScreen ? 3 : (isDesktop ? 3 : 2);
+  const containerMaxWidth = 1100;
+  const effectiveWidth = Math.min(width, containerMaxWidth);
+  const horizontalPadding = 50;
+  const gap = 12;
+  const cardWidth = (effectiveWidth - horizontalPadding - (gap * (columns - 1))) / columns;
 
   return (
     <View style={styles.container}>
@@ -188,7 +193,11 @@ const styles = StyleSheet.create({
     backgroundColor: NoxColors.background
   },
   scrollContent: {
-    paddingTop: Platform.OS === 'ios' ? 70 : 50
+    paddingTop: Platform.OS === 'ios' ? 70 : 40,
+    maxWidth: 1100,
+    width: '100%',
+    alignSelf: 'center',
+    paddingBottom: 40,
   },
   header: {
     flexDirection: 'row',

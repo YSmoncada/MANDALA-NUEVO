@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, 
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
+import { useResponsive } from '../../utils/responsive';
 
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: keyof typeof Ionicons.glyphMap }> = {
@@ -14,6 +15,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
 const FILTROS = ['todos', 'Pendiente', 'Despachado', 'Cancelado'];
 
 export default function MonitorOrdenesScreen() {
+  const { isDesktop, isLargeScreen } = useResponsive();
+  const numColumns = isLargeScreen ? 3 : (isDesktop ? 2 : 1);
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -136,6 +139,9 @@ export default function MonitorOrdenesScreen() {
         </View>
       ) : (
         <FlatList
+          key={numColumns}
+          numColumns={numColumns}
+          columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
           data={filtered}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderPedido}
@@ -151,11 +157,14 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.background },
   header: { 
     paddingHorizontal: 25, 
-    paddingTop: Platform.OS === 'ios' ? 70 : 50, 
+    paddingTop: Platform.OS === 'ios' ? 70 : 40, 
     paddingBottom: 20, 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
-    alignItems: 'center' 
+    alignItems: 'center',
+    maxWidth: 1200,
+    width: '100%',
+    alignSelf: 'center',
   },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
@@ -164,7 +173,7 @@ const styles = StyleSheet.create({
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: NoxColors.emerald, marginRight: 6 },
   liveText: { color: NoxColors.emerald, fontSize: 9, fontWeight: '900', letterSpacing: 2 },
 
-  statsRow: { marginBottom: 15 },
+  statsRow: { marginBottom: 15, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   statsContainer: { paddingHorizontal: 25, gap: 10 },
   statBox: { 
     backgroundColor: NoxColors.card, 
@@ -179,8 +188,10 @@ const styles = StyleSheet.create({
   statNum: { fontSize: 18, fontWeight: '900', color: NoxColors.text },
   statLbl: { fontSize: 8, color: NoxColors.muted, fontWeight: '900', letterSpacing: 1.5, marginTop: 4 },
 
-  listContent: { padding: 20, paddingBottom: 100 },
+  listContent: { padding: 20, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  columnWrapper: { gap: 16 },
   card: { 
+    flex: 1,
     backgroundColor: NoxColors.card, 
     borderRadius: 28, 
     padding: 20, 

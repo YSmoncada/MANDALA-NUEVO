@@ -131,6 +131,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: NoxColors.container,
     marginHorizontal: 20,
+    maxWidth: 460,
+    width: '92%',
+    alignSelf: 'center',
     borderRadius: 40,
     padding: 35,
     borderWidth: 1,

@@ -4,11 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import { useAlertStore } from '../../store/alertStore';
 import { NoxColors } from '../../constants/theme';
+import { useResponsive } from '../../utils/responsive';
 
-
-const { width } = Dimensions.get('window');
 
 export default function AdminAccountingScreen() {
+  const { isDesktop, width } = useResponsive();
   const [turno, setTurno] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [showAbrir, setShowAbrir] = useState(false);
@@ -86,7 +86,7 @@ export default function AdminAccountingScreen() {
             <ActivityIndicator size="large" color={NoxColors.aura} />
         </View>
       ) : (
-        <ScrollView style={{ padding: 25 }} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {turno ? (
                 <>
                 {/* Resumen Principal Turno Abierto */}
@@ -232,13 +232,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
     alignItems: 'center', 
     paddingHorizontal: 25, 
-    paddingTop: 60,
-    paddingBottom: 20
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingBottom: 20,
+    maxWidth: 960,
+    width: '100%',
+    alignSelf: 'center',
   },
   brandingNox: { fontSize: 28, fontWeight: '900', color: NoxColors.text, letterSpacing: 2 },
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, marginTop: 5 },
   refreshBtn: { backgroundColor: NoxColors.container, width: 50, height: 50, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+
+  scrollContent: {
+    padding: 25,
+    maxWidth: 960,
+    width: '100%',
+    alignSelf: 'center',
+  },
 
   cardMain: { 
     backgroundColor: NoxColors.card, 
@@ -259,7 +269,8 @@ const styles = StyleSheet.create({
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 15, marginBottom: 40 },
   statBox: { 
-    width: (width - 65) / 2, 
+    flex: 1,
+    minWidth: 160, 
     backgroundColor: NoxColors.card, 
     borderRadius: 24, 
     padding: 20,
@@ -291,7 +302,7 @@ const styles = StyleSheet.create({
   openBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 13 },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center', padding: 25 },
-  modalCard: { backgroundColor: NoxColors.card, borderRadius: 35, padding: 30, width: '100%', borderWidth: 1, borderColor: NoxColors.border },
+  modalCard: { backgroundColor: NoxColors.card, borderRadius: 35, padding: 30, width: '100%', maxWidth: 480, alignSelf: 'center', borderWidth: 1, borderColor: NoxColors.border },
   modalTitle: { color: NoxColors.aura, fontSize: 20, fontWeight: '900', letterSpacing: 2, marginBottom: 25, textAlign: 'center' },
   modalLabel: { color: NoxColors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 1, marginBottom: 10, textTransform: 'uppercase' },
   modalInput: { backgroundColor: NoxColors.deep, borderRadius: 15, padding: 18, color: NoxColors.text, fontSize: 16, marginBottom: 20, borderWidth: 1, borderColor: NoxColors.border },

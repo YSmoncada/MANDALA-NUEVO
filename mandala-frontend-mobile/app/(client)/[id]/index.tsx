@@ -7,7 +7,7 @@ import { formatImageUrl } from '../../../utils/imageHelpers';
 import { NoxColors } from '../../../constants/theme';
 
 
-const { width } = Dimensions.get('window');
+import { useResponsive } from '../../../utils/responsive';
 
 const CATEGORIES = [
   { id: "", label: "Todos" },
@@ -19,6 +19,8 @@ const CATEGORIES = [
 ];
 
 export default function ClientMenuScreen() {
+  const { isDesktop, isLargeScreen, contentMaxWidth, modalMaxWidth } = useResponsive();
+  const numColumns = isLargeScreen ? 4 : (isDesktop ? 3 : 2);
   const { id: rawId } = useGlobalSearchParams();
   const mesaId = Array.isArray(rawId) ? rawId[0] : rawId;
   const [productos, setProductos] = useState<any[]>([]);
@@ -126,72 +128,76 @@ export default function ClientMenuScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.branding}>Nox<Text style={{color:NoxColors.subtext}}>OS</Text></Text>
-          <Text style={styles.mesaTitle}>MESA #{mesaInfo?.numero || '?'}</Text>
-          {mesaInfo?.mesero_nombre && (
-            <Text style={styles.meseroAsignado}>Atendido por: <Text style={{color:NoxColors.text}}>{mesaInfo.mesero_nombre}</Text></Text>
-          )}
-        </View>
-        <TouchableOpacity style={styles.cartBtnHeader} onPress={() => setShowCart(true)}>
-           <Ionicons name="bag-handle" size={24} color={NoxColors.aura} />
-           {order.length > 0 && <View style={styles.badge}><Text style={styles.badgeTxt}>{order.length}</Text></View>}
-        </TouchableOpacity>
-      </View>
-
-      {/* Buscador y Categorías */}
-      <View style={styles.searchSection}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color={NoxColors.muted} />
-          <TextInput 
-            style={styles.searchInput}
-            placeholder="Buscar producto..."
-            placeholderTextColor={NoxColors.muted}
-            value={filtroNombre}
-            onChangeText={setFiltroNombre}
-          />
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 20, paddingRight: 10 }}>
-            {categorias.map(cat => (
-                <TouchableOpacity 
-                    key={cat.id} 
-                    style={[styles.catBtn, filtro === cat.id && styles.catBtnActive]}
-                    onPress={() => setFiltro(cat.id)}
-                >
-                    <Text style={[styles.catText, filtro === cat.id && styles.catTextActive]}>{cat.label}</Text>
-                </TouchableOpacity>
-            ))}
-        </ScrollView>
-      </View>
-
-      {/* Productos */}
-      <FlatList
-        data={filteredProds}
-        numColumns={2}
-        keyExtractor={item => String(item.id)}
-        contentContainerStyle={{ padding: 15, paddingBottom: 180 }}
-        renderItem={({ item }) => (
-          <View style={styles.prodCard}>
-             <View style={styles.imgContainer}>
-                {item.imagen ? <Image source={{uri: formatImageUrl(item.imagen)}} style={styles.prodImg} /> : <Ionicons name="beer-outline" size={32} color={NoxColors.muted} />}
-             </View>
-             <View style={styles.infoContainer}>
-                <Text style={styles.prodName} numberOfLines={2}>{item.nombre}</Text>
-                <Text style={styles.prodPrice}>${parseFloat(item.precio).toLocaleString()}</Text>
-             </View>
-             <TouchableOpacity style={styles.addBtn} onPress={() => addToOrder(item)}>
-                <Ionicons name="add" size={20} color={NoxColors.text} />
-             </TouchableOpacity>
+      <View style={[styles.innerWrapper, { maxWidth: contentMaxWidth }]}>
+        {/* Header */}
+        <View style={[styles.header, isDesktop && { paddingTop: 30 }]}>
+          <View>
+            <Text style={styles.branding}>Nox<Text style={{color:NoxColors.subtext}}>OS</Text></Text>
+            <Text style={styles.mesaTitle}>MESA #{mesaInfo?.numero || '?'}</Text>
+            {mesaInfo?.mesero_nombre && (
+              <Text style={styles.meseroAsignado}>Atendido por: <Text style={{color:NoxColors.text}}>{mesaInfo.mesero_nombre}</Text></Text>
+            )}
           </View>
-        )}
-      />
+          <TouchableOpacity style={styles.cartBtnHeader} onPress={() => setShowCart(true)}>
+             <Ionicons name="bag-handle" size={24} color={NoxColors.aura} />
+             {order.length > 0 && <View style={styles.badge}><Text style={styles.badgeTxt}>{order.length}</Text></View>}
+          </TouchableOpacity>
+        </View>
 
-      {/* Flotante Carrito — box-none para no bloquear toques del fondo */}
+        {/* Buscador y Categorías */}
+        <View style={styles.searchSection}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search" size={18} color={NoxColors.muted} />
+            <TextInput 
+              style={styles.searchInput}
+              placeholder="Buscar producto..."
+              placeholderTextColor={NoxColors.muted}
+              value={filtroNombre}
+              onChangeText={setFiltroNombre}
+            />
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 20, paddingRight: 10 }}>
+              {categorias.map(cat => (
+                  <TouchableOpacity 
+                      key={cat.id} 
+                      style={[styles.catBtn, filtro === cat.id && styles.catBtnActive]}
+                      onPress={() => setFiltro(cat.id)}
+                  >
+                      <Text style={[styles.catText, filtro === cat.id && styles.catTextActive]}>{cat.label}</Text>
+                  </TouchableOpacity>
+              ))}
+          </ScrollView>
+        </View>
+
+        {/* Productos */}
+        <FlatList
+          key={`client-grid-${numColumns}`}
+          data={filteredProds}
+          numColumns={numColumns}
+          columnWrapperStyle={numColumns > 1 ? { gap: 14 } : undefined}
+          keyExtractor={item => String(item.id)}
+          contentContainerStyle={{ padding: 15, paddingBottom: 180 }}
+          renderItem={({ item }) => (
+            <View style={styles.prodCard}>
+               <View style={styles.imgContainer}>
+                  {item.imagen ? <Image source={{uri: formatImageUrl(item.imagen)}} style={styles.prodImg} /> : <Ionicons name="beer-outline" size={32} color={NoxColors.muted} />}
+               </View>
+               <View style={styles.infoContainer}>
+                  <Text style={styles.prodName} numberOfLines={2}>{item.nombre}</Text>
+                  <Text style={styles.prodPrice}>${parseFloat(item.precio).toLocaleString()}</Text>
+               </View>
+               <TouchableOpacity style={styles.addBtn} onPress={() => addToOrder(item)}>
+                  <Ionicons name="add" size={20} color={NoxColors.text} />
+               </TouchableOpacity>
+            </View>
+          )}
+        />
+      </View>
+
+      {/* Flotante Carrito */}
       {order.length > 0 && !showCart && (
         <View style={styles.floatingWrapper} pointerEvents="box-none">
-          <TouchableOpacity style={styles.floatingCart} onPress={() => setShowCart(true)} activeOpacity={0.85}>
+          <TouchableOpacity style={[styles.floatingCart, { maxWidth: modalMaxWidth }]} onPress={() => setShowCart(true)} activeOpacity={0.85}>
             <Text style={styles.cartTotal}>${calculateTotal().toLocaleString()}</Text>
             <Text style={styles.cartConfirm}>VER PEDIDO</Text>
           </TouchableOpacity>
@@ -200,8 +206,8 @@ export default function ClientMenuScreen() {
 
       {/* Modal Carrito */}
       <Modal visible={showCart} transparent animationType="slide" statusBarTranslucent>
-        <View style={styles.cartOverlay}>
-          <View style={styles.cartContent}>
+        <View style={[styles.cartOverlay, isDesktop && { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
+          <View style={[styles.cartContent, isDesktop && { width: '100%', maxWidth: modalMaxWidth, borderRadius: 28, borderWidth: 1, borderColor: NoxColors.border }]}>
             <View style={styles.cartHead}>
               <Text style={styles.cartTitle}>TU PEDIDO</Text>
               <TouchableOpacity onPress={() => setShowCart(false)}>
@@ -243,6 +249,7 @@ export default function ClientMenuScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.deep },
+  innerWrapper: { flex: 1, width: '100%', alignSelf: 'center' },
   loader: { flex: 1, backgroundColor: NoxColors.deep, justifyContent: 'center', alignItems: 'center' },
   loaderText: { color: NoxColors.muted, fontWeight: '900', marginTop: 15, fontSize: 10, letterSpacing: 2 },
   header: { paddingHorizontal: 25, paddingTop: 60, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
@@ -262,7 +269,7 @@ const styles = StyleSheet.create({
   searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: NoxColors.card, marginHorizontal: 20, marginBottom: 15, paddingHorizontal: 15, height: 45, borderRadius: 15, borderWidth: 1, borderColor: NoxColors.border },
   searchInput: { flex: 1, marginLeft: 10, color: NoxColors.text, fontSize: 14 },
 
-  prodCard: { width: (width - 60) / 2, backgroundColor: NoxColors.card, margin: 8, padding: 15, borderRadius: 28, borderWidth: 1, borderColor: NoxColors.border, height: 230, alignItems: 'center' },
+  prodCard: { flex: 1, backgroundColor: NoxColors.card, marginVertical: 7, padding: 15, borderRadius: 24, borderWidth: 1, borderColor: NoxColors.border, minHeight: 230, alignItems: 'center' },
   imgContainer: { width: 110, height: 110, backgroundColor: NoxColors.container, borderRadius: 25, justifyContent:'center', alignItems:'center', marginBottom: 12 },
   prodImg: { width: 110, height: 110, borderRadius: 25 },
   infoContainer: { alignItems: 'center', width: '100%' },
@@ -270,8 +277,8 @@ const styles = StyleSheet.create({
   prodPrice: { color: NoxColors.emerald, fontSize: 14, fontWeight: '900', marginTop: 5 },
   addBtn: { position: 'absolute', bottom: 12, right: 12, backgroundColor: NoxColors.aura, width: 34, height: 34, borderRadius: 12, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.4, shadowRadius: 10 },
 
-  floatingWrapper: { position: 'absolute', bottom: 85, left: 20, right: 20, zIndex: 99, elevation: 15 },
-  floatingCart: { backgroundColor: NoxColors.aura, padding: 20, borderRadius: 25, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 20, elevation: 15 },
+  floatingWrapper: { position: 'absolute', bottom: 30, left: 0, right: 0, alignItems: 'center', zIndex: 99, elevation: 15, paddingHorizontal: 20 },
+  floatingCart: { width: '100%', backgroundColor: NoxColors.aura, padding: 20, borderRadius: 25, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 20, elevation: 15 },
   cartTotal: { color:NoxColors.text, fontSize: 20, fontWeight:'900' },
   cartConfirm: { color:NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 12 },
 

@@ -6,9 +6,8 @@ import { useAuthStore } from '../../store/authStore';
 import { formatImageUrl } from '../../utils/imageHelpers';
 import NoxAlert from '../../components/NoxAlert';
 import { NoxColors } from '../../constants/theme';
+import { useResponsive } from '../../utils/responsive';
 
-
-const { width } = Dimensions.get('window');
 
 const CATEGORIES = [
   { id: "", label: "Todos" },
@@ -20,6 +19,8 @@ const CATEGORIES = [
 ];
 
 export default function PedidosScreen() {
+  const { isDesktop, isLargeScreen } = useResponsive();
+  const numColumns = isLargeScreen ? 4 : (isDesktop ? 3 : 2);
   const [productos, setProductos] = useState<any[]>([]);
   const [mesas, setMesas] = useState<any[]>([]);
   const [categorias, setCategorias] = useState<any[]>(CATEGORIES);
@@ -207,10 +208,12 @@ export default function PedidosScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 50 }} />
       ) : (
         <FlatList
+          key={numColumns}
           data={filtered}
-          numColumns={2}
+          numColumns={numColumns}
+          columnWrapperStyle={numColumns > 1 ? { gap: 12 } : undefined}
           keyExtractor={(item) => String(item.id)}
-          contentContainerStyle={{ padding: 15, paddingBottom: 100 }}
+          contentContainerStyle={styles.listContent}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.prodCard} onPress={() => addToOrder(item)}>
               <View style={styles.prodImageContainer}>
@@ -330,7 +333,17 @@ export default function PedidosScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.deep },
-  header: { paddingHorizontal: 25, paddingTop: 60, paddingBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  header: { 
+    paddingHorizontal: 25, 
+    paddingTop: 40, 
+    paddingBottom: 20, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center',
+    maxWidth: 1200,
+    width: '100%',
+    alignSelf: 'center',
+  },
   brandingNox: { fontSize: 28, fontWeight: '900', color: NoxColors.text, letterSpacing: 2 },
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, marginTop: 5 },
@@ -338,14 +351,15 @@ const styles = StyleSheet.create({
   cartBadge: { position: 'absolute', top: -5, right: -5, backgroundColor: NoxColors.aura, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: NoxColors.deep },
   cartBadgeText: { color: NoxColors.text, fontSize: 10, fontWeight: 'bold' },
 
-  catScroll: { marginBottom: 15 },
+  catScroll: { marginBottom: 15, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   catBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: NoxColors.container, marginRight: 10 },
   catBtnActive: { backgroundColor: NoxColors.aura },
   catText: { fontSize: 11, fontWeight: 'bold', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
   catTextActive: { color: NoxColors.text },
 
+  listContent: { padding: 15, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   prodCard: { 
-    width: (width - 60) / 2,
+    flex: 1,
     backgroundColor: NoxColors.card, 
     margin: 8, 
     borderRadius: 24, 
@@ -374,17 +388,19 @@ const styles = StyleSheet.create({
   prodPrice: { fontSize: 14, color: NoxColors.emerald, fontWeight: '900', marginTop: 5 },
   addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: NoxColors.aura, width: 32, height: 32, borderRadius: 10, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.4, shadowRadius: 8 },
 
-  searchSection: { marginBottom: 10 },
+  searchSection: { marginBottom: 10, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: NoxColors.card, marginHorizontal: 20, marginBottom: 15, paddingHorizontal: 15, height: 48, borderRadius: 18, borderWidth: 1, borderColor: NoxColors.border },
   searchInput: { flex: 1, marginLeft: 10, color: NoxColors.text, fontSize: 14 },
 
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'flex-end' },
+  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', padding: 20 },
   chkCard: { 
     backgroundColor: NoxColors.card, 
-    borderTopLeftRadius: 40, 
-    borderTopRightRadius: 40, 
+    borderRadius: 36, 
     padding: 30, 
-    height: '90%',
+    maxHeight: '90%',
+    maxWidth: 580,
+    width: '100%',
+    alignSelf: 'center',
     borderWidth: 1,
     borderColor: 'rgba(171, 0, 255, 0.2)'
   },

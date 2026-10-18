@@ -246,8 +246,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
     alignItems: 'center', 
     paddingHorizontal: 25, 
-    paddingTop: Platform.OS === 'ios' ? 70 : 50,
-    paddingBottom: 30,
+    paddingTop: Platform.OS === 'ios' ? 70 : 40,
+    paddingBottom: 25,
+    maxWidth: 800,
+    width: '100%',
+    alignSelf: 'center',
   },
   headerTitleContainer: { gap: 4 },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
@@ -257,7 +260,7 @@ const styles = StyleSheet.create({
   userBadge: { width: 45, height: 45, borderRadius: 15, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.3)' },
   userText: { color: NoxColors.aura, fontWeight: 'bold', fontSize: 18 },
 
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 100 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 100, maxWidth: 800, width: '100%', alignSelf: 'center' },
   sectionTitle: { fontSize: 9, fontWeight: '900', color: NoxColors.muted, letterSpacing: 2, marginTop: 30, marginBottom: 15, marginLeft: 5 },
 
   card: { 

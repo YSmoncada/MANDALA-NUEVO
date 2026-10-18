@@ -1,19 +1,49 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { NoxColors } from '../../constants/theme';
+import { useResponsive } from '../../utils/responsive';
 
 
 export default function AdminLayout() {
+  const { isDesktop } = useResponsive();
+
   return (
     <Tabs 
       screenOptions={{ 
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: '#999',
-        tabBarStyle: {
+        tabBarPosition: isDesktop ? 'left' : 'bottom',
+        tabBarActiveTintColor: NoxColors.aura,
+        tabBarInactiveTintColor: '#8A7BAF',
+        tabBarStyle: isDesktop ? {
+          backgroundColor: NoxColors.card,
+          borderRightColor: NoxColors.border,
+          borderRightWidth: 1,
+          borderTopWidth: 0,
+          width: 220,
+          paddingTop: 30,
+        } : {
           backgroundColor: NoxColors.deep,
           borderTopColor: '#333',
           height: 60,
           paddingBottom: 10,
+        },
+        tabBarItemStyle: isDesktop ? {
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          height: 48,
+          borderRadius: 14,
+          marginHorizontal: 12,
+          marginVertical: 4,
+        } : {},
+        tabBarLabelStyle: isDesktop ? {
+          fontSize: 13,
+          fontWeight: '700',
+          marginLeft: 12,
+        } : {
+          fontSize: 10,
+          fontWeight: '600',
         },
         headerStyle: {
           backgroundColor: NoxColors.deep,

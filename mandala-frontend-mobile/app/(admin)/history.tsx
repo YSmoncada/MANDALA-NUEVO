@@ -348,12 +348,12 @@ export default function AdminHistoryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.background },
-  header: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 15 },
+  header: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 15, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
 
-  filterSection: { paddingHorizontal: 20, marginBottom: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  filterSection: { paddingHorizontal: 20, marginBottom: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1100, width: '100%', alignSelf: 'center' },
   filterGroup: { flexDirection: 'row', gap: 8 },
   filterChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border },
   filterChipActive: { backgroundColor: NoxColors.container, borderColor: 'rgba(169,68,255,0.3)' },
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   userSelectBtnActive: { backgroundColor: NoxColors.aura, borderColor: NoxColors.aura },
   userSelectText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', flexShrink: 1 },
 
-  summaryContainer: { paddingHorizontal: 20, marginBottom: 25 },
+  summaryContainer: { paddingHorizontal: 20, marginBottom: 25, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   summaryCard: { 
     backgroundColor: NoxColors.container, borderRadius: 28, padding: 22, flexDirection: 'row', 
     justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.3)'
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   statCount: { color: NoxColors.text, fontSize: 20, fontWeight: '900' },
   statSub: { color: NoxColors.aura, fontSize: 8, fontWeight: '900' },
 
-  listContent: { paddingHorizontal: 20 },
+  listContent: { paddingHorizontal: 20, maxWidth: 1100, width: '100%', alignSelf: 'center', paddingBottom: 100 },
   sectionHeader: { marginTop: 25, marginBottom: 15 },
   sectionHeaderLine: { height: 1, backgroundColor: 'rgba(138, 123, 175, 0.1)', position: 'absolute', left: 0, right: 0, top: 12 },
   sectionHeaderContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: NoxColors.background, alignSelf: 'flex-start', paddingRight: 15 },
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   totalVal: { color: NoxColors.emerald, fontSize: 24, fontWeight: '900' },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(5, 5, 16, 0.95)', justifyContent: 'center', padding: 25 },
-  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)', shadowColor: NoxColors.aura, shadowOpacity: 0.1, shadowRadius: 30 },
+  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)', shadowColor: NoxColors.aura, shadowOpacity: 0.1, shadowRadius: 30, maxWidth: 500, width: '100%', alignSelf: 'center' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30, alignItems: 'center' },
   modalTitle: { color: NoxColors.text, fontSize: 18, fontWeight: '900', letterSpacing: 2 },
   modalSubLabel: { fontSize: 9, fontWeight: '900', color: NoxColors.muted, marginVertical: 20, letterSpacing: 2 },
