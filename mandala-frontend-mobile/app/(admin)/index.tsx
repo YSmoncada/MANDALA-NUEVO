@@ -79,13 +79,8 @@ export default function AdminDashboard() {
     router.replace("/(auth)/login");
   };
 
-  const { width, isDesktop, isLargeScreen } = useResponsive();
-  const columns = isLargeScreen ? 3 : (isDesktop ? 3 : 2);
-  const containerMaxWidth = 1100;
-  const effectiveWidth = Math.min(width, containerMaxWidth);
-  const horizontalPadding = 50;
-  const gap = 12;
-  const cardWidth = (effectiveWidth - horizontalPadding - (gap * (columns - 1))) / columns;
+  const { isDesktop, isLargeScreen } = useResponsive();
+  const cardWidth = isLargeScreen ? '31.8%' : (isDesktop ? '48.5%' : '48%');
 
   return (
     <View style={styles.container}>
