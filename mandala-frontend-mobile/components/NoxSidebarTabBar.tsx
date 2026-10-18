@@ -24,10 +24,21 @@ export default function NoxSidebarTabBar({
   const { user, clearAuth } = useAuthStore();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // Filtrar rutas ocultas (aquellas con options.href === null)
+  // Filtrar estrictamente solo las rutas principales con ícono y sin href: null / display: none
   const visibleRoutes = state.routes.filter((route) => {
     const { options } = descriptors[route.key];
-    return options.href !== null;
+    if (!options) return false;
+    if ((options as any).href === null) return false;
+    if ((options.tabBarItemStyle as any)?.display === 'none') return false;
+    if (typeof options.tabBarButton === 'function') {
+      try {
+        const btn = options.tabBarButton({} as any);
+        if (btn === null) return false;
+      } catch (e) {}
+    }
+    // Debe tener ícono definido explícitamente en el layout
+    if (typeof options.tabBarIcon !== 'function') return false;
+    return true;
   });
 
   const handleLogout = () => {

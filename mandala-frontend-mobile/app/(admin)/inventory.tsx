@@ -21,6 +21,8 @@ export default function AdmInventarioScreen() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [editId, setEditId] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [filtro, setFiltro] = useState<any>("");
+  const [filtroNombre, setFiltroNombre] = useState("");
 
   // Estados para Movimientos
   const [movModalOpen, setMovModalOpen] = useState(false);
@@ -176,6 +178,29 @@ export default function AdmInventarioScreen() {
     ]);
   };
 
+  const filteredProductos = productos.filter((p) => {
+    const matchCat =
+      !filtro ||
+      p.categoria === filtro ||
+      p.categoria_id === filtro ||
+      String(p.categoria) === String(filtro) ||
+      String(p.categoria_id) === String(filtro);
+
+    const matchName =
+      !filtroNombre ||
+      p.nombre?.toLowerCase().includes(filtroNombre.toLowerCase());
+
+    return matchCat && matchName;
+  });
+
+  const categoriasFiltro = [
+    { id: "", label: "Todos" },
+    ...categorias.map((c: any) => ({
+      id: c.id,
+      label: c.nombre || c.label,
+    })),
+  ];
+
   return (
     <View style={styles.container}>
       {/* Header Premium con Gradiente Visual */}
@@ -189,6 +214,44 @@ export default function AdmInventarioScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Buscador y Categorías Estilo Mesera */}
+      <View style={styles.searchSection}>
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={18} color={NoxColors.muted} />
+          <TextInput 
+            style={styles.searchInput}
+            placeholder="Buscar producto por nombre..."
+            placeholderTextColor={NoxColors.muted}
+            value={filtroNombre}
+            onChangeText={setFiltroNombre}
+          />
+          {filtroNombre.length > 0 && (
+            <TouchableOpacity onPress={() => setFiltroNombre("")} style={{ padding: 4 }}>
+              <Ionicons name="close-circle" size={18} color={NoxColors.muted} />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.catScroll} 
+          contentContainerStyle={{ paddingHorizontal: 20 }}
+        >
+          {categoriasFiltro.map(cat => (
+            <TouchableOpacity 
+              key={String(cat.id)} 
+              style={[styles.catBtn, filtro === cat.id && styles.catBtnActive]}
+              onPress={() => setFiltro(cat.id)}
+            >
+              <Text style={[styles.catText, filtro === cat.id && styles.catTextActive]}>
+                {cat.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       {isLoading ? (
         <ActivityIndicator size="large" color={NoxColors.aura} style={{marginTop:50}} />
       ) : (
@@ -196,10 +259,17 @@ export default function AdmInventarioScreen() {
           key={numColumns}
           numColumns={numColumns}
           columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
-          data={productos} 
+          data={filteredProductos} 
           keyExtractor={it => String(it.id)} 
           contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchData(true)} tintColor={NoxColors.aura} />}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="cube-outline" size={44} color={NoxColors.muted} />
+              <Text style={styles.emptyTitle}>No se encontraron productos</Text>
+              <Text style={styles.emptySub}>Prueba cambiando la categoría o término de búsqueda</Text>
+            </View>
+          }
           renderItem={({item}) => (
           <View style={styles.card}>
             <View style={styles.cardAccent} />
@@ -435,5 +505,76 @@ const styles = StyleSheet.create({
   saveBtn: { backgroundColor: NoxColors.emerald, padding: 22, borderRadius: 25, alignItems: 'center', marginTop: 20 },
   saveBtnMov: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 25, alignItems: 'center', marginTop: 10 },
   saveBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 14 },
-  formRow: { flexDirection: 'row', gap: 10 }
+  formRow: { flexDirection: 'row', gap: 10 },
+
+  // Estilos del Buscador y Categorías (Estilo Mesera)
+  searchSection: { 
+    marginBottom: 8, 
+    maxWidth: 1200, 
+    width: '100%', 
+    alignSelf: 'center' 
+  },
+  searchBar: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: NoxColors.card, 
+    marginHorizontal: 20, 
+    marginBottom: 12, 
+    paddingHorizontal: 16, 
+    height: 48, 
+    borderRadius: 18, 
+    borderWidth: 1, 
+    borderColor: NoxColors.border 
+  },
+  searchInput: { 
+    flex: 1, 
+    marginLeft: 10, 
+    color: NoxColors.text, 
+    fontSize: 14 
+  },
+  catScroll: { 
+    marginBottom: 10, 
+    maxWidth: 1200, 
+    width: '100%', 
+    alignSelf: 'center' 
+  },
+  catBtn: { 
+    paddingHorizontal: 18, 
+    paddingVertical: 9, 
+    borderRadius: 18, 
+    backgroundColor: NoxColors.container, 
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  catBtnActive: { 
+    backgroundColor: NoxColors.aura,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  catText: { 
+    fontSize: 11, 
+    fontWeight: 'bold', 
+    color: NoxColors.muted, 
+    textTransform: 'uppercase', 
+    letterSpacing: 1 
+  },
+  catTextActive: { 
+    color: NoxColors.text 
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 50,
+  },
+  emptyTitle: {
+    color: NoxColors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 12,
+  },
+  emptySub: {
+    color: NoxColors.muted,
+    fontSize: 13,
+    marginTop: 4,
+  },
 });
