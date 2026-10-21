@@ -26,6 +26,7 @@ export default function AdminHistoryScreen() {
   
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [userFilterModalOpen, setUserFilterModalOpen] = useState(false);
+  const [productReportModalOpen, setProductReportModalOpen] = useState(false);
   const [selectedPedido, setSelectedPedido] = useState<any>(null);
   
   const [filterType, setFilterType] = useState<'today' | 'all'>('today');
@@ -112,6 +113,48 @@ export default function AdminHistoryScreen() {
      const m = meseras.find(it => it.id === selectedMesera);
      return m ? m.username.toUpperCase() : "TODOS";
   }, [selectedMesera, meseras]);
+
+  const productReportData = useMemo(() => {
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const localTodayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    const validOrders = pedidos.filter(p => {
+      const pedidoDate = (p.fecha_hora || "").split('T')[0];
+      if (filterType === 'today') {
+        if (pedidoDate !== todayStr && pedidoDate !== localTodayStr) return false;
+      }
+      if (selectedMesera !== null) {
+        if (p.creado_por !== selectedMesera) return false;
+      }
+      return p.estado_nombre === 'Pagado' || p.estado_nombre === 'Despachado';
+    });
+
+    const summary: Record<string, { id: any; nombre: string; cantidad: number; total: number }> = {};
+
+    validOrders.forEach(order => {
+      if (Array.isArray(order.productos)) {
+        order.productos.forEach((item: any) => {
+          const key = item.producto_id ? String(item.producto_id) : (item.producto_nombre || 'Desconocido');
+          const name = item.producto_nombre || `Producto #${item.producto_id || ''}`;
+          const qty = parseInt(item.cantidad || 1, 10);
+          const price = parseFloat(item.producto_price || item.producto_precio || item.precio || 0);
+
+          if (!summary[key]) {
+            summary[key] = { id: key, nombre: name, cantidad: 0, total: 0 };
+          }
+          summary[key].cantidad += qty;
+          summary[key].total += (qty * price);
+        });
+      }
+    });
+
+    const list = Object.values(summary).sort((a, b) => b.cantidad - a.cantidad);
+    const totalUnidades = list.reduce((acc, i) => acc + i.cantidad, 0);
+    const totalRecaudado = list.reduce((acc, i) => acc + i.total, 0);
+
+    return { list, totalUnidades, totalRecaudado };
+  }, [pedidos, filterType, selectedMesera]);
 
   const renderPedido = ({ item }: { item: any }) => {
     const status = STATUS_CONFIG[item.estado_nombre] || { label: item.estado_nombre || 'S/E', color: NoxColors.muted, bg: 'rgba(138,123,175,0.1)', icon: 'help-circle-outline' };
@@ -207,16 +250,27 @@ export default function AdminHistoryScreen() {
               </TouchableOpacity>
           </View>
 
-          <TouchableOpacity 
-            style={[styles.userSelectBtn, selectedMesera !== null && styles.userSelectBtnActive]}
-            onPress={() => setUserFilterModalOpen(true)}
-          >
-              <Ionicons name="person-circle-outline" size={20} color={selectedMesera !== null ? NoxColors.text : NoxColors.aura} />
-              <Text style={[styles.userSelectText, selectedMesera !== null && {color: NoxColors.text}]}>
-                  {currentMeseraName}
-              </Text>
-              <Ionicons name="chevron-down" size={14} color={selectedMesera !== null ? NoxColors.text : NoxColors.muted} />
-          </TouchableOpacity>
+          <View style={styles.filterActionsGroup}>
+            <TouchableOpacity 
+              style={[styles.userSelectBtn, selectedMesera !== null && styles.userSelectBtnActive]}
+              onPress={() => setUserFilterModalOpen(true)}
+            >
+                <Ionicons name="person-circle-outline" size={18} color={selectedMesera !== null ? NoxColors.text : NoxColors.aura} />
+                <Text style={[styles.userSelectText, selectedMesera !== null && {color: NoxColors.text}]}>
+                    {currentMeseraName}
+                </Text>
+                <Ionicons name="chevron-down" size={14} color={selectedMesera !== null ? NoxColors.text : NoxColors.muted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.productReportBtn}
+              onPress={() => setProductReportModalOpen(true)}
+              activeOpacity={0.8}
+            >
+                <Ionicons name="cube" size={16} color={NoxColors.emerald} />
+                <Text style={styles.productReportBtnText}>PRODUCTOS</Text>
+            </TouchableOpacity>
+          </View>
       </View>
 
       <View style={styles.summaryContainer}>
@@ -342,6 +396,78 @@ export default function AdminHistoryScreen() {
               </View>
           </View>
       </Modal>
+    
+      {/* Modal Reporte de Cantidades Vendidas por Producto */}
+      <Modal visible={productReportModalOpen} transparent animationType="fade">
+        <View style={styles.reportModalOverlay}>
+          <View style={styles.reportModalCard}>
+            <View style={styles.reportHeader}>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View style={styles.reportIconBox}>
+                    <Ionicons name="cube" size={20} color={NoxColors.emerald} />
+                  </View>
+                  <Text style={styles.reportTitle}>CANTIDADES VENDIDAS</Text>
+                </View>
+                <Text style={styles.reportSubtitle}>
+                  {filterType === 'today' ? 'Ventas de Hoy' : 'Histórico Completo'}
+                  {selectedMesera !== null ? ` • Filtro: ${currentMeseraName}` : ' • Todas las Meseras'}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => setProductReportModalOpen(false)} style={styles.closeBtn}>
+                <Ionicons name="close" size={24} color={NoxColors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.reportSummaryRow}>
+              <View style={styles.reportMetricBox}>
+                <Text style={styles.metricVal}>{productReportData.totalUnidades}</Text>
+                <Text style={styles.metricLbl}>UNIDADES TOTALES</Text>
+              </View>
+              <View style={[styles.reportMetricBox, { borderLeftWidth: 1, borderLeftColor: 'rgba(255,255,255,0.08)' }]}>
+                <Text style={[styles.metricVal, { color: NoxColors.emerald }]}>
+                  ${productReportData.totalRecaudado.toLocaleString()}
+                </Text>
+                <Text style={styles.metricLbl}>TOTAL RECAUDADO</Text>
+              </View>
+            </View>
+
+            {productReportData.list.length === 0 ? (
+              <View style={{ paddingVertical: 40, alignItems: 'center' }}>
+                <Ionicons name="receipt-outline" size={40} color={NoxColors.muted} />
+                <Text style={{ color: NoxColors.muted, marginTop: 10, fontSize: 13, fontWeight: '700' }}>
+                  No hay ventas registradas con los filtros actuales
+                </Text>
+              </View>
+            ) : (
+              <ScrollView style={{ maxHeight: 380 }} showsVerticalScrollIndicator={false}>
+                {productReportData.list.map((item, index) => (
+                  <View key={item.id} style={styles.reportItemRow}>
+                    <View style={styles.rankBadge}>
+                      <Text style={styles.rankText}>#{index + 1}</Text>
+                    </View>
+                    <View style={{ flex: 1, marginHorizontal: 12 }}>
+                      <Text style={styles.reportItemName} numberOfLines={1}>{item.nombre}</Text>
+                      <Text style={styles.reportItemSub}>${item.total.toLocaleString()} generado</Text>
+                    </View>
+                    <View style={styles.qtyBadge}>
+                      <Text style={styles.qtyBadgeNum}>{item.cantidad}</Text>
+                      <Text style={styles.qtyBadgeUnit}>uds</Text>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            )}
+
+            <TouchableOpacity 
+              style={styles.closeReportBtn} 
+              onPress={() => setProductReportModalOpen(false)}
+            >
+              <Text style={styles.closeReportBtnText}>CERRAR</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -353,7 +479,7 @@ const styles = StyleSheet.create({
   brandingOS: { color: NoxColors.aura },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
 
-  filterSection: { paddingHorizontal: 20, marginBottom: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1100, width: '100%', alignSelf: 'center' },
+  filterSection: { paddingHorizontal: 20, marginBottom: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   filterGroup: { flexDirection: 'row', gap: 8 },
   filterChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border },
   filterChipActive: { backgroundColor: NoxColors.container, borderColor: 'rgba(169,68,255,0.3)' },
@@ -431,5 +557,161 @@ const styles = StyleSheet.create({
 
   emptyContainer: { alignItems: 'center', marginTop: 100, gap: 15, opacity: 0.2 },
   emptyText: { color: NoxColors.muted, fontWeight: '900', fontSize: 11, letterSpacing: 3 },
-  selectedProdName: { color: NoxColors.aura, fontSize: 12, fontWeight: 'bold', marginTop: 4 }
+  selectedProdName: { color: NoxColors.aura, fontSize: 12, fontWeight: 'bold', marginTop: 4 },
+  filterActionsGroup: { flexDirection: 'row', gap: 8, alignItems: 'center', flexWrap: 'wrap' },
+  productReportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+  },
+  productReportBtnText: {
+    color: NoxColors.emerald,
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  reportModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  reportModalCard: {
+    width: '100%',
+    maxWidth: 560,
+    backgroundColor: NoxColors.card,
+    borderRadius: 28,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.25)',
+    shadowColor: NoxColors.emerald,
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+  },
+  reportHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  reportIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  reportTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: NoxColors.text,
+    letterSpacing: 1,
+  },
+  reportSubtitle: {
+    fontSize: 11,
+    color: NoxColors.muted,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  reportSummaryRow: {
+    flexDirection: 'row',
+    backgroundColor: NoxColors.container,
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: NoxColors.border,
+  },
+  reportMetricBox: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  metricVal: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: NoxColors.text,
+  },
+  metricLbl: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: NoxColors.muted,
+    letterSpacing: 1,
+    marginTop: 4,
+  },
+  reportItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  rankBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rankText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: NoxColors.muted,
+  },
+  reportItemName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: NoxColors.text,
+  },
+  reportItemSub: {
+    fontSize: 11,
+    color: NoxColors.muted,
+    marginTop: 2,
+  },
+  qtyBadge: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.25)',
+  },
+  qtyBadgeNum: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: NoxColors.emerald,
+    marginRight: 2,
+  },
+  qtyBadgeUnit: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: NoxColors.muted,
+  },
+  closeReportBtn: {
+    marginTop: 18,
+    backgroundColor: NoxColors.container,
+    paddingVertical: 14,
+    borderRadius: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: NoxColors.border,
+  },
+  closeReportBtnText: {
+    color: NoxColors.text,
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1.5,
+  },
 });
+

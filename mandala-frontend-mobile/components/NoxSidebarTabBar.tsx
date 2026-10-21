@@ -10,6 +10,7 @@ import { useAuthStore } from '../store/authStore';
 interface NoxSidebarTabBarProps extends BottomTabBarProps {
   roleTitle?: string;
   roleSubtitle?: string;
+  hideSettingsOnDesktop?: boolean;
 }
 
 export default function NoxSidebarTabBar({
@@ -18,6 +19,7 @@ export default function NoxSidebarTabBar({
   navigation,
   roleTitle = 'SISTEMA',
   roleSubtitle = 'Mandala NoxOS',
+  hideSettingsOnDesktop = false,
 }: NoxSidebarTabBarProps) {
   const { isDesktop } = useResponsive();
   const router = useRouter();
@@ -38,6 +40,8 @@ export default function NoxSidebarTabBar({
     }
     // Debe tener ícono definido explícitamente en el layout
     if (typeof options.tabBarIcon !== 'function') return false;
+    // Ocultar pestaña de Perfil/Ajustes en Desktop si fue solicitado (ej. mesera y bartender)
+    if (isDesktop && hideSettingsOnDesktop && route.name === 'settings') return false;
     return true;
   });
 

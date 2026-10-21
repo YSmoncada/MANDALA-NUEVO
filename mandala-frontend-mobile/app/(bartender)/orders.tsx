@@ -147,18 +147,19 @@ export default function PedidosScreen() {
             <TouchableOpacity style={styles.prodCard} onPress={() => addToOrder(item)}>
               <View style={styles.prodImageContainer}>
                 {item.imagen ? (
-                   <Image 
+                  <Image 
                     key={`img-${item.id}-${item.imagen}`}
                     source={{ uri: formatImageUrl(item.imagen) }} 
                     style={styles.prodImage}
-                    resizeMode="cover"
                   />
                 ) : (
                   <Ionicons name="fast-food-outline" size={32} color={NoxColors.muted} />
                 )}
               </View>
-              <Text style={styles.prodName} numberOfLines={1}>{item.nombre}</Text>
-              <Text style={styles.prodPrice}>${parseFloat(item.precio).toLocaleString()}</Text>
+              <View style={styles.prodInfo}>
+                <Text style={styles.prodName} numberOfLines={2}>{item.nombre}</Text>
+                <Text style={styles.prodPrice}>${parseFloat(item.precio).toLocaleString()}</Text>
+              </View>
               <View style={styles.addIcon}><Ionicons name="add" size={16} color={NoxColors.text} /></View>
             </TouchableOpacity>
           )}
@@ -267,32 +268,34 @@ const styles = StyleSheet.create({
 
   listContent: { padding: 15, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   prodCard: { 
-    flex: 1, 
+    flex: 1,
     backgroundColor: NoxColors.card, 
     margin: 8, 
     borderRadius: 24, 
-    padding: 15, 
+    padding: 15,
     borderWidth: 1, 
     borderColor: NoxColors.border,
-    position: 'relative' 
+    height: 235,
+    alignItems: 'center'
   },
   prodImageContainer: { 
-    width: '100%', 
-    height: 100, 
-    backgroundColor: NoxColors.container, 
-    borderRadius: 20, 
+    width: 105, 
+    height: 105, 
+    backgroundColor: 'rgba(138, 123, 175, 0.05)', 
+    borderRadius: 22,
     justifyContent: 'center', 
     alignItems: 'center', 
-    marginBottom: 12,
-    overflow: 'hidden'
+    marginBottom: 12
   },
   prodImage: {
-    width: '100%',
-    height: '100%',
+    width: 105,
+    height: 105,
+    borderRadius: 22
   },
-  prodName: { fontSize: 14, fontWeight: 'bold', color: NoxColors.text },
-  prodPrice: { fontSize: 13, color: NoxColors.emerald, fontWeight: 'bold', marginTop: 5 },
-  addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: NoxColors.aura, width: 28, height: 28, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  prodInfo: { alignItems: 'center', width: '100%' },
+  prodName: { fontSize: 13, fontWeight: 'bold', color: NoxColors.text, textAlign: 'center', height: 36, lineHeight: 18 },
+  prodPrice: { fontSize: 14, color: NoxColors.emerald, fontWeight: '900', marginTop: 5 },
+  addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: NoxColors.aura, width: 32, height: 32, borderRadius: 10, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.4, shadowRadius: 8 },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', padding: 20 },
   chkCard: { 

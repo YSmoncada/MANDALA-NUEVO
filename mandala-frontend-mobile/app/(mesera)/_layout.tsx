@@ -11,7 +11,7 @@ export default function MeseraLayout() {
 
   return (
     <Tabs
-      tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="SERVICIO" roleSubtitle="Meseros & Atención" />}
+      tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="SERVICIO" roleSubtitle="Meseros & Atención" hideSettingsOnDesktop={true} />}
       screenOptions={{
         tabBarPosition: isDesktop ? 'right' : 'bottom',
         headerShown: false,
