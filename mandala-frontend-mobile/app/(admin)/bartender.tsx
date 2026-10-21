@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
 
 
 export default function AdminBartenderScreen() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(admin)/settings');
+    }
+  };
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -103,9 +113,14 @@ export default function AdminBartenderScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-          <Text style={styles.subtitle}>PREPARACIÓN EN BARRA</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
+            <Text style={styles.subtitle}>PREPARACIÓN EN BARRA</Text>
+          </View>
         </View>
         <TouchableOpacity style={styles.refreshBtn} onPress={fetchPending} disabled={loading}>
           <Ionicons name="reload" size={24} color={loading ? NoxColors.gray : NoxColors.aura} />
@@ -146,6 +161,7 @@ const styles = StyleSheet.create({
   brandingNox: { fontSize: 28, fontWeight: '900', color: NoxColors.text, letterSpacing: 2 },
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, marginTop: 5 },
+  backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
   refreshBtn: { backgroundColor: NoxColors.container, width: 50, height: 50, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
 
   card: { 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator, Alert, Modal, ScrollView, Image, Share, RefreshControl, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import * as Linking from 'expo-linking';
 import { NoxColors } from '../../constants/theme';
@@ -9,6 +9,15 @@ import { useResponsive } from '../../utils/responsive';
 
 
 export default function AdminMesasScreen() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(admin)/settings');
+    }
+  };
   const { isDesktop, isLargeScreen } = useResponsive();
   const numColumns = isLargeScreen ? 3 : (isDesktop ? 2 : 1);
   const [mesas, setMesas] = useState<any[]>([]);
@@ -91,9 +100,14 @@ export default function AdminMesasScreen() {
     <View style={styles.container}>
       {/* Encabezado Premium */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-          <Text style={styles.subtitle}>CONFIGURACIÓN DE SALÓN</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
+            <Text style={styles.subtitle}>CONFIGURACIÓN DE SALÓN</Text>
+          </View>
         </View>
         <TouchableOpacity style={styles.addBtn} onPress={() => setModalOpen(true)}>
           <Ionicons name="add" size={24} color={NoxColors.text} />
@@ -121,7 +135,7 @@ export default function AdminMesasScreen() {
             if (isSolicitando) statusColor = NoxColors.amber; // Amarillo/Naranja
 
             return (
-              <View style={styles.mesaCard}>
+              <View style={[styles.mesaCard, { maxWidth: isLargeScreen ? '32%' : (isDesktop ? '48.8%' : '100%') }]}>
                 <View style={[styles.cardAccent, {backgroundColor: statusColor}]} />
                 <View style={[styles.mesaIcon, {backgroundColor: statusColor}]}>
                   <Ionicons name={isSolicitando ? "cash-outline" : "restaurant-outline"} size={24} color={NoxColors.text} />
@@ -239,6 +253,7 @@ const styles = StyleSheet.create({
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
+  backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
   addBtn: { backgroundColor: NoxColors.aura, width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
 
   listContent: { padding: 20, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },

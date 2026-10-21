@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, SectionList, TouchableOpacity, ActivityIndicator, Alert, ScrollView, Dimensions, RefreshControl, Platform, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
@@ -18,6 +18,15 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
 };
 
 export default function AdminHistoryScreen() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(admin)/settings');
+    }
+  };
   const insets = useSafeAreaInsets();
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [meseras, setMeseras] = useState<any[]>([]);
@@ -127,18 +136,19 @@ export default function AdminHistoryScreen() {
       if (selectedMesera !== null) {
         if (p.creado_por !== selectedMesera) return false;
       }
-      return p.estado_nombre === 'Pagado' || p.estado_nombre === 'Despachado';
+      return p.estado_nombre !== 'Cancelado';
     });
 
     const summary: Record<string, { id: any; nombre: string; cantidad: number; total: number }> = {};
 
     validOrders.forEach(order => {
-      if (Array.isArray(order.productos)) {
-        order.productos.forEach((item: any) => {
-          const key = item.producto_id ? String(item.producto_id) : (item.producto_nombre || 'Desconocido');
-          const name = item.producto_nombre || `Producto #${item.producto_id || ''}`;
+      const items = order.productos_detalle || order.detalles || order.productos || [];
+      if (Array.isArray(items)) {
+        items.forEach((item: any) => {
+          const key = item.producto_id ? String(item.producto_id) : (item.producto_nombre || item.nombre || 'Desconocido');
+          const name = item.producto_nombre || item.nombre || `Producto #${item.producto_id || ''}`;
           const qty = parseInt(item.cantidad || 1, 10);
-          const price = parseFloat(item.producto_price || item.producto_precio || item.precio || 0);
+          const price = parseFloat(item.producto_price || item.producto_precio || item.precio || item.precio_unitario || 0);
 
           if (!summary[key]) {
             summary[key] = { id: key, nombre: name, cantidad: 0, total: 0 };
@@ -188,11 +198,11 @@ export default function AdminHistoryScreen() {
           </View>
 
           <View style={styles.productSection}>
-              {(item.productos_detalle || item.detalles || []).map((p: any, idx: number) => (
+              {(item.productos_detalle || item.detalles || item.productos || []).map((p: any, idx: number) => (
                   <View key={idx} style={styles.productRow}>
                       <Text style={styles.productCant}>{p.cantidad || 1}x</Text>
-                      <Text style={styles.productName} numberOfLines={1}>{p.producto_nombre || 'Producto'}</Text>
-                      <Text style={styles.productPrice}>${parseFloat(p.producto_price || p.producto_precio || 0).toLocaleString()}</Text>
+                      <Text style={styles.productName} numberOfLines={1}>{p.producto_nombre || p.nombre || 'Producto'}</Text>
+                      <Text style={styles.productPrice}>${parseFloat(p.producto_price || p.producto_precio || p.precio || p.precio_unitario || 0).toLocaleString()}</Text>
                   </View>
               ))}
           </View>
@@ -228,9 +238,14 @@ export default function AdminHistoryScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-          <Text style={styles.subtitle}>HISTORIAL DE VENTAS</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
+            <Text style={styles.subtitle}>HISTORIAL DE VENTAS</Text>
+          </View>
         </View>
       </View>
 
@@ -268,7 +283,7 @@ export default function AdminHistoryScreen() {
               activeOpacity={0.8}
             >
                 <Ionicons name="cube" size={16} color={NoxColors.emerald} />
-                <Text style={styles.productReportBtnText}>PRODUCTOS</Text>
+                <Text style={styles.productReportBtnText}>PRODUCTOS ({productReportData.totalUnidades})</Text>
             </TouchableOpacity>
           </View>
       </View>
@@ -278,6 +293,16 @@ export default function AdminHistoryScreen() {
               <View style={styles.summaryInfo}>
                 <Text style={styles.summaryLabel}>BALANCE TOTAL ({filterType === 'today' ? 'HOY' : 'TOTAL'})</Text>
                 <Text style={styles.summaryAmount}>${totalCaja.toLocaleString()}</Text>
+                <TouchableOpacity 
+                  style={styles.summaryReportBtn} 
+                  onPress={() => setProductReportModalOpen(true)}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="cube" size={13} color={NoxColors.emerald} />
+                  <Text style={styles.summaryReportBtnText}>
+                    {productReportData.totalUnidades} uds vendidas • Ver reporte
+                  </Text>
+                </TouchableOpacity>
               </View>
               <View style={styles.summaryStats}>
                   <Text style={styles.statCount}>{groupedData.reduce((acc, s) => acc + s.data.length, 0)}</Text>
@@ -475,6 +500,9 @@ export default function AdminHistoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.background },
   header: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 15, maxWidth: 1100, width: '100%', alignSelf: 'center' },
+  backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
+  summaryReportBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, backgroundColor: 'rgba(16, 185, 129, 0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.25)' },
+  summaryReportBtnText: { color: NoxColors.emerald, fontSize: 11, fontWeight: '800' },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },

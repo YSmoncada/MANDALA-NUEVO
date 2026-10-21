@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, ScrollView, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
@@ -15,6 +16,15 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
 const FILTROS = ['todos', 'Pendiente', 'Despachado', 'Cancelado'];
 
 export default function MonitorOrdenesScreen() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(admin)');
+    }
+  };
   const { isDesktop, isLargeScreen } = useResponsive();
   const numColumns = isLargeScreen ? 3 : (isDesktop ? 2 : 1);
   const [pedidos, setPedidos] = useState<any[]>([]);
@@ -68,7 +78,7 @@ export default function MonitorOrdenesScreen() {
     const horaStr = item.hora ?? (item.fecha_hora ? new Date(item.fecha_hora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--');
 
     return (
-      <View style={styles.card}>
+      <View style={[styles.card, { maxWidth: isLargeScreen ? '32%' : (isDesktop ? '48.8%' : '100%') }]}>
         <View style={[styles.cardAccent, {backgroundColor: cfg.color}]} />
         <View style={styles.cardTop}>
           <View style={styles.cardInfo}>
@@ -106,12 +116,17 @@ export default function MonitorOrdenesScreen() {
     );
   };
 
-  return (
-    <View style={styles.container}>
+  const renderHeader = () => (
+    <View style={styles.headerWrapper}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-          <Text style={styles.subtitle}>MONITOR DE ÓRDENES</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
+            <Text style={styles.subtitle}>MONITOR DE ÓRDENES</Text>
+          </View>
         </View>
         <View style={styles.liveBadge}>
           <View style={styles.liveDot} />
@@ -129,13 +144,15 @@ export default function MonitorOrdenesScreen() {
             ))}
         </ScrollView>
       </View>
+    </View>
+  );
 
+  return (
+    <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 60 }} />
-      ) : filtered.length === 0 ? (
-        <View style={styles.emptyContainer}>
-            <Ionicons name="receipt-outline" size={60} color="rgba(138,123,175,0.05)" />
-            <Text style={styles.emptyText}>SIN ÓRDENES ACTIVAS</Text>
+        <View style={{ flex: 1, paddingHorizontal: 20 }}>
+          {renderHeader()}
+          <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 60 }} />
         </View>
       ) : (
         <FlatList
@@ -145,8 +162,15 @@ export default function MonitorOrdenesScreen() {
           data={filtered}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderPedido}
+          ListHeaderComponent={renderHeader}
           contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={NoxColors.aura} />}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="receipt-outline" size={60} color="rgba(138,123,175,0.05)" />
+              <Text style={styles.emptyText}>SIN ÓRDENES ACTIVAS</Text>
+            </View>
+          }
         />
       )}
     </View>
@@ -155,8 +179,12 @@ export default function MonitorOrdenesScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NoxColors.background },
+  headerWrapper: {
+    width: '100%',
+    marginBottom: 5,
+  },
   header: { 
-    paddingHorizontal: 25, 
+    paddingHorizontal: 0, 
     paddingTop: Platform.OS === 'ios' ? 70 : 40, 
     paddingBottom: 20, 
     flexDirection: 'row', 
@@ -166,6 +194,16 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+  backBtn: { 
+    width: 42, 
+    height: 42, 
+    borderRadius: 14, 
+    backgroundColor: NoxColors.card, 
+    borderWidth: 1, 
+    borderColor: NoxColors.border, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
@@ -174,7 +212,7 @@ const styles = StyleSheet.create({
   liveText: { color: NoxColors.emerald, fontSize: 9, fontWeight: '900', letterSpacing: 2 },
 
   statsRow: { marginBottom: 15, maxWidth: 1200, width: '100%', alignSelf: 'center' },
-  statsContainer: { paddingHorizontal: 25, gap: 10 },
+  statsContainer: { paddingHorizontal: 2, gap: 10 },
   statBox: { 
     backgroundColor: NoxColors.card, 
     borderRadius: 20, 

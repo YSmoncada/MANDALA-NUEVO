@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
 import { NoxColors } from '../../constants/theme';
@@ -8,6 +9,15 @@ import { useResponsive } from '../../utils/responsive';
 
 
 export default function AdmUsersScreen() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(admin)/settings');
+    }
+  };
   const { isDesktop } = useResponsive();
   const numColumns = isDesktop ? 2 : 1;
   const { user: currentUser } = useAuthStore();
@@ -130,7 +140,7 @@ export default function AdmUsersScreen() {
     const roleColor = roleCategories.sistema.includes(roleText.toLowerCase()) ? NoxColors.amber : NoxColors.aura;
     
     return (
-      <View style={styles.card}>
+      <View style={[styles.card, isDesktop && { maxWidth: '48.8%' }]}>
         <View style={[styles.cardAccent, { backgroundColor: roleColor }]} />
         <View style={[styles.avatar, { backgroundColor: `${roleColor}15` }]}>
             <Text style={[styles.avatarText, { color: roleColor }]}>{(item.username || '?').charAt(0).toUpperCase()}</Text>
@@ -160,9 +170,14 @@ export default function AdmUsersScreen() {
     <View style={styles.container}>
       {/* Encabezado Premium */}
       <View style={styles.header}>
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-          <Text style={styles.subtitle}>USUARIOS</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
+          </TouchableOpacity>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
+            <Text style={styles.subtitle}>USUARIOS Y ROLES</Text>
+          </View>
         </View>
         <TouchableOpacity style={styles.addBtn} onPress={() => setShowAddModal(true)}>
           <Ionicons name="person-add" size={24} color={NoxColors.text} />
@@ -290,6 +305,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+  backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
   headerTitleContainer: { gap: 4 },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },

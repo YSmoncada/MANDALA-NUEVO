@@ -144,7 +144,7 @@ export default function PedidosScreen() {
           keyExtractor={(item) => String(item.id)}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.prodCard} onPress={() => addToOrder(item)}>
+            <TouchableOpacity style={[styles.prodCard, { maxWidth: isLargeScreen ? '23%' : (isDesktop ? '31%' : '48%') }]} onPress={() => addToOrder(item)}>
               <View style={styles.prodImageContainer}>
                 {item.imagen ? (
                   <Image 

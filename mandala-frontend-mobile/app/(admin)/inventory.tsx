@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, ActivityIndicator, Alert, ScrollView, Image, RefreshControl, Platform, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import apiClient from '../../utils/apiClient';
 import { formatImageUrl } from '../../utils/imageHelpers';
@@ -9,13 +9,31 @@ import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
 
 
+const DEFAULT_CATEGORIES = [
+  { id: "", label: "Todos" },
+  { id: "cerveza", label: "Cervezas" },
+  { id: "vinos", label: "Vinos" },
+  { id: "destilados", label: "Destilados" },
+  { id: "cocteles", label: "Cócteles" },
+  { id: "bebidas", label: "Bebidas" },
+];
+
 const INITIAL_FORM = { nombre: "", categoria_id: "", precio: "0", stock_actual: "0", imagen: "" };
 
 export default function AdmInventarioScreen() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(admin)');
+    }
+  };
   const { isDesktop } = useResponsive();
   const numColumns = isDesktop ? 2 : 1;
   const [productos, setProductos] = useState<any[]>([]);
-  const [categorias, setCategorias] = useState<any[]>([]);
+  const [categorias, setCategorias] = useState<any[]>(DEFAULT_CATEGORIES);
   const [isLoading, setIsLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState(INITIAL_FORM);
@@ -96,8 +114,13 @@ export default function AdmInventarioScreen() {
           apiClient.get('/categorias/')
       ]);
       setProductos(Array.isArray(prodRes.data) ? prodRes.data : []);
-      if (Array.isArray(catRes.data)) {
-        setCategorias(catRes.data);
+      const rawCats = Array.isArray(catRes.data) ? catRes.data : (catRes.data?.results || []);
+      if (rawCats.length > 0) {
+        const dbCats = rawCats.map((c: any) => ({
+          id: c.id,
+          label: c.nombre || c.label || String(c)
+        }));
+        setCategorias([{ id: "", label: "Todos" }, ...dbCats]);
       }
     } catch (err) {
       console.error("Error al cargar inventario:", err);
@@ -193,21 +216,20 @@ export default function AdmInventarioScreen() {
     return matchCat && matchName;
   });
 
-  const categoriasFiltro = [
-    { id: "", label: "Todos" },
-    ...categorias.map((c: any) => ({
-      id: c.id,
-      label: c.nombre || c.label,
-    })),
-  ];
+  const categoriasFiltro = categorias;
 
   return (
     <View style={styles.container}>
       {/* Header Premium con Gradiente Visual */}
       <View style={styles.header}>
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-          <Text style={styles.subtitle}>CONTROL DE EXISTENCIAS</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
+          </TouchableOpacity>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
+            <Text style={styles.subtitle}>CONTROL DE EXISTENCIAS</Text>
+          </View>
         </View>
         <TouchableOpacity style={styles.addBtn} onPress={() => {setForm(INITIAL_FORM); setEditId(null); setModalOpen(true);}}>
           <Ionicons name="add" size={24} color={NoxColors.text} />
@@ -271,7 +293,7 @@ export default function AdmInventarioScreen() {
             </View>
           }
           renderItem={({item}) => (
-          <View style={styles.card}>
+          <View style={[styles.card, isDesktop && { maxWidth: '48.8%' }]}>
             <View style={styles.cardAccent} />
             <View style={styles.cardIcon}>
                 {item.imagen ? (
@@ -450,6 +472,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+  backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
   headerTitleContainer: { gap: 4 },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
