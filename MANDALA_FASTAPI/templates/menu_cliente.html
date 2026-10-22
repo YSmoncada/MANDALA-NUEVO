@@ -418,6 +418,7 @@
     let allCategories = [];
     let currentCat = '';
     let cart = {}; // { prodId: { id, nombre, precio, qty } }
+    let currentPendingCount = 0;
 
     async function init() {
       await Promise.all([loadCategories(), loadProducts()]);
@@ -639,10 +640,15 @@
         }
 
         let total = 0;
+        let pendingCount = 0;
         container.innerHTML = orders.map(ord => {
-          const isCancel = (ord.estado_nombre || '').toLowerCase() === 'cancelado';
+          const statusLower = (ord.estado_nombre || '').toLowerCase();
+          const isCancel = statusLower === 'cancelado';
           if (!isCancel) total += parseFloat(ord.total || 0);
-          const isDesp = (ord.estado_nombre || '').toLowerCase() === 'despachado';
+          const isDesp = statusLower === 'despachado';
+          if (!isCancel && !isDesp) {
+            pendingCount++;
+          }
           const items = ord.productos_detalle || ord.detalles || [];
 
           return `
@@ -672,19 +678,41 @@
         document.getElementById('total-consumed').textContent = `$${total.toLocaleString('es-CO')}`;
         document.getElementById('total-card').style.display = 'flex';
 
+        currentPendingCount = pendingCount;
+        const btnCuenta = document.getElementById('btn-pedir-cuenta');
+        if (pendingCount > 0) {
+          btnCuenta.style.background = 'rgba(245, 158, 11, 0.15)';
+          btnCuenta.style.border = '1px solid var(--amber)';
+          btnCuenta.style.color = 'var(--amber)';
+          btnCuenta.innerHTML = '⏳ PEDIDOS EN PREPARACIÓN (NO DISPONIBLE)';
+        } else {
+          btnCuenta.style.background = 'var(--aura)';
+          btnCuenta.style.border = 'none';
+          btnCuenta.style.color = '#fff';
+          btnCuenta.innerHTML = '🛎️ PEDIR LA CUENTA A LA MESA';
+        }
+
       } catch (e) {
         container.innerHTML = '<div style="text-align: center; color: var(--muted);">No se pudieron cargar los pedidos.</div>';
       }
     }
 
     async function pedirCuenta() {
+      if (currentPendingCount > 0) {
+        alert('⚠️ No puedes solicitar la cuenta mientras tengas pedidos en preparación o pendientes de entrega. Por favor espera a que te los entreguen.');
+        return;
+      }
       if (!confirm('¿Deseas solicitar la cuenta a tu mesa?')) return;
       try {
         const res = await fetch(`/api/mesas/${MESA_ID}/pedir-cuenta/`, { method: 'POST' });
         if (res.ok) {
           alert('🛎️ ¡Cuenta solicitada! Tu mesera asignada se acerca a la mesa en un momento.');
+          const btnCuenta = document.getElementById('btn-pedir-cuenta');
+          btnCuenta.disabled = true;
+          btnCuenta.textContent = '✅ CUENTA SOLICITADA A TU MESERA';
         } else {
-          alert('Alerta enviada a la mesera.');
+          const err = await res.json().catch(() => ({}));
+          alert('⚠️ ' + (err.detail || 'No se pudo solicitar la cuenta.'));
         }
       } catch (e) {
         alert('Se notificó a la mesera.');

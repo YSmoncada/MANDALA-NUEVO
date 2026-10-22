@@ -94,11 +94,26 @@ def pedir_cuenta(mesa_id: int, db: Session = Depends(deps.get_db)):
     if not db_mesa:
         raise HTTPException(status_code=404, detail="Mesa no encontrada")
     
+    # Validar que no haya pedidos pendientes de preparación o entrega
+    pedidos_pendientes = db.query(models.Pedido).join(
+        models.EstadoPedido, models.Pedido.estado == models.EstadoPedido.id
+    ).filter(
+        models.Pedido.mesa == mesa_id,
+        (models.EstadoPedido.nombre.ilike("%pendiente%")) | 
+        (models.EstadoPedido.nombre.ilike("%preparando%")) | 
+        (models.EstadoPedido.nombre.ilike("%aceptado%"))
+    ).count()
+    
+    if pedidos_pendientes > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail="No puedes pedir la cuenta mientras tengas pedidos en preparación o pendientes de entrega."
+        )
+    
     db_mesa.pidiendo_cuenta = True
     db.commit()
-    print(f"DEBUG: Mesa {db_mesa.numero} (ID {db_mesa.id}) PIDIENDO CUENTA. Mesero asignado: {db_mesa.mesero_id}")
     logger.info(f"Mesa {db_mesa.numero} ha pedido la cuenta")
-    return {"detail": "Cuenta solicitada"}
+    return {"detail": "Cuenta solicitada exitosamente"}
 
 @router.post("/{mesa_id}/limpiar-cuenta/")
 def limpiar_cuenta(

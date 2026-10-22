@@ -118,11 +118,25 @@ export default function ClientHistoryScreen() {
         <TouchableOpacity 
           style={styles.payBtn} 
           onPress={async () => {
+            const hasPending = pedidos.some(p => {
+              const st = (p.estado_nombre || p.estado || '').toLowerCase();
+              return ['pendiente', 'preparando', 'aceptado'].includes(st);
+            });
+
+            if (hasPending) {
+              Alert.alert(
+                "Pedidos en Preparación",
+                "No puedes pedir la cuenta mientras tengas pedidos pendientes de entrega en barra/cocina."
+              );
+              return;
+            }
+
             try {
               await axios.post(`${API_URL}/mesas/${mesaId}/pedir-cuenta/`);
               Alert.alert("Solicitud Enviada", "Un mesero vendrá pronto con tu cuenta.");
-            } catch (e) {
-              Alert.alert("Error", "No se pudo solicitar la cuenta.");
+            } catch (e: any) {
+              const detail = e.response?.data?.detail || "No se pudo solicitar la cuenta.";
+              Alert.alert("No se pudo pedir la cuenta", detail);
             }
           }}
         >
