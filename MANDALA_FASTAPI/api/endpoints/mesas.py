@@ -77,8 +77,10 @@ def get_mesa(
     if est:
         db_mesa.estado_nombre = est.nombre
         
-    # Asignación automática si es cliente (no viene logueado) y no tiene mesero
-    if not db_mesa.mesero_id:
+    # Asignación automática si es cliente (no viene logueado) y no tiene mesero o estaba libre
+    estado_ocupada = db.query(models.EstadoMesa).filter(models.EstadoMesa.nombre.ilike("Ocupada")).first()
+    ocupada_id = estado_ocupada.id if estado_ocupada else None
+    if not db_mesa.mesero_id or (ocupada_id and db_mesa.estado != ocupada_id):
         assign_waiter(db, db_mesa)
         
     if db_mesa.rel_mesero:

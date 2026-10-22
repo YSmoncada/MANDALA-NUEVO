@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_
 from db import database, models
 from schemas import schemas
 from api import deps
@@ -30,8 +31,16 @@ def read_pedidos(
     
     if estado:
         query = query.join(models.EstadoPedido, models.Pedido.estado == models.EstadoPedido.id).filter(models.EstadoPedido.nombre.ilike(estado))
-    if usuario:
-        query = query.filter(models.Pedido.creado_por == usuario)
+    target_waiter = usuario
+    if not target_waiter and current_user and not mesa:
+        roles = [r.rol.nombre.lower() for r in current_user.roles_asignados] if current_user.roles_asignados else []
+        if any("meser" in r for r in roles):
+            target_waiter = current_user.id
+
+    if target_waiter:
+        query = query.outerjoin(models.Mesa, models.Pedido.mesa == models.Mesa.id).filter(
+            or_(models.Pedido.creado_por == target_waiter, models.Mesa.mesero_id == target_waiter)
+        )
     if mesa:
         query = query.filter(models.Pedido.mesa == mesa)
         if not usuario:

@@ -10,6 +10,14 @@ import logging
 logger = logging.getLogger("mandala.usuarios")
 router = APIRouter()
 
+def validate_secure_password(password: str):
+    if not password or len(password) < 6:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 6 caracteres")
+    has_letter = any(c.isalpha() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    if not (has_letter and has_digit):
+        raise HTTPException(status_code=400, detail="La contraseña debe ser segura: incluye letras y al menos un número")
+
 @router.get("/")
 def get_usuarios(
     db: Session = Depends(deps.get_db), 
@@ -42,6 +50,7 @@ def create_usuario(
     if db_user:
         raise HTTPException(status_code=400, detail="El nombre de usuario ya está registrado")
     
+    validate_secure_password(usuario.password)
     hashed_password = security.get_password_hash(usuario.password)
     db_user = models.Usuario(
         username=usuario.username,
@@ -124,6 +133,7 @@ def change_password(
     if not new_password:
         raise HTTPException(status_code=400, detail="Contraseña requerida")
         
+    validate_secure_password(new_password)
     db_user.password = security.get_password_hash(new_password)
     db.commit()
     logger.info(f"Contraseña de {db_user.username} cambiada por {current_user.username}")

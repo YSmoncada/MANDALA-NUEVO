@@ -59,9 +59,26 @@ export default function AdmUsersScreen() {
     });
   };
 
+  const validateSecurePassword = (pass: string): string | null => {
+    if (!pass || pass.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres.';
+    }
+    const hasLetter = /[a-zA-Z]/.test(pass);
+    const hasNumber = /[0-9]/.test(pass);
+    if (!hasLetter || !hasNumber) {
+      return 'La contraseña debe ser segura: incluye letras y al menos un número.';
+    }
+    return null;
+  };
+
   const handleAddProfile = async () => {
-    if (!newProfileForm.username || newProfileForm.password.length < 4) {
-      Alert.alert('Error', 'Usuario y contraseña obligatorios (Mín: 4 caracteres).');
+    if (!newProfileForm.username) {
+      Alert.alert('Error', 'El nombre de usuario es obligatorio.');
+      return;
+    }
+    const passErr = validateSecurePassword(newProfileForm.password);
+    if (passErr) {
+      Alert.alert('Contraseña Débil', passErr);
       return;
     }
     
@@ -88,11 +105,15 @@ export default function AdmUsersScreen() {
   };
 
   const handleUpdateCredentials = async () => {
-    if (newCredentials.length < 4) return Alert.alert('Error', 'Mínimo 4 caracteres requeridos.');
+    const passErr = validateSecurePassword(newCredentials);
+    if (passErr) {
+      Alert.alert('Contraseña Débil', passErr);
+      return;
+    }
     try {
       await apiClient.post(`/usuarios/${selectedUser.id}/cambiar-password/`, { password: newCredentials });
       setShowResetModal(false);
-      Alert.alert('Éxito', 'Credenciales actualizadas.');
+      Alert.alert('Éxito', 'Contraseña actualizada correctamente.');
       fetchData();
     } catch(err) { 
       Alert.alert('Error', 'No se pudo actualizar la clave.');
@@ -230,9 +251,9 @@ export default function AdmUsersScreen() {
                     autoCapitalize="none"
                 />
 
-                <Text style={styles.label}>CONTRASEÑA / PIN</Text>
+                <Text style={styles.label}>CONTRASEÑA SEGURA</Text>
                 <TextInput 
-                    placeholder="Mínimo 4 caracteres" placeholderTextColor={NoxColors.gray} 
+                    placeholder="Mínimo 6 caracteres (letras y números)" placeholderTextColor={NoxColors.gray} 
                     secureTextEntry style={styles.input} 
                     value={newProfileForm.password} 
                     onChangeText={t => setNewProfileForm({...newProfileForm, password: t})} 
@@ -270,9 +291,9 @@ export default function AdmUsersScreen() {
                 <Text style={[styles.label, {color: NoxColors.aura}]}>USUARIO: {selectedUser?.username?.toUpperCase()}</Text>
                 
                 <View style={{marginTop: 15}}>
-                    <Text style={styles.label}>NUEVA CONTRASEÑA O PIN</Text>
+                    <Text style={styles.label}>NUEVA CONTRASEÑA</Text>
                     <TextInput 
-                        placeholder="Mínimo 4 dígitos" placeholderTextColor={NoxColors.gray} 
+                        placeholder="Mínimo 6 caracteres (letras y números)" placeholderTextColor={NoxColors.gray} 
                         secureTextEntry style={styles.input} 
                         value={newCredentials} onChangeText={setNewCredentials} 
                     />

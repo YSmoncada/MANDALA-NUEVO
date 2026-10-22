@@ -9,6 +9,9 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     plan: free
+    buildFilter:
+      paths:
+        - MANDALA_FASTAPI/**
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
@@ -22,6 +25,9 @@ services:
     rootDir: mandala-frontend-mobile
     buildCommand: npm install && npm run build
     staticPublishPath: dist
+    buildFilter:
+      paths:
+        - mandala-frontend-mobile/**
     routes:
       - type: rewrite
         source: /*

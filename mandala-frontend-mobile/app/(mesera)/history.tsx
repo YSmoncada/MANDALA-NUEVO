@@ -50,9 +50,10 @@ export default function MisPedidosScreen() {
 
   const fetchPedidos = async (uid?: string) => {
     const id = uid || user?.id;
-    if (!id) return;
+    // Permitir consulta general si id no está listo aún
     try {
-      const res = await apiClient.get(`/pedidos/?usuario=${id}`);
+      const url = id ? `/pedidos/?usuario=${id}` : '/pedidos/';
+      const res = await apiClient.get(url);
       setPedidos(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       console.error("Error fetching orders", e);
@@ -127,7 +128,7 @@ export default function MisPedidosScreen() {
         (prod: any) => (prod.cantidad_despachada || 0) < prod.cantidad
       );
 
-      if (statusLower === 'pendiente' || tieneItemsPendientes || p.pidiendo_cuenta) {
+      if (['pendiente', 'preparando', 'aceptado'].includes(statusLower) || tieneItemsPendientes || p.pidiendo_cuenta) {
         mesasActivasIds.add(p.mesa);
       }
     });
@@ -135,7 +136,7 @@ export default function MisPedidosScreen() {
     pedidos.forEach(p => {
       const statusLower = (p.estado_nombre || '').toLowerCase();
       // Si la mesa está en el set de activas, agrupamos TODOS sus pedidos (incluso despachados)
-      if (mesasActivasIds.has(p.mesa) && ['pendiente', 'despachado'].includes(statusLower)) {
+      if (mesasActivasIds.has(p.mesa) && ['pendiente', 'preparando', 'aceptado', 'despachado'].includes(statusLower)) {
         if (!groups[p.mesa]) {
           groups[p.mesa] = {
             mesa_id: p.mesa,
@@ -172,7 +173,7 @@ export default function MisPedidosScreen() {
       // 1. Está despachado pero su mesa no tiene nada pendiente (no está en activeMesaIds)
       // 2. O si ya está Finalizado/Pagado/Cancelado
       const isDespachadoMesaTerminada = statusLower === 'despachado' && !activeMesaIds.has(p.mesa);
-      const isFinalizado = !['pendiente', 'despachado'].includes(statusLower);
+      const isFinalizado = !['pendiente', 'preparando', 'aceptado', 'despachado'].includes(statusLower);
       
       return isDespachadoMesaTerminada || isFinalizado;
     });
