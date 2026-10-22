@@ -30,6 +30,7 @@ def create_config(
     return db_config
 
 @router.put("/{config_id}/", response_model=schemas.EmpresaConfig)
+@router.patch("/{config_id}/", response_model=schemas.EmpresaConfig)
 def update_config(
     config_id: int, 
     config: schemas.EmpresaConfigUpdate, 

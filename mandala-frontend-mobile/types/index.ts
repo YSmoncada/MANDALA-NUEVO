@@ -3,7 +3,9 @@
 export interface User {
   id: string;
   username: string;
+  nombre?: string;
   role: 'admin' | 'bartender' | 'mesera' | 'usuario' | string;
+  rol?: string;
 }
 
 export interface Categoria {

@@ -149,3 +149,11 @@ class Turno(Base):
     def usuario_cierre_nombre(self):
         return self.usuario_cierre.username if self.usuario_cierre else None
 
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("usuarios.id"))
+    token = Column(String(500), unique=True, index=True)
+    expires_at = Column(DateTime(timezone=True))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+

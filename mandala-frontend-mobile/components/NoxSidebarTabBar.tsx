@@ -7,7 +7,11 @@ import { NoxColors } from '../constants/theme';
 import { useResponsive } from '../utils/responsive';
 import { useAuthStore } from '../store/authStore';
 
-interface NoxSidebarTabBarProps extends BottomTabBarProps {
+interface NoxSidebarTabBarProps {
+  state: any;
+  descriptors: any;
+  navigation: any;
+  insets?: any;
   roleTitle?: string;
   roleSubtitle?: string;
   hideSettingsOnDesktop?: boolean;
@@ -27,7 +31,7 @@ export default function NoxSidebarTabBar({
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Filtrar estrictamente solo las rutas principales con ícono y sin href: null / display: none
-  const visibleRoutes = state.routes.filter((route) => {
+  const visibleRoutes = (state.routes || []).filter((route: any) => {
     const { options } = descriptors[route.key];
     if (!options) return false;
     if ((options as any).href === null) return false;
@@ -57,7 +61,7 @@ export default function NoxSidebarTabBar({
   if (!isDesktop) {
     return (
       <View style={styles.mobileTabBar}>
-        {visibleRoutes.map((route) => {
+        {visibleRoutes.map((route: any) => {
           const isFocused = state.routes[state.index]?.key === route.key;
           const { options } = descriptors[route.key];
           const rawLabel =
@@ -133,7 +137,7 @@ export default function NoxSidebarTabBar({
         <Text style={styles.sectionHeader}>NAVEGACIÓN</Text>
 
         <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-          {visibleRoutes.map((route) => {
+          {visibleRoutes.map((route: any) => {
             const isFocused = state.routes[state.index]?.key === route.key;
             const { options } = descriptors[route.key];
             const rawLabel =

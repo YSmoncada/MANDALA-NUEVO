@@ -19,7 +19,7 @@ const CATEGORIES = [
 ];
 
 export default function ClientMenuScreen() {
-  const { isDesktop, isLargeScreen, contentMaxWidth, modalMaxWidth } = useResponsive();
+  const { isDesktop, isLargeScreen, maxContentWidth: contentMaxWidth, maxModalWidth: modalMaxWidth } = useResponsive();
   const numColumns = isLargeScreen ? 4 : (isDesktop ? 3 : 2);
   const { id: rawId } = useGlobalSearchParams();
   const mesaId = Array.isArray(rawId) ? rawId[0] : rawId;

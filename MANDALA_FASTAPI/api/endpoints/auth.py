@@ -87,11 +87,13 @@ def refresh_token(refresh_data: dict, db: Session = Depends(deps.get_db)):
 
 @router.post("/logout/")
 def logout(db: Session = Depends(deps.get_db), token: str = Depends(deps.oauth2_scheme)):
-    # Con JWT stateless el logout es opcional en el servidor (a menos que usemos blacklist)
-    # Por ahora simplemente borramos si existe en UserSession
     if token:
-        session = db.query(models.UserSession).filter(models.UserSession.token == token).first()
-        if session:
-            db.delete(session)
-            db.commit()
+        try:
+            session = db.query(models.UserSession).filter(models.UserSession.token == token).first()
+            if session:
+                db.delete(session)
+                db.commit()
+        except Exception as e:
+            db.rollback()
+            logger.warning(f"Aviso en logout (no crítico): {e}")
     return {"detail": "Sesión cerrada correctamente"}
