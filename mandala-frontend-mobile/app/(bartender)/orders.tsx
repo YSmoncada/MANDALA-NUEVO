@@ -75,16 +75,22 @@ export default function PedidosScreen() {
     if (!selectedMesa) return Alert.alert('Error', 'Debes seleccionar una mesa');
     if (order.length === 0) return Alert.alert('Error', 'El pedido está vacío');
 
-    const payload = {
+    const userIdNum = user?.id ? parseInt(String(user.id), 10) : undefined;
+    const payload: any = {
       mesa: selectedMesa.id,
-      usuario: user?.id,
       productos: order.map(it => ({ 
         producto_id: it.id, 
         cantidad: it.cantidad,
         precio_unitario: parseFloat(it.precio)
       })),
-      total: total
+      total: total,
+      force_append: selectedMesa.estado_nombre === 'Ocupada'
     };
+
+    if (userIdNum && !isNaN(userIdNum)) {
+      payload.usuario = userIdNum;
+      payload.creado_por = userIdNum;
+    }
 
     try {
       const res = await apiClient.post('/pedidos/', payload);

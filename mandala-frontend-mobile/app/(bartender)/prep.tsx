@@ -133,7 +133,7 @@ export default function BartenderPrepScreen() {
     const mesaNum = item.mesa_numero || (typeof item.mesa === 'object' ? item.mesa.numero : item.mesa) || "??";
 
     return (
-      <View style={[styles.card, isProcessed && { opacity: 0.5 }]}>
+      <View style={[styles.card, isProcessed && { opacity: 0.5 }, { maxWidth: isLargeScreen ? '32%' : (isDesktop ? '48.8%' : '100%') }]}>
         {/* Encabezado de la Tarjeta */}
         <View style={styles.cardHeader}>
           <View style={styles.leftInfo}>
@@ -143,7 +143,7 @@ export default function BartenderPrepScreen() {
             </View>
             <View style={styles.pedidoInfo}>
               <Text style={styles.pedidoId}>Pedido #{item.id}</Text>
-              <Text style={styles.responsable}>{item.mesera_nombre || 'N/A'}</Text>
+              <Text style={styles.responsable}>{item.usuario_nombre || item.mesera_nombre || item.mesero_nombre || 'N/A'}</Text>
             </View>
           </View>
           <View style={styles.rightInfo}>

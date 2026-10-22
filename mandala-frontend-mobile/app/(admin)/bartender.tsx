@@ -75,8 +75,13 @@ export default function AdminBartenderScreen() {
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <View style={styles.mesaBadge}>
-            <Text style={styles.mesaText}>Mesa #{mesaNum}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View style={styles.mesaBadge}>
+              <Text style={styles.mesaText}>Mesa #{mesaNum}</Text>
+            </View>
+            <Text style={{ color: NoxColors.aura, fontSize: 11, fontWeight: '700' }}>
+              • {item.usuario_nombre || item.mesera_nombre || 'S/N'}
+            </Text>
           </View>
           <Text style={styles.timeText}>{new Date(item.fecha_hora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
         </View>

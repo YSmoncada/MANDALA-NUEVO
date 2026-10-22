@@ -43,6 +43,7 @@ export interface Pedido {
   mesa: number;
   mesa_numero?: number;
   usuario?: number;
+  usuario_nombre?: string;
   mesera_nombre?: string;
   estado: 'pendiente' | 'despachado' | 'finalizada' | 'cancelado';
   total: string | number;

@@ -45,6 +45,7 @@ def read_pedidos(
             p.mesa_numero = ms.numero
             p.pidiendo_cuenta = ms.pidiendo_cuenta
         p.usuario_nombre = db.query(models.Usuario.username).filter(models.Usuario.id == p.creado_por).scalar() or "Anónimo"
+        p.mesera_nombre = p.usuario_nombre
         
         for d in p.detalles:
             if d.producto:
@@ -167,6 +168,8 @@ def create_pedido(
         ms = db.query(models.Mesa).filter(models.Mesa.id == db_pedido.mesa).first()
         db_pedido.estado_nombre = est_obj.nombre
         db_pedido.mesa_numero = ms.numero if ms else 0
+        db_pedido.usuario_nombre = db.query(models.Usuario.username).filter(models.Usuario.id == db_pedido.creado_por).scalar() or "Anónimo"
+        db_pedido.mesera_nombre = db_pedido.usuario_nombre
         
         for d in db_pedido.detalles:
             if d.producto:
@@ -200,6 +203,7 @@ def get_pedido(
     ms = db.query(models.Mesa).filter(models.Mesa.id == pedido.mesa).first()
     if ms: pedido.mesa_numero = ms.numero
     pedido.usuario_nombre = db.query(models.Usuario.username).filter(models.Usuario.id == pedido.creado_por).scalar() or "Anónimo"
+    pedido.mesera_nombre = pedido.usuario_nombre
     
     for d in pedido.detalles:
         if d.producto:

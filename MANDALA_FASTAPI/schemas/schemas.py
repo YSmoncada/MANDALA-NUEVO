@@ -129,6 +129,7 @@ class Pedido(PedidoBase):
     fecha_hora: datetime
     creado_por: Optional[int] = None
     usuario_nombre: Optional[str] = None
+    mesera_nombre: Optional[str] = None
     detalles: List[PedidoProducto]
     productos_detalle: Optional[List[PedidoProducto]] = None # Alias para el móvil
     class Config:
