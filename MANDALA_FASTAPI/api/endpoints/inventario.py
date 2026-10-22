@@ -13,7 +13,13 @@ router = APIRouter()
 
 @router.get("/categorias/", response_model=List[schemas.Categoria])
 def get_categorias(db: Session = Depends(deps.get_db)):
-    return db.query(models.Categoria).all()
+    cats = db.query(models.Categoria).all()
+    if not cats:
+        for c_nombre in ["Cervezas", "Licores", "Whisky", "Vinos", "Cócteles", "Bebidas"]:
+            db.add(models.Categoria(nombre=c_nombre))
+        db.commit()
+        cats = db.query(models.Categoria).all()
+    return cats
 
 @router.post("/categorias/", response_model=schemas.Categoria)
 def create_categoria(
@@ -129,28 +135,31 @@ def delete_producto(
         db.delete(db_prod)
         db.commit()
         logger.info(f"Producto {nombre} eliminado físicamente por {current_user.username}")
-        return {"detail": "Producto eliminado permanentemente"}
+        return {"detail": f"Producto '{nombre}' eliminado permanentemente"}
     except IntegrityError:
-        # Si tiene dependencias (pedidos), hacemos borrado lógico (desactivar)
+        # Si tiene dependencias (pedidos o movimientos históricos), hacemos borrado lógico (desactivar)
         db.rollback()
-        db_prod.activo = False
-        db.commit()
+        db_prod = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+        if db_prod:
+            db_prod.activo = False
+            db.commit()
         logger.info(f"Producto {nombre} desactivado (borrado lógico) por tener historial de ventas")
-        return {"detail": "Producto desactivado por tener registros asociados"}
+        return {"detail": f"Producto '{nombre}' desactivado del inventario"}
 
 
 # --- MOVIMIENTOS ---
 
 @router.get("/tipos-movimiento/", response_model=List[schemas.TipoMovimiento])
 def get_tipos_movimiento(db: Session = Depends(deps.get_db)):
-    # Asegurar que existan tipos básicos
-    tipos = db.query(models.TipoMovimiento).all()
-    if not tipos:
-        for t in ["Entrada", "Salida (Merma)", "Ajuste Inventario", "Venta"]:
-            db.add(models.TipoMovimiento(nombre=t))
-        db.commit()
-        tipos = db.query(models.TipoMovimiento).all()
-    return tipos
+    # Solo "Entrada" y "Salida" para modificación manual de stock
+    tipos = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.in_(["Entrada", "Salida"])).all()
+    nombres_existentes = {t.nombre for t in tipos}
+    for t_nombre in ["Entrada", "Salida"]:
+        if t_nombre not in nombres_existentes:
+            nuevo = models.TipoMovimiento(nombre=t_nombre)
+            db.add(nuevo)
+            db.commit()
+    return db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.in_(["Entrada", "Salida"])).all()
 
 @router.get("/movimientos/", response_model=List[schemas.MovimientoInventario])
 def get_movimientos(producto_id: Optional[int] = None, db: Session = Depends(deps.get_db)):
@@ -158,11 +167,11 @@ def get_movimientos(producto_id: Optional[int] = None, db: Session = Depends(dep
     if producto_id:
         query = query.filter(models.MovimientoInventario.producto_id == producto_id)
     
-    movs = query.order_by(models.MovimientoInventario.fecha.desc()).limit(100).all()
+    movs = query.order_by(models.MovimientoInventario.fecha.desc()).limit(200).all()
     for m in movs:
-        m.producto_nombre = db.query(models.Producto.nombre).filter(models.Producto.id == m.producto_id).scalar()
-        m.tipo_nombre = db.query(models.TipoMovimiento.nombre).filter(models.TipoMovimiento.id == m.tipo_id).scalar()
-        m.usuario_nombre = db.query(models.Usuario.username).filter(models.Usuario.id == m.usuario_id).scalar()
+        m.producto_nombre = db.query(models.Producto.nombre).filter(models.Producto.id == m.producto_id).scalar() or "Producto eliminado"
+        m.tipo_nombre = db.query(models.TipoMovimiento.nombre).filter(models.TipoMovimiento.id == m.tipo_id).scalar() or "Movimiento"
+        m.usuario_nombre = db.query(models.Usuario.username).filter(models.Usuario.id == m.usuario_id).scalar() or "Admin"
     return movs
 
 @router.post("/movimientos/", response_model=schemas.MovimientoInventario)
@@ -171,6 +180,9 @@ def create_movimiento(
     db: Session = Depends(deps.get_db),
     current_user: models.Usuario = Depends(deps.check_admin_role)
 ):
+    if mov.cantidad <= 0:
+        raise HTTPException(status_code=400, detail="La cantidad debe ser mayor a 0")
+
     # 1. Verificar producto
     product = db.query(models.Producto).filter(models.Producto.id == mov.producto_id).first()
     if not product:
@@ -183,22 +195,28 @@ def create_movimiento(
 
     # 3. Crear registro
     db_mov = models.MovimientoInventario(
-        **mov.dict(),
+        producto_id=mov.producto_id,
+        tipo_id=mov.tipo_id,
+        cantidad=mov.cantidad,
+        motivo=mov.motivo,
         usuario_id=current_user.id
     )
     db.add(db_mov)
     
-    # 4. Actualizar stock físico
+    # 4. Actualizar stock físico (Solo Entrada y Salida)
     if "Entrada" in tipo.nombre:
         product.stock_actual += mov.cantidad
     elif "Salida" in tipo.nombre or "Venta" in tipo.nombre:
-        product.stock_actual -= mov.cantidad
+        product.stock_actual = max(0, product.stock_actual - mov.cantidad)
     elif "Ajuste" in tipo.nombre:
-        # En ajuste, seteamos el stock al valor enviado
         product.stock_actual = mov.cantidad 
         
     db.commit()
     db.refresh(db_mov)
     
-    logger.info(f"Movimiento de inventario ({tipo.nombre}) para {product.nombre} por {current_user.username}")
+    db_mov.producto_nombre = product.nombre
+    db_mov.tipo_nombre = tipo.nombre
+    db_mov.usuario_nombre = current_user.username
+    
+    logger.info(f"Movimiento de inventario ({tipo.nombre}) para {product.nombre}: {mov.cantidad} uds por {current_user.username}")
     return db_mov
