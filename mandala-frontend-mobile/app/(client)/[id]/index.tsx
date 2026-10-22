@@ -55,10 +55,11 @@ export default function ClientMenuScreen() {
       console.log("Data fetched successfully");
       setProductos(prodRes.data);
       setMesaInfo(mesaRes.data);
-      if (Array.isArray(catRes.data)) {
-        const dbCats = catRes.data.map((c: any) => ({
+      const rawCats = Array.isArray(catRes.data) ? catRes.data : (catRes.data?.results || []);
+      if (rawCats.length > 0) {
+        const dbCats = rawCats.map((c: any) => ({
           id: c.id,
-          label: c.nombre
+          label: c.nombre || c.label || String(c)
         }));
         setCategorias([{ id: "", label: "Todos" }, ...dbCats]);
       }
@@ -98,8 +99,12 @@ export default function ClientMenuScreen() {
     if (order.length === 0) return;
     try {
       const payload = {
-        mesa: mesaId,
-        productos: order.map(i => ({ producto_id: i.id, cantidad: i.qty })),
+        mesa: parseInt(String(mesaId), 10),
+        productos: order.map(i => ({ 
+          producto_id: i.id, 
+          cantidad: i.qty,
+          precio_unitario: parseFloat(i.precio) || 0
+        })),
         force_append: true  // Permite agregar a la cuenta existente de la mesa
       };
       await apiClient.post('/pedidos/', payload);

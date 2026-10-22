@@ -26,7 +26,7 @@ export default function RootLayout() {
     // Usar un tiempo de espera corto para asegurar que el componente Layout se haya montado por completo
     const timer = setTimeout(() => {
       const inAuthGroup = segments[0] === '(auth)';
-      const inClientGroup = segments[0] === '(client)';
+      const inClientGroup = segments[0] === '(client)' || segments.includes('(client)') || segments[0] === '[id]';
 
       // 1. Si NO hay token y NO estamos en login o cliente, mandar a login
       if (!token && !inAuthGroup && !inClientGroup) {

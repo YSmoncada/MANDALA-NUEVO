@@ -222,16 +222,9 @@ export default function AdmInventarioScreen() {
     <View style={styles.container}>
       {/* Header Premium con Gradiente Visual */}
       <View style={styles.header}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          {isDesktop && (
-            <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
-              <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
-            </TouchableOpacity>
-          )}
-          <View style={styles.headerTitleContainer}>
-            <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-            <Text style={styles.subtitle}>CONTROL DE EXISTENCIAS</Text>
-          </View>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
+          <Text style={styles.subtitle}>CONTROL DE EXISTENCIAS</Text>
         </View>
         <TouchableOpacity style={styles.addBtn} onPress={() => {setForm(INITIAL_FORM); setEditId(null); setModalOpen(true);}}>
           <Ionicons name="add" size={24} color={NoxColors.text} />
