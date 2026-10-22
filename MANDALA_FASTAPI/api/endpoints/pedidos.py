@@ -34,6 +34,10 @@ def read_pedidos(
         query = query.filter(models.Pedido.creado_por == usuario)
     if mesa:
         query = query.filter(models.Pedido.mesa == mesa)
+        if not usuario:
+            turno_actual = db.query(models.Turno).filter(models.Turno.estado == "abierto").first()
+            if turno_actual:
+                query = query.filter(models.Pedido.turno_id == turno_actual.id)
         
     pedidos_list = query.order_by(models.Pedido.fecha_hora.desc()).offset(skip).limit(limit).all()
     
@@ -44,7 +48,14 @@ def read_pedidos(
         if ms: 
             p.mesa_numero = ms.numero
             p.pidiendo_cuenta = ms.pidiendo_cuenta
-        p.usuario_nombre = db.query(models.Usuario.username).filter(models.Usuario.id == p.creado_por).scalar() or "Anónimo"
+        
+        u = db.query(models.Usuario).filter(models.Usuario.id == p.creado_por).first() if p.creado_por else None
+        if u:
+            p.usuario_nombre = u.nombre_completo or u.username
+        elif ms and ms.rel_mesero:
+            p.usuario_nombre = ms.rel_mesero.nombre_completo or ms.rel_mesero.username
+        else:
+            p.usuario_nombre = "Barra"
         p.mesera_nombre = p.usuario_nombre
         
         for d in p.detalles:
@@ -107,25 +118,21 @@ def create_pedido(
                 mesa_obj.mesero_id = current_user.id
         elif pedido.usuario:
             data['creado_por'] = pedido.usuario
+            if mesa_obj and not mesa_obj.mesero_id:
+                mesa_obj.mesero_id = pedido.usuario
+        elif pedido.creado_por:
+            data['creado_por'] = pedido.creado_por
+            if mesa_obj and not mesa_obj.mesero_id:
+                mesa_obj.mesero_id = pedido.creado_por
         else:
-            # Fallback para pedidos anónimos (cliente QR)
-            # 1. ¿La mesa ya tiene un mesero asignado?
+            # Pedido realizado directamente por el cliente desde el QR
             if mesa_obj and mesa_obj.mesero_id:
                 data['creado_por'] = mesa_obj.mesero_id
             else:
-                # 2. Si no, buscamos al mesero con menos pedidos activos o al azar
-                # Buscamos usuarios con rol 'Mesera' o 'Mesero'
-                meseros = db.query(models.Usuario).join(models.UsuarioRol).join(models.Rol).filter(models.Rol.nombre.ilike('%meser%')).all()
-                if meseros:
-                    # Contamos pedidos activos por mesero
-                    counts = []
-                    for m in meseros:
-                        c = db.query(models.Pedido).filter(models.Pedido.creado_por == m.id, models.Pedido.estado == est_obj.id).count()
-                        counts.append((c, m.id))
-                    counts.sort() # Menor a mayor
-                    chosen_id = counts[0][1]
-                    data['creado_por'] = chosen_id
-                    if mesa_obj: mesa_obj.mesero_id = chosen_id
+                from api.endpoints.mesas import assign_waiter
+                assigned = assign_waiter(db, mesa_obj)
+                if assigned:
+                    data['creado_por'] = assigned.id
                 else:
                     admin = db.query(models.Usuario).first()
                     data['creado_por'] = admin.id if admin else None
@@ -168,7 +175,13 @@ def create_pedido(
         ms = db.query(models.Mesa).filter(models.Mesa.id == db_pedido.mesa).first()
         db_pedido.estado_nombre = est_obj.nombre
         db_pedido.mesa_numero = ms.numero if ms else 0
-        db_pedido.usuario_nombre = db.query(models.Usuario.username).filter(models.Usuario.id == db_pedido.creado_por).scalar() or "Anónimo"
+        u = db.query(models.Usuario).filter(models.Usuario.id == db_pedido.creado_por).first() if db_pedido.creado_por else None
+        if u:
+            db_pedido.usuario_nombre = u.nombre_completo or u.username
+        elif ms and ms.rel_mesero:
+            db_pedido.usuario_nombre = ms.rel_mesero.nombre_completo or ms.rel_mesero.username
+        else:
+            db_pedido.usuario_nombre = "Barra"
         db_pedido.mesera_nombre = db_pedido.usuario_nombre
         
         for d in db_pedido.detalles:
@@ -273,6 +286,8 @@ def update_pedido(
                     est_libre = db.query(models.EstadoMesa).filter(models.EstadoMesa.nombre == "Libre").first()
                     if est_libre:
                         mesa_obj.estado = est_libre.id
+                        mesa_obj.mesero_id = None
+                        mesa_obj.pidiendo_cuenta = False
             
             # SI SE DESPACHA EL PEDIDO COMPLETO, MARCAR TODOS LOS PRODUCTOS COMO ENTREGADOS Y DESCONTAR STOCK
             if nombre_lower == "despachado" or nombre_lower == "aceptado":

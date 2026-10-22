@@ -143,7 +143,7 @@ export default function BartenderPrepScreen() {
             </View>
             <View style={styles.pedidoInfo}>
               <Text style={styles.pedidoId}>Pedido #{item.id}</Text>
-              <Text style={styles.responsable}>{item.usuario_nombre || item.mesera_nombre || item.mesero_nombre || 'N/A'}</Text>
+              <Text style={styles.responsable}>{item.usuario_nombre || item.mesera_nombre || item.mesero_nombre || (item.creado_por ? `Usuario #${item.creado_por}` : 'Barra')}</Text>
             </View>
           </View>
           <View style={styles.rightInfo}>

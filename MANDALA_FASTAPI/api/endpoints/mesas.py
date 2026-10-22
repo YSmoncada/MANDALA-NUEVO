@@ -27,16 +27,19 @@ def assign_waiter(db: Session, mesa: models.Mesa):
     if not waiters:
         return None
         
-    # Contar pedidos activos (Pendiente=1, Preparando=2) por cada mesero
+    # Contar mesas ocupadas asignadas a cada mesero para distribuir el trabajo de forma uniforme
+    estado_ocupada = db.query(models.EstadoMesa).filter(models.EstadoMesa.nombre.ilike("Ocupada")).first()
+    ocupada_id = estado_ocupada.id if estado_ocupada else None
+    
     waiter_loads = []
     for w in waiters:
-        load = db.query(models.Pedido).filter(
-            models.Pedido.creado_por == w.id,
-            models.Pedido.estado.in_([1, 2])
-        ).count()
+        q = db.query(models.Mesa).filter(models.Mesa.mesero_id == w.id)
+        if ocupada_id:
+            q = q.filter(models.Mesa.estado == ocupada_id)
+        load = q.count()
         waiter_loads.append((w, load))
         
-    # Seleccionar los que tienen carga mínima
+    # Seleccionar quien tenga menos mesas ocupadas asignadas
     min_load = min(load for w, load in waiter_loads)
     candidates = [w for w, load in waiter_loads if load == min_load]
     
@@ -44,7 +47,7 @@ def assign_waiter(db: Session, mesa: models.Mesa):
     mesa.mesero_id = selected.id
     db.commit()
     db.refresh(mesa)
-    print(f"DEBUG: Mesa {mesa.numero} ASIGNADA a mesero {selected.username} (ID: {selected.id})")
+    logger.info(f"Mesa {mesa.numero} asignada uniformemente a {selected.username} (carga actual: {min_load} mesas ocupadas)")
     return selected
 
 @router.get("/")

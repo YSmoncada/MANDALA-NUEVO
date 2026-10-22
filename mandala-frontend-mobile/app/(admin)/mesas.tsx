@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator, Alert, Modal, ScrollView, Image, Share, RefreshControl, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
-import apiClient from '../../utils/apiClient';
+import apiClient, { API_URL } from '../../utils/apiClient';
 import * as Linking from 'expo-linking';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
@@ -71,9 +71,9 @@ export default function AdminMesasScreen() {
   };
 
   const getClientUrl = (mesaId: any) => {
-      // URL de producción en Vercel para acceso universal sin descargas
-      const baseUrl = "https://mandala-proyect.vercel.app";
-      return `${baseUrl}/(client)/${mesaId}`;
+      // Menú digital rápido servido directamente por el backend sin proyectos externos
+      const baseUrl = API_URL.replace(/\/api\/?$/, '');
+      return `${baseUrl}/menu/${mesaId}`;
   };
 
   const getQrUrl = (mesaId: any) => {
