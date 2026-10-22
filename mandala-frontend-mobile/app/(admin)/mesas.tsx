@@ -12,11 +12,7 @@ export default function AdminMesasScreen() {
   const router = useRouter();
 
   const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(admin)/settings');
-    }
+    router.replace('/(admin)/settings');
   };
   const { isDesktop, isLargeScreen } = useResponsive();
   const numColumns = isLargeScreen ? 3 : (isDesktop ? 2 : 1);

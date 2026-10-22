@@ -12,11 +12,7 @@ export default function AdminAccountingScreen() {
   const router = useRouter();
 
   const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(admin)/settings');
-    }
+    router.replace('/(admin)/settings');
   };
   const { isDesktop, width } = useResponsive();
   const [turno, setTurno] = useState<any>(null);

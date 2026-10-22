@@ -21,11 +21,7 @@ export default function AdminHistoryScreen() {
   const router = useRouter();
 
   const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(admin)/settings');
-    }
+    router.replace('/(admin)/settings');
   };
   const insets = useSafeAreaInsets();
   const [pedidos, setPedidos] = useState<any[]>([]);
@@ -277,14 +273,7 @@ export default function AdminHistoryScreen() {
                 <Ionicons name="chevron-down" size={14} color={selectedMesera !== null ? NoxColors.text : NoxColors.muted} />
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              style={styles.productReportBtn}
-              onPress={() => setProductReportModalOpen(true)}
-              activeOpacity={0.8}
-            >
-                <Ionicons name="cube" size={16} color={NoxColors.emerald} />
-                <Text style={styles.productReportBtnText}>PRODUCTOS ({productReportData.totalUnidades})</Text>
-            </TouchableOpacity>
+
           </View>
       </View>
 
@@ -300,7 +289,7 @@ export default function AdminHistoryScreen() {
                 >
                   <Ionicons name="cube" size={13} color={NoxColors.emerald} />
                   <Text style={styles.summaryReportBtnText}>
-                    {productReportData.totalUnidades} uds vendidas • Ver reporte
+                    Ver reporte de ventas por producto
                   </Text>
                 </TouchableOpacity>
               </View>

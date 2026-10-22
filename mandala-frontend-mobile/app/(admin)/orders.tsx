@@ -120,9 +120,11 @@ export default function MonitorOrdenesScreen() {
     <View style={styles.headerWrapper}>
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
-            <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
-          </TouchableOpacity>
+          {isDesktop && (
+            <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
+              <Ionicons name="arrow-back" size={22} color={NoxColors.text} />
+            </TouchableOpacity>
+          )}
           <View>
             <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
             <Text style={styles.subtitle}>MONITOR DE ÓRDENES</Text>
