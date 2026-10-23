@@ -40,17 +40,29 @@
       justify-content: space-between;
       align-items: center;
     }
+    .header-inner {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
     .brand { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
     .brand span { color: var(--aura); }
     .mesa-badge {
       background: rgba(169, 68, 255, 0.15);
       border: 1px solid var(--aura);
       color: var(--text);
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 12px;
       font-size: 11px;
       font-weight: 900;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
     .tabs-nav {
       display: flex;
@@ -88,6 +100,8 @@
       align-items: center;
       gap: 6px;
     }
+    .desktop-only { display: none !important; }
+    .mobile-only { display: flex !important; }
     .waiter-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); }
     .search-box {
       padding: 14px 18px 8px;
@@ -133,10 +147,6 @@
       gap: 12px;
       padding: 0 18px 30px;
     }
-    @media (min-width: 768px) {
-      .prods-grid { grid-template-columns: repeat(3, 1fr); max-width: 900px; margin: 0 auto; }
-      .header, .tabs-nav, .search-box, .cat-scroll { max-width: 900px; margin: 0 auto; }
-    }
     .prod-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -145,6 +155,12 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s, border-color 0.22s;
+    }
+    .prod-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(169, 68, 255, 0.45);
+      box-shadow: 0 14px 30px rgba(169, 68, 255, 0.16);
     }
     .prod-img-box {
       width: 100%;
@@ -157,7 +173,15 @@
       align-items: center;
       justify-content: center;
     }
-    .prod-img { width: 100%; height: 100%; object-fit: cover; }
+    .prod-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+    .prod-card:hover .prod-img {
+      transform: scale(1.06);
+    }
     .prod-title { font-size: 13px; font-weight: 800; line-height: 17px; margin-bottom: 4px; height: 34px; overflow: hidden; }
     .prod-cat { font-size: 9px; font-weight: 900; color: var(--aura); text-transform: uppercase; margin-bottom: 6px; }
     .prod-price { font-size: 15px; font-weight: 900; color: var(--emerald); margin-top: auto; }
@@ -177,7 +201,8 @@
       gap: 4px;
       transition: all 0.15s;
     }
-    .add-btn:active { background: var(--aura); }
+    .add-btn:hover { background: var(--aura); border-color: var(--aura); color: #fff; }
+    .add-btn:active { transform: scale(0.97); }
     .qty-ctrls {
       display: flex;
       align-items: center;
@@ -293,6 +318,10 @@
       border-radius: 20px;
       padding: 16px;
       margin-bottom: 14px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .order-card:hover {
+      border-color: rgba(169, 68, 255, 0.4);
     }
     .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .order-id { font-size: 14px; font-weight: 900; }
@@ -312,6 +341,19 @@
       align-items: center;
     }
     .total-num { font-size: 24px; font-weight: 900; color: var(--emerald); }
+    .mesa-info-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .mesa-info-pill strong { color: var(--aura); }
     .cuenta-btn {
       background: var(--amber);
       color: #000;
@@ -323,6 +365,214 @@
       cursor: pointer;
       width: 100%;
       margin-top: 14px;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .cuenta-btn:active { transform: scale(0.98); }
+
+    /* Contenedores y Layouts Responsivos para Desktop */
+    .app-container {
+      width: 100%;
+      max-width: 1260px;
+      margin: 0 auto;
+    }
+    .menu-layout-grid {
+      display: block;
+    }
+    .menu-catalog-col {
+      width: 100%;
+    }
+    .desktop-cart-sidebar {
+      display: none;
+    }
+    .orders-layout-grid {
+      display: block;
+    }
+    .orders-col-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    /* Adaptaciones Tablet y Desktop */
+    @media (min-width: 768px) {
+      .prods-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .modal-overlay {
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-sheet {
+        border-radius: 28px;
+        max-width: 500px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 35px rgba(169, 68, 255, 0.25);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      body {
+        padding-bottom: 40px;
+      }
+      .desktop-only { display: flex !important; }
+      .mobile-only { display: none !important; }
+
+      .header {
+        padding: 14px 28px;
+      }
+      .header-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .header-tabs {
+        display: flex !important;
+        gap: 6px;
+        background: var(--card-inner);
+        padding: 4px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+      }
+      .header-tabs .tab-btn {
+        padding: 8px 20px;
+        font-size: 11px;
+      }
+      .desktop-waiter-pill {
+        display: flex !important;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-size: 12px;
+        color: var(--emerald);
+        font-weight: 700;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Desktop 2 Columnas para Menú */
+      .menu-layout-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 30px;
+        align-items: start;
+        padding: 20px 24px 40px;
+      }
+      .search-box {
+        padding: 0 0 14px;
+      }
+      .cat-scroll {
+        padding: 0 0 18px;
+        flex-wrap: wrap;
+      }
+      .prods-grid {
+        padding: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      /* Sidebar de Carrito Desktop */
+      .desktop-cart-sidebar {
+        display: block;
+        position: sticky;
+        top: 86px;
+        z-index: 30;
+      }
+      .desktop-cart-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      }
+      .desktop-cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        padding-bottom: 14px;
+        margin-bottom: 16px;
+      }
+      .desktop-cart-title {
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        color: #fff;
+      }
+      .desktop-cart-subtitle {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-top: 2px;
+      }
+      .desktop-cart-badge {
+        background: rgba(169, 68, 255, 0.15);
+        border: 1px solid var(--aura);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .desktop-cart-empty {
+        text-align: center;
+        padding: 42px 14px;
+      }
+      .desktop-cart-items-list {
+        max-height: 380px;
+        overflow-y: auto;
+        padding-right: 4px;
+        margin-bottom: 14px;
+      }
+      .desktop-cart-footer {
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding-top: 16px;
+      }
+      .desktop-cart-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .desktop-cart-total-txt {
+        font-size: 22px;
+        font-weight: 900;
+        color: var(--emerald);
+      }
+
+      /* Desktop Mi Cuenta */
+      .orders-section {
+        max-width: 1240px;
+        padding: 24px 24px 60px;
+      }
+      .orders-layout-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 30px;
+        align-items: start;
+      }
+      .orders-col-title {
+        font-size: 13px;
+        margin-bottom: 16px;
+      }
+      #orders-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 16px;
+      }
+      .orders-summary-col {
+        position: sticky;
+        top: 86px;
+      }
+      .total-card {
+        margin-top: 0;
+        margin-bottom: 14px;
+      }
+      .cart-bar {
+        display: none !important;
+      }
     }
 
     /* Modal de Diálogo NoxOS Universal */
@@ -431,58 +681,128 @@
 
   <!-- Header -->
   <div class="header">
-    <div class="brand">Nox<span>OS</span></div>
-    <div class="mesa-badge">MESA #{{MESA_NUMERO}}</div>
+    <div class="header-inner">
+      <div class="brand">Nox<span>OS</span></div>
+
+      <!-- Pestañas Integradas en Header (Desktop) -->
+      <div class="header-tabs desktop-only">
+        <button class="tab-btn active" id="desktop-tab-menu-btn" onclick="switchTab('menu')">CARTA DIGITAL</button>
+        <button class="tab-btn" id="desktop-tab-orders-btn" onclick="switchTab('orders')">MI CUENTA</button>
+      </div>
+
+      <div class="header-right">
+        <!-- Badge de Mesera (Desktop) -->
+        <div class="desktop-waiter-pill desktop-only">
+          <div class="waiter-dot"></div>
+          <span>Atendido por: <strong id="desktop-waiter-label">{{MESERO_NOMBRE}}</strong></span>
+        </div>
+        <div class="mesa-badge">MESA #{{MESA_NUMERO}}</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Navegación de Pestañas -->
-  <div class="tabs-nav">
+  <!-- Navegación de Pestañas Móvil -->
+  <div class="tabs-nav mobile-only">
     <button class="tab-btn active" id="tab-menu-btn" onclick="switchTab('menu')">CARTA DIGITAL</button>
     <button class="tab-btn" id="tab-orders-btn" onclick="switchTab('orders')">MI CUENTA</button>
   </div>
 
-  <!-- Banner Mesero -->
-  <div class="waiter-banner">
+  <!-- Banner Mesero Móvil -->
+  <div class="waiter-banner mobile-only">
     <div class="waiter-dot"></div>
     <span>Atendido por: <strong id="waiter-label">{{MESERO_NOMBRE}}</strong></span>
   </div>
 
   <!-- CONTENIDO 1: CARTA DIGITAL -->
   <div id="view-menu">
-    <div class="search-box">
-      <input type="text" class="search-input" id="search-input" placeholder="Buscar producto por nombre..." oninput="filterProducts()">
-    </div>
+    <div class="app-container">
+      <div class="menu-layout-grid">
+        <!-- Columna de Catálogo (Buscador, Categorías y Productos) -->
+        <div class="menu-catalog-col">
+          <div class="search-box">
+            <input type="text" class="search-input" id="search-input" placeholder="Buscar producto por nombre..." oninput="filterProducts()">
+          </div>
 
-    <div class="cat-scroll" id="cat-container">
-      <button class="cat-pill active" onclick="setCategory('')">Todos</button>
-    </div>
+          <div class="cat-scroll" id="cat-container">
+            <button class="cat-pill active" onclick="setCategory('')">Todos</button>
+          </div>
 
-    <div class="prods-grid" id="prods-grid">
-      <div style="grid-column: span 2; text-align: center; padding: 40px; color: var(--muted); font-size: 13px;">
-        Cargando carta de productos...
+          <div class="prods-grid" id="prods-grid">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--muted); font-size: 13px;">
+              Cargando carta de productos...
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar de Carrito en Desktop (Sticky) -->
+        <aside class="desktop-cart-sidebar" id="desktop-cart-sidebar">
+          <div class="desktop-cart-card">
+            <div class="desktop-cart-header">
+              <div>
+                <div class="desktop-cart-title">TU PEDIDO</div>
+                <div class="desktop-cart-subtitle">Mesa #{{MESA_NUMERO}} • Comanda en vivo</div>
+              </div>
+              <div class="desktop-cart-badge" id="desktop-cart-badge">0 items</div>
+            </div>
+
+            <div class="desktop-cart-empty" id="desktop-cart-empty">
+              <div style="font-size: 40px; margin-bottom: 12px; opacity: 0.7;">🍸</div>
+              <div style="font-weight: 800; font-size: 14px; margin-bottom: 6px; color: #fff;">Tu orden está vacía</div>
+              <p style="font-size: 12px; color: var(--muted); line-height: 1.5;">Selecciona tus cócteles o bebidas en la carta para agregarlos a tu pedido.</p>
+            </div>
+
+            <div class="desktop-cart-items-list" id="desktop-cart-items-list" style="display: none;"></div>
+
+            <div class="desktop-cart-footer" id="desktop-cart-footer" style="display: none;">
+              <div class="desktop-cart-summary-row">
+                <span style="color: var(--muted); font-size: 13px; font-weight: 800;">TOTAL A PAGAR</span>
+                <span class="desktop-cart-total-txt" id="desktop-total-txt">$0</span>
+              </div>
+              <button class="checkout-btn" id="desktop-btn-submit" onclick="confirmarPedidoAntesDeEnviar()">
+                CONFIRMAR Y ENVIAR PEDIDO ➔
+              </button>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   </div>
 
   <!-- CONTENIDO 2: MI CUENTA -->
   <div id="view-orders" style="display: none;">
-    <div class="orders-section">
-      <div id="orders-list">
-        <div style="text-align: center; padding: 40px; color: var(--muted); font-size: 13px;">
-          Cargando pedidos de la mesa...
+    <div class="app-container">
+      <div class="orders-section">
+        <div class="orders-layout-grid">
+          <div class="orders-list-col">
+            <div class="orders-col-title">ÓRDENES DE TU MESA</div>
+            <div id="orders-list">
+              <div style="text-align: center; padding: 40px; color: var(--muted); font-size: 13px;">
+                Cargando pedidos de la mesa...
+              </div>
+            </div>
+          </div>
+
+          <div class="orders-summary-col">
+            <div class="total-card" id="total-card" style="display: none;">
+              <div style="width: 100%;">
+                <div style="font-size: 10px; color: var(--muted); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px;">ESTADO DE CUENTA EN VIVO</div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+                  <span style="font-size: 13px; font-weight: 800; color: #fff;">TOTAL CONSUMIDO:</span>
+                  <span class="total-num" id="total-consumed">$0</span>
+                </div>
+                <div class="mesa-info-pill">
+                  <span>📍 Mesa #{{MESA_NUMERO}}</span>
+                  <span>• Atendido por: <strong id="account-waiter-label">{{MESERO_NOMBRE}}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <button class="cuenta-btn" id="btn-pedir-cuenta" onclick="pedirCuenta()">
+              🛎️ PEDIR LA CUENTA A LA MESA
+            </button>
+          </div>
         </div>
       </div>
-
-      <div class="total-card" id="total-card" style="display: none;">
-        <div>
-          <div style="font-size: 10px; color: var(--muted); font-weight: 800; letter-spacing: 1px;">TOTAL CONSUMIDO</div>
-          <div class="total-num" id="total-consumed">$0</div>
-        </div>
-      </div>
-
-      <button class="cuenta-btn" id="btn-pedir-cuenta" onclick="pedirCuenta()">
-        🛎️ PEDIR LA CUENTA A LA MESA
-      </button>
     </div>
   </div>
 
@@ -649,6 +969,7 @@
       const totalCount = items.reduce((acc, i) => acc + i.qty, 0);
       const totalPrice = items.reduce((acc, i) => acc + (i.precio * i.qty), 0);
 
+      // Barra Flotante Móvil
       const bar = document.getElementById('cart-bar');
       if (totalCount > 0) {
         bar.classList.add('visible');
@@ -659,9 +980,8 @@
         closeCartModal();
       }
 
-      // Render Modal Items
-      const listEl = document.getElementById('cart-items-list');
-      listEl.innerHTML = items.map(it => `
+      // Render Modal Móvil
+      const itemsHtml = items.map(it => `
         <div class="cart-item">
           <div>
             <div class="cart-item-title">${it.nombre}</div>
@@ -675,7 +995,31 @@
         </div>
       `).join('');
 
+      document.getElementById('cart-items-list').innerHTML = itemsHtml;
       document.getElementById('modal-total-txt').textContent = `$${totalPrice.toLocaleString('es-CO')}`;
+
+      // Render Sidebar Desktop
+      const dEmpty = document.getElementById('desktop-cart-empty');
+      const dList = document.getElementById('desktop-cart-items-list');
+      const dFoot = document.getElementById('desktop-cart-footer');
+      const dBadge = document.getElementById('desktop-cart-badge');
+      const dTotal = document.getElementById('desktop-total-txt');
+
+      if (dEmpty && dList && dFoot && dBadge && dTotal) {
+        if (totalCount === 0) {
+          dEmpty.style.display = 'block';
+          dList.style.display = 'none';
+          dFoot.style.display = 'none';
+          dBadge.textContent = '0 items';
+        } else {
+          dEmpty.style.display = 'none';
+          dList.style.display = 'block';
+          dFoot.style.display = 'block';
+          dBadge.textContent = `${totalCount} item${totalCount > 1 ? 's' : ''}`;
+          dList.innerHTML = itemsHtml;
+          dTotal.textContent = `$${totalPrice.toLocaleString('es-CO')}`;
+        }
+      }
     }
 
     function openCartModal() {
@@ -841,7 +1185,10 @@
         ]);
 
         if (mesaRes && mesaRes.mesero_nombre) {
-          document.getElementById('waiter-label').textContent = mesaRes.mesero_nombre;
+          const wName = mesaRes.mesero_nombre;
+          if (document.getElementById('waiter-label')) document.getElementById('waiter-label').textContent = wName;
+          if (document.getElementById('desktop-waiter-label')) document.getElementById('desktop-waiter-label').textContent = wName;
+          if (document.getElementById('account-waiter-label')) document.getElementById('account-waiter-label').textContent = wName;
         }
 
         const orders = Array.isArray(pedRes) ? pedRes : [];
@@ -963,16 +1310,19 @@
     }
 
     function switchTab(tab) {
-      if (tab === 'menu') {
-        document.getElementById('view-menu').style.display = 'block';
-        document.getElementById('view-orders').style.display = 'none';
-        document.getElementById('tab-menu-btn').classList.add('active');
-        document.getElementById('tab-orders-btn').classList.remove('active');
-      } else {
-        document.getElementById('view-menu').style.display = 'none';
-        document.getElementById('view-orders').style.display = 'block';
-        document.getElementById('tab-menu-btn').classList.remove('active');
-        document.getElementById('tab-orders-btn').classList.add('active');
+      const isMenu = tab === 'menu';
+      document.getElementById('view-menu').style.display = isMenu ? 'block' : 'none';
+      document.getElementById('view-orders').style.display = isMenu ? 'none' : 'block';
+
+      // Pestañas Móvil
+      document.getElementById('tab-menu-btn')?.classList.toggle('active', isMenu);
+      document.getElementById('tab-orders-btn')?.classList.toggle('active', !isMenu);
+
+      // Pestañas Desktop
+      document.getElementById('desktop-tab-menu-btn')?.classList.toggle('active', isMenu);
+      document.getElementById('desktop-tab-orders-btn')?.classList.toggle('active', !isMenu);
+
+      if (!isMenu) {
         loadTableOrders();
       }
     }
