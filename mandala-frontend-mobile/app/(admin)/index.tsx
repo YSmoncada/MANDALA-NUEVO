@@ -86,7 +86,7 @@ export default function AdminDashboard() {
   };
 
   const { isDesktop, isLargeScreen } = useResponsive();
-  const cardWidth = isLargeScreen ? '31.8%' : (isDesktop ? '48.5%' : '48%');
+  const cardWidth = isLargeScreen ? '31.8%' : (isDesktop ? '48.5%' : '100%');
 
   return (
     <View style={styles.container}>
@@ -100,15 +100,9 @@ export default function AdminDashboard() {
         {/* Header Superior Premium */}
         <View style={styles.header}>
           <View>
-
             <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
           </View>
-          <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn} activeOpacity={0.7}>
-            <Ionicons name="power" size={22} color={NoxColors.rose} />
-          </TouchableOpacity>
         </View>
-
-
 
         {/* Sección de Métricas del Día Rediseñada */}
         <View style={styles.statsSection}>
@@ -116,7 +110,7 @@ export default function AdminDashboard() {
             <Text style={styles.sectionTitle}>Métricas del Turno Actual</Text>
           </View>
 
-          <View style={styles.statsGrid}>
+          <View style={[styles.statsGrid, { flexDirection: isDesktop ? 'row' : 'column' }]}>
 
             {/* Ventas Totales */}
             <View style={[styles.statCardPremium, { borderColor: 'rgba(16, 185, 129, 0.25)' }]}>
@@ -192,7 +186,7 @@ export default function AdminDashboard() {
             </View>
 
             {/* KPIs EDA */}
-            <View style={styles.edaKpisRow}>
+            <View style={[styles.edaKpisRow, { flexDirection: isDesktop ? 'row' : 'column' }]}>
               <View style={styles.edaKpiBox}>
                 <Text style={styles.edaKpiLabel}>Ticket Promedio</Text>
                 <Text style={styles.edaKpiVal}>${edaData.kpis?.ticket_promedio?.toLocaleString() || "64.200"}</Text>
@@ -227,7 +221,7 @@ export default function AdminDashboard() {
                   return (
                     <View key={idx} style={styles.chartCol}>
                       <Text style={[styles.chartPedCount, isPeak ? { color: NoxColors.aura, fontWeight: '900' } : null]}>
-                        {h.pedidos > 0 ? `${h.pedidos}p` : '0'}
+                        {h.pedidos > 0 ? `${h.pedidos}` : '-'}
                       </Text>
                       <View style={styles.barTrack}>
                         <View style={[
@@ -248,7 +242,7 @@ export default function AdminDashboard() {
             </View>
 
             {/* Categorías (Pareto) & Top Productos */}
-            <View style={styles.edaSplitGrid}>
+            <View style={[styles.edaSplitGrid, { flexDirection: isDesktop ? 'row' : 'column' }]}>
               {/* Categorías */}
               <View style={[styles.edaHalfCard, { flex: 1 }]}>
                 <Text style={styles.chartTitle}>Participación (Pareto)</Text>
