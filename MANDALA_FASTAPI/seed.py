@@ -40,7 +40,9 @@ def seed():
     usuarios_base = [
         {"user": "admin", "pass": "admin123", "email": "admin@mandala.com", "name": "Administrador", "rol": "admin"},
         {"user": "bartender", "pass": "bartender123", "email": "bartender@mandala.com", "name": "Bartender de Turno", "rol": "bartender"},
-        {"user": "mesera", "pass": "mesera123", "email": "mesera@mandala.com", "name": "Mesera de Turno", "rol": "mesera"}
+        {"user": "mesera", "pass": "mesera123", "email": "mesera@mandala.com", "name": "Carolina Martínez", "rol": "mesera"},
+        {"user": "valentina", "pass": "valentina123", "email": "valentina@mandala.com", "name": "Valentina Gómez", "rol": "mesera"},
+        {"user": "camila", "pass": "camila123", "email": "camila@mandala.com", "name": "Camila Torres", "rol": "mesera"}
     ]
 
     for u_data in usuarios_base:

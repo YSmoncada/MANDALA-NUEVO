@@ -53,16 +53,13 @@ def render_menu_cliente(mesa_id: int, db: Session = Depends(deps.get_db)):
             status_code=404
         )
     
-    # Asignar mesero de forma uniforme si aún no tiene asignado o si la mesa estaba libre
-    estado_ocupada = db.query(models.EstadoMesa).filter(models.EstadoMesa.nombre.ilike("Ocupada")).first()
-    ocupada_id = estado_ocupada.id if estado_ocupada else None
-    
-    if not mesa.mesero_id or (ocupada_id and mesa.estado != ocupada_id):
+    # Asignar mesero de forma uniforme si aún no tiene asignado
+    if not mesa.mesero_id:
         assign_waiter(db, mesa)
         
     mesero_nombre = "Equipo Mandala"
     if mesa.rel_mesero:
-        if mesa.rel_mesero.nombre_completo and mesa.rel_mesero.nombre_completo != "Mesera de Turno":
+        if mesa.rel_mesero.nombre_completo:
             mesero_nombre = mesa.rel_mesero.nombre_completo
         else:
             mesero_nombre = mesa.rel_mesero.username.capitalize()

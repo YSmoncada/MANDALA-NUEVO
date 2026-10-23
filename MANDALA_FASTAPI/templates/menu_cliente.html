@@ -324,6 +324,107 @@
       width: 100%;
       margin-top: 14px;
     }
+
+    /* Modal de Diálogo NoxOS Universal */
+    .nox-dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 2, 12, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: noxFadeIn 0.2s ease-out;
+    }
+    .nox-dialog-overlay.open {
+      display: flex;
+    }
+    .nox-dialog-card {
+      position: relative;
+      background: #120A24;
+      border: 1px solid rgba(169, 68, 255, 0.35);
+      border-radius: 26px;
+      padding: 28px 22px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(169, 68, 255, 0.2);
+      animation: noxScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nox-dialog-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 22px;
+      background: rgba(169, 68, 255, 0.15);
+      border: 1px solid rgba(169, 68, 255, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 16px;
+      box-shadow: 0 0 25px rgba(169, 68, 255, 0.25);
+    }
+    .nox-dialog-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #FFFFFF;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .nox-dialog-message {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #A396C8;
+      margin-bottom: 22px;
+      font-weight: 500;
+    }
+    .nox-dialog-actions {
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+    }
+    .nox-dialog-btn-primary {
+      background: linear-gradient(135deg, #A944FF 0%, #7928CA 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(169, 68, 255, 0.35);
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .nox-dialog-btn-primary:active {
+      transform: scale(0.97);
+    }
+    .nox-dialog-btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: #8A7BAF;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+    .nox-dialog-btn-secondary:active {
+      transform: scale(0.97);
+    }
+    @keyframes noxFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes noxScaleUp {
+      from { opacity: 0; transform: scale(0.9) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -406,9 +507,19 @@
         <span style="color: var(--muted); font-size: 12px; font-weight: 800;">TOTAL A PAGAR</span>
         <span style="font-size: 20px; font-weight: 900; color: var(--emerald);" id="modal-total-txt">$0</span>
       </div>
-      <button class="checkout-btn" id="btn-submit" onclick="enviarPedido()">
+      <button class="checkout-btn" id="btn-submit" onclick="confirmarPedidoAntesDeEnviar()">
         CONFIRMAR Y ENVIAR PEDIDO
       </button>
+    </div>
+  </div>
+
+  <!-- Modal de Diálogo NoxOS (Alerts y Confirmaciones Personalizadas) -->
+  <div class="nox-dialog-overlay" id="nox-dialog-overlay">
+    <div class="nox-dialog-card">
+      <div class="nox-dialog-icon" id="nox-dialog-icon">🍸</div>
+      <h3 class="nox-dialog-title" id="nox-dialog-title">AVISO</h3>
+      <p class="nox-dialog-message" id="nox-dialog-message">Mensaje del sistema</p>
+      <div class="nox-dialog-actions" id="nox-dialog-actions"></div>
     </div>
   </div>
 
@@ -574,7 +685,85 @@
       document.getElementById('cart-modal').classList.remove('open');
     }
 
-    async function enviarPedido() {
+    /* Diálogos Personalizados NoxOS */
+    function showNoxAlert(options) {
+      const overlay = document.getElementById('nox-dialog-overlay');
+      const icon = document.getElementById('nox-dialog-icon');
+      const title = document.getElementById('nox-dialog-title');
+      const msg = document.getElementById('nox-dialog-message');
+      const actions = document.getElementById('nox-dialog-actions');
+
+      icon.textContent = options.icon || '✨';
+      title.textContent = options.title || 'AVISO';
+      msg.innerHTML = options.message || '';
+
+      actions.innerHTML = `
+        <button class="nox-dialog-btn-primary" id="nox-btn-ok">${options.btnText || 'ENTENDIDO'}</button>
+      `;
+
+      document.getElementById('nox-btn-ok').onclick = () => {
+        overlay.classList.remove('open');
+        if (typeof options.onConfirm === 'function') options.onConfirm();
+      };
+
+      overlay.classList.add('open');
+    }
+
+    function showNoxConfirm(options) {
+      const overlay = document.getElementById('nox-dialog-overlay');
+      const icon = document.getElementById('nox-dialog-icon');
+      const title = document.getElementById('nox-dialog-title');
+      const msg = document.getElementById('nox-dialog-message');
+      const actions = document.getElementById('nox-dialog-actions');
+
+      icon.textContent = options.icon || '❓';
+      title.textContent = options.title || 'CONFIRMACIÓN';
+      msg.innerHTML = options.message || '';
+
+      actions.innerHTML = `
+        <button class="nox-dialog-btn-primary" id="nox-btn-confirm">${options.confirmText || 'CONFIRMAR'}</button>
+        <button class="nox-dialog-btn-secondary" id="nox-btn-cancel">${options.cancelText || 'CANCELAR'}</button>
+      `;
+
+      document.getElementById('nox-btn-confirm').onclick = () => {
+        overlay.classList.remove('open');
+        if (typeof options.onConfirm === 'function') options.onConfirm();
+      };
+
+      document.getElementById('nox-btn-cancel').onclick = () => {
+        overlay.classList.remove('open');
+        if (typeof options.onCancel === 'function') options.onCancel();
+      };
+
+      overlay.classList.add('open');
+    }
+
+    function confirmarPedidoAntesDeEnviar() {
+      const items = Object.values(cart);
+      if (items.length === 0) return;
+
+      const totalCount = items.reduce((s, it) => s + it.qty, 0);
+      const totalPrice = items.reduce((s, it) => s + (it.qty * it.precio), 0);
+      const meseroNombre = document.getElementById('waiter-label').textContent || 'Tu mesera';
+
+      showNoxConfirm({
+        icon: '🍸',
+        title: '¿ENVIAR PEDIDO A BARRA?',
+        message: `Vas a enviar <strong>${totalCount} producto${totalCount > 1 ? 's' : ''}</strong> por un total de <strong style="color: var(--emerald);">$${totalPrice.toLocaleString('es-CO')}</strong>.<br><br>Atendido por: <strong style="color: var(--aura);">${meseroNombre}</strong>.`,
+        confirmText: 'SÍ, ENVIAR A BARRA 🚀',
+        cancelText: 'VOLVER AL MENÚ',
+        onConfirm: () => {
+          enviarPedidoReal();
+        }
+      });
+    }
+
+    // Alias para compatibilidad
+    function enviarPedido() {
+      confirmarPedidoAntesDeEnviar();
+    }
+
+    async function enviarPedidoReal() {
       const items = Object.values(cart);
       if (items.length === 0) return;
 
@@ -601,19 +790,42 @@
 
         if (res.ok) {
           const created = await res.json();
-          alert('✅ ¡Tu pedido fue enviado a la barra/cocina! Ya lo están preparando.');
           cart = {};
           renderCartUI();
           filterProducts();
           closeCartModal();
-          switchTab('orders');
+
+          const meseroNombre = document.getElementById('waiter-label').textContent || 'Tu mesera';
+
+          showNoxAlert({
+            icon: '🍸',
+            title: '¡PEDIDO ENVIADO CON ÉXITO!',
+            message: `Tu comanda ya está en la barra del bartender.<br><strong style="color: var(--emerald);">${meseroNombre}</strong> te llevará los productos a tu mesa tan pronto estén preparados.`,
+            btnText: 'VER ESTADO EN MI CUENTA 📋',
+            onConfirm: () => {
+              switchTab('orders');
+              loadTableOrders();
+            }
+          });
+
+          // Actualizar pedidos en segundo plano
           loadTableOrders();
         } else {
-          const err = await res.json();
-          alert('❌ ' + (err.detail || 'No se pudo enviar el pedido.'));
+          const err = await res.json().catch(() => ({}));
+          showNoxAlert({
+            icon: '⚠️',
+            title: 'NO SE PUDO ENVIAR',
+            message: err.detail || 'Ocurrió un error al procesar tu pedido.',
+            btnText: 'ENTENDIDO'
+          });
         }
       } catch (e) {
-        alert('❌ Error de conexión al enviar pedido.');
+        showNoxAlert({
+          icon: '📡',
+          title: 'ERROR DE CONEXIÓN',
+          message: 'No se pudo conectar con el servidor del bar. Verifica tu red Wi-Fi o datos móviles.',
+          btnText: 'REINTENTAR'
+        });
       } finally {
         btn.disabled = false;
         btn.textContent = 'CONFIRMAR Y ENVIAR PEDIDO';
@@ -699,24 +911,55 @@
 
     async function pedirCuenta() {
       if (currentPendingCount > 0) {
-        alert('⚠️ No puedes solicitar la cuenta mientras tengas pedidos en preparación o pendientes de entrega. Por favor espera a que te los entreguen.');
+        showNoxAlert({
+          icon: '⏳',
+          title: 'PEDIDOS EN PREPARACIÓN',
+          message: 'Tienes órdenes pendientes o en barra. Por favor espera a recibir todos tus productos antes de solicitar la cuenta.',
+          btnText: 'ENTENDIDO'
+        });
         return;
       }
-      if (!confirm('¿Deseas solicitar la cuenta a tu mesa?')) return;
-      try {
-        const res = await fetch(`/api/mesas/${MESA_ID}/pedir-cuenta/`, { method: 'POST' });
-        if (res.ok) {
-          alert('🛎️ ¡Cuenta solicitada! Tu mesera asignada se acerca a la mesa en un momento.');
-          const btnCuenta = document.getElementById('btn-pedir-cuenta');
-          btnCuenta.disabled = true;
-          btnCuenta.textContent = '✅ CUENTA SOLICITADA A TU MESERA';
-        } else {
-          const err = await res.json().catch(() => ({}));
-          alert('⚠️ ' + (err.detail || 'No se pudo solicitar la cuenta.'));
+
+      const meseroNombre = document.getElementById('waiter-label').textContent || 'Tu mesera';
+
+      showNoxConfirm({
+        icon: '🛎️',
+        title: 'SOLICITAR LA CUENTA',
+        message: `¿Deseas pedir la cuenta a tu mesa?<br><strong style="color: var(--aura);">${meseroNombre}</strong> se acercará con la cuenta y los medios de pago (datáfono / efectivo).`,
+        confirmText: 'SÍ, PEDIR CUENTA 🛎️',
+        cancelText: 'CANCELAR',
+        onConfirm: async () => {
+          try {
+            const res = await fetch(`/api/mesas/${MESA_ID}/pedir-cuenta/`, { method: 'POST' });
+            if (res.ok) {
+              showNoxAlert({
+                icon: '🛎️',
+                title: '¡CUENTA SOLICITADA!',
+                message: `Le hemos avisado a <strong style="color: var(--emerald);">${meseroNombre}</strong>.<br>Ya viene en camino hacia tu mesa.`,
+                btnText: 'EXCELENTE'
+              });
+              const btnCuenta = document.getElementById('btn-pedir-cuenta');
+              btnCuenta.disabled = true;
+              btnCuenta.textContent = '✅ CUENTA SOLICITADA A TU MESERA';
+            } else {
+              const err = await res.json().catch(() => ({}));
+              showNoxAlert({
+                icon: '⚠️',
+                title: 'ATENCIÓN',
+                message: err.detail || 'No se pudo solicitar la cuenta en este momento.',
+                btnText: 'ENTENDIDO'
+              });
+            }
+          } catch (e) {
+            showNoxAlert({
+              icon: '🛎️',
+              title: 'AVISO ENVIADO',
+              message: 'Se notificó la solicitud de cuenta a tu mesera.',
+              btnText: 'ENTENDIDO'
+            });
+          }
         }
-      } catch (e) {
-        alert('Se notificó a la mesera.');
-      }
+      });
     }
 
     function switchTab(tab) {
