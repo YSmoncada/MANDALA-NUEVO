@@ -372,16 +372,18 @@ const styles = StyleSheet.create({
   prodImageContainer: { 
     width: 105, 
     height: 105, 
-    backgroundColor: 'rgba(138, 123, 175, 0.05)', 
+    backgroundColor: '#FFFFFF', 
     borderRadius: 22,
     justifyContent: 'center', 
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
+    overflow: 'hidden'
   },
   prodImage: {
     width: 105,
     height: 105,
-    borderRadius: 22
+    borderRadius: 22,
+    resizeMode: 'contain'
   },
   prodInfo: { alignItems: 'center', width: '100%' },
   prodName: { fontSize: 13, fontWeight: 'bold', color: NoxColors.text, textAlign: 'center', height: 36, lineHeight: 18 },

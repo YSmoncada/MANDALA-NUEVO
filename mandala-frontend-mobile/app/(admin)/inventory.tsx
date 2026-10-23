@@ -1098,8 +1098,8 @@ const styles = StyleSheet.create({
     borderColor: NoxColors.border,
   },
   cardAccent: { position: 'absolute', left: 0, top: 25, bottom: 25, width: 4, backgroundColor: NoxColors.aura, borderTopRightRadius: 10, borderBottomRightRadius: 10 },
-  cardIcon: { width: 64, height: 64, borderRadius: 18, backgroundColor: 'rgba(255, 255, 255, 0.03)', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
-  cardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+  cardIcon: { width: 64, height: 64, borderRadius: 18, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+  cardImage: { width: '100%', height: '100%', resizeMode: 'contain' },
   
   cardMain: { flex: 1, marginHorizontal: 14 },
   cardTitle: { fontSize: 15, fontWeight: 'bold', color: NoxColors.text, marginBottom: 4 },
