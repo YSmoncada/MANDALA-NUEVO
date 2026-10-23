@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from db.database import engine, Base
-from api.endpoints import auth, pedidos, inventario, mesas, usuarios, config, contabilidad, menu_cliente
+from api.endpoints import auth, pedidos, inventario, mesas, usuarios, config, contabilidad, menu_cliente, analytics
 from db.migrate_turnos import migrate
 # Migración robusta
 migrate()
@@ -81,6 +81,8 @@ app.include_router(mesas.router, prefix="/api/mesas", tags=["mesas"])
 app.include_router(usuarios.router, prefix="/api/usuarios", tags=["usuarios"])
 app.include_router(config.router, prefix="/api/config", tags=["config"])
 app.include_router(contabilidad.router, prefix="/api/contabilidad", tags=["contabilidad"])
+app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
+app.include_router(analytics.router, prefix="/analytics", tags=["analytics_fallback"])
 app.include_router(menu_cliente.router, tags=["menu_cliente"])
 
 # Fallback por si el frontend hace peticiones a la raíz sin /api
