@@ -10,12 +10,12 @@ import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
 
 const MODULES = [
-  { id: 'inventory', label: 'INVENTARIO', sub: 'Control de Stock', icon: 'cube-outline', path: '/(admin)/inventory', color: '#A944FF' },
-  { id: 'orders', label: 'PEDIDOS', sub: 'Historial y Monitor', icon: 'receipt-outline', path: '/(admin)/orders', color: '#10b981' },
-  { id: 'mesas', label: 'MESAS', sub: 'Diseño Salón', icon: 'grid-outline', path: '/(admin)/mesas', color: '#06b6d4' },
-  { id: 'users', label: 'USUARIOS', sub: 'Gestión de Staff', icon: 'people-outline', path: '/(admin)/users', color: '#ec4899' },
-  { id: 'history', label: 'REPORTES', sub: 'Estadísticas Nox', icon: 'bar-chart-outline', path: '/(admin)/history', color: '#f59e0b' },
-  { id: 'accounting', label: 'CAJA', sub: 'Flujo de Efectivo', icon: 'cash-outline', path: '/(admin)/accounting', color: '#84cc16' },
+  { id: 'inventory', label: 'INVENTARIO', sub: 'Control de existencias y catálogo', icon: 'cube-outline', path: '/(admin)/inventory', color: '#A944FF', badge: '8 Items' },
+  { id: 'orders', label: 'PEDIDOS', sub: 'Monitor de comandas en vivo', icon: 'receipt-outline', path: '/(admin)/orders', color: '#10b981', badge: 'En Vivo' },
+  { id: 'mesas', label: 'MESAS', sub: 'Mapa y estado de salón', icon: 'grid-outline', path: '/(admin)/mesas', color: '#06b6d4', badge: 'Salón Activo' },
+  { id: 'users', label: 'USUARIOS', sub: 'Gestión de personal y roles', icon: 'people-outline', path: '/(admin)/users', color: '#ec4899', badge: '3 Roles' },
+  { id: 'history', label: 'REPORTES', sub: 'Inteligencia y métricas EDA', icon: 'bar-chart-outline', path: '/(admin)/history', color: '#f59e0b', badge: 'Analítica' },
+  { id: 'accounting', label: 'CAJA Y TURNOS', sub: 'Arqueo y flujo de efectivo', icon: 'cash-outline', path: '/(admin)/accounting', color: '#84cc16', badge: 'Turno Abierto' },
 ];
 
 export default function AdminDashboard() {
@@ -110,36 +110,76 @@ export default function AdminDashboard() {
 
 
 
-        {/* Sección de Métricas del Día */}
+        {/* Sección de Métricas del Día Rediseñada */}
         <View style={styles.statsSection}>
-          <Text style={styles.sectionTitle}>Métricas del Día</Text>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Métricas del Turno Actual</Text>
+            <View style={styles.liveIndicatorPill}>
+              <View style={styles.pulseDot} />
+              <Text style={styles.liveIndicatorText}>EN VIVO • MELGAR</Text>
+            </View>
+          </View>
+
           <View style={styles.statsGrid}>
 
             {/* Ventas Totales */}
-            <View style={[styles.statItem, { borderLeftColor: NoxColors.emerald }]}>
-              <View style={[styles.statIconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
-                <Ionicons name="trending-up" size={18} color={NoxColors.emerald} />
+            <View style={[styles.statCardPremium, { borderColor: 'rgba(16, 185, 129, 0.25)' }]}>
+              <View style={styles.statCardTop}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.statCardCategory}>VENTAS DEL DÍA</Text>
+                  <Text style={styles.statCardValue}>${stats.totalVentas.toLocaleString()}</Text>
+                </View>
+                <View style={[styles.statIconBadge, { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.3)' }]}>
+                  <Ionicons name="trending-up" size={20} color={NoxColors.emerald} />
+                </View>
               </View>
-              <Text style={styles.statValue}>${stats.totalVentas.toLocaleString()}</Text>
-              <Text style={styles.statLabel}>Ventas Hoy</Text>
+              <View style={styles.statCardFooter}>
+                <Text style={[styles.statTrendText, { color: NoxColors.emerald }]}>↑ Turno activo</Text>
+                <Text style={styles.statSubText}>Facturado hoy</Text>
+              </View>
             </View>
 
             {/* Pedidos Hoy */}
-            <View style={[styles.statItem, { borderLeftColor: NoxColors.aura }]}>
-              <View style={[styles.statIconContainer, { backgroundColor: 'rgba(169, 68, 255, 0.1)' }]}>
-                <Ionicons name="receipt" size={18} color={NoxColors.aura} />
+            <View style={[styles.statCardPremium, { borderColor: 'rgba(169, 68, 255, 0.25)' }]}>
+              <View style={styles.statCardTop}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.statCardCategory}>PEDIDOS REGISTRADOS</Text>
+                  <Text style={styles.statCardValue}>{stats.pedidosHoy} <Text style={{ fontSize: 13, color: NoxColors.muted, fontWeight: '600' }}>órdenes</Text></Text>
+                </View>
+                <View style={[styles.statIconBadge, { backgroundColor: 'rgba(169, 68, 255, 0.12)', borderColor: 'rgba(169, 68, 255, 0.3)' }]}>
+                  <Ionicons name="receipt" size={20} color={NoxColors.aura} />
+                </View>
               </View>
-              <Text style={styles.statValue}>{stats.pedidosHoy}</Text>
-              <Text style={styles.statLabel}>Pedidos</Text>
+              <View style={styles.statCardFooter}>
+                <Text style={[styles.statTrendText, { color: NoxColors.aura }]}>⚡ En consumo</Text>
+                <Text style={styles.statSubText}>Despachados a pista</Text>
+              </View>
             </View>
 
             {/* Stock Crítico */}
-            <View style={[styles.statItem, { borderLeftColor: NoxColors.rose }]}>
-              <View style={[styles.statIconContainer, { backgroundColor: 'rgba(255, 68, 68, 0.1)' }]}>
-                <Ionicons name="alert-circle" size={18} color={NoxColors.rose} />
+            <View style={[styles.statCardPremium, { borderColor: stats.stockBajoCount > 0 ? 'rgba(255, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.25)' }]}>
+              <View style={styles.statCardTop}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.statCardCategory}>ALERTAS DE STOCK</Text>
+                  <Text style={[styles.statCardValue, stats.stockBajoCount > 0 ? { color: NoxColors.rose } : { color: NoxColors.emerald }]}>
+                    {stats.stockBajoCount} <Text style={{ fontSize: 13, color: NoxColors.muted, fontWeight: '600' }}>críticos</Text>
+                  </Text>
+                </View>
+                <View style={[
+                  styles.statIconBadge, 
+                  stats.stockBajoCount > 0 
+                    ? { backgroundColor: 'rgba(255, 68, 68, 0.12)', borderColor: 'rgba(255, 68, 68, 0.3)' }
+                    : { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.3)' }
+                ]}>
+                  <Ionicons name={stats.stockBajoCount > 0 ? "alert-circle" : "shield-checkmark"} size={20} color={stats.stockBajoCount > 0 ? NoxColors.rose : NoxColors.emerald} />
+                </View>
               </View>
-              <Text style={styles.statValue}>{stats.stockBajoCount}</Text>
-              <Text style={styles.statLabel}>Stock Crítico</Text>
+              <View style={styles.statCardFooter}>
+                <Text style={[styles.statTrendText, { color: stats.stockBajoCount > 0 ? NoxColors.amber : NoxColors.emerald }]}>
+                  {stats.stockBajoCount > 0 ? "⚠️ Reponer pronto" : "✓ Existencias OK"}
+                </Text>
+                <Text style={styles.statSubText}>≤ 5 uds. disponibles</Text>
+              </View>
             </View>
 
           </View>
@@ -251,30 +291,41 @@ export default function AdminDashboard() {
           </View>
         )}
 
-        {/* Grid de Módulos Rediseñado de 2 Columnas */}
+        {/* Grid de Módulos Operativos Rediseñado */}
         <View style={styles.modulesSection}>
-          <Text style={styles.sectionTitle}>Módulos Operativos</Text>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Módulos Operativos</Text>
+            <Text style={styles.modulesCountTag}>6 Módulos Disponibles</Text>
+          </View>
+
           <View style={styles.modulesGrid}>
             {MODULES.map((mod) => (
               <TouchableOpacity
                 key={mod.id}
-                style={[styles.moduleCard, { width: cardWidth }]}
+                style={[styles.moduleCardPremium, { width: cardWidth, borderColor: `${mod.color}30` }]}
                 onPress={() => router.push(mod.path as any)}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
               >
-                {/* Contenedor del Icono con Halo de Color */}
-                <View style={[styles.moduleIconContainer, { backgroundColor: `${mod.color}15` }]}>
-                  <Ionicons name={mod.icon as any} size={26} color={mod.color} />
+                {/* Fila Superior: Icono y Badge de Estado */}
+                <View style={styles.moduleTopRow}>
+                  <View style={[styles.moduleIconBadge, { backgroundColor: `${mod.color}18`, borderColor: `${mod.color}45` }]}>
+                    <Ionicons name={mod.icon as any} size={22} color={mod.color} />
+                  </View>
+                  <View style={[styles.modulePillBadge, { backgroundColor: `${mod.color}15`, borderColor: `${mod.color}35` }]}>
+                    <Text style={[styles.modulePillText, { color: mod.color }]}>{mod.badge}</Text>
+                  </View>
                 </View>
 
-                <View style={styles.moduleInfo}>
-                  <Text style={styles.moduleLabel}>{mod.label}</Text>
-                  <Text style={styles.moduleSub}>{mod.sub}</Text>
+                {/* Centro: Título y Descripción */}
+                <View style={styles.moduleBody}>
+                  <Text style={styles.moduleTitleText}>{mod.label}</Text>
+                  <Text style={styles.moduleDescText}>{mod.sub}</Text>
                 </View>
 
-                {/* Flecha de Navegación sutil */}
-                <View style={styles.moduleArrowContainer}>
-                  <Ionicons name="chevron-forward" size={14} color="rgba(255, 255, 255, 0.3)" />
+                {/* Fila Inferior: Acción y flecha */}
+                <View style={styles.moduleActionRow}>
+                  <Text style={[styles.moduleActionText, { color: mod.color }]}>Ingresar al panel</Text>
+                  <Ionicons name="arrow-forward" size={13} color={mod.color} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -408,58 +459,115 @@ const styles = StyleSheet.create({
 
   statsSection: {
     paddingHorizontal: 25,
-    marginBottom: 35
+    marginBottom: 25
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 14,
   },
   sectionTitle: {
     color: NoxColors.muted,
     fontSize: 10,
     fontWeight: '900',
     letterSpacing: 2,
-    marginBottom: 16,
     textTransform: 'uppercase'
+  },
+  liveIndicatorPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.25)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
+  },
+  pulseDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: NoxColors.emerald,
+  },
+  liveIndicatorText: {
+    color: NoxColors.emerald,
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  modulesCountTag: {
+    color: NoxColors.subtext,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   statsGrid: {
     flexDirection: 'row',
     gap: 12
   },
-  statItem: {
+  statCardPremium: {
     backgroundColor: NoxColors.card,
-    padding: 16,
-    borderRadius: 26,
+    padding: 18,
+    borderRadius: 22,
     flex: 1,
-    borderLeftWidth: 4,
     borderWidth: 1,
-    borderColor: NoxColors.border,
     justifyContent: 'space-between',
-    minHeight: 110,
+    minHeight: 120,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 3,
   },
-  statIconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8
+  statCardTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
-  statValue: {
-    color: NoxColors.text,
-    fontSize: 16,
-    fontWeight: '900',
-    letterSpacing: 0.5
-  },
-  statLabel: {
+  statCardCategory: {
     color: NoxColors.muted,
-    fontSize: 8,
+    fontSize: 9,
     fontWeight: '900',
+    letterSpacing: 1,
     textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  statCardValue: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: '900',
     letterSpacing: 0.5,
-    marginTop: 2
+  },
+  statIconBadge: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+    marginTop: 6,
+  },
+  statTrendText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  statSubText: {
+    color: NoxColors.subtext,
+    fontSize: 10,
+    fontWeight: '600',
   },
 
+  /* Módulos Operativos Rediseñados */
   modulesSection: {
     paddingHorizontal: 25
   },
@@ -468,47 +576,75 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 12
   },
-  moduleCard: {
+  moduleCardPremium: {
     backgroundColor: NoxColors.card,
-    padding: 18,
-    borderRadius: 28,
+    padding: 16,
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: NoxColors.border,
     justifyContent: 'space-between',
-    minHeight: 160,
+    minHeight: 135,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.12,
     shadowRadius: 10,
-    elevation: 3
+    elevation: 3,
   },
-  moduleIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
-    justifyContent: 'center',
+  moduleTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 8,
   },
-  moduleInfo: {
-    gap: 3
+  moduleIconBadge: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  moduleLabel: {
-    color: NoxColors.text,
+  modulePillBadge: {
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  modulePillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  moduleBody: {
+    gap: 3,
+    marginVertical: 4,
+  },
+  moduleTitleText: {
+    color: '#fff',
     fontSize: 14,
     fontWeight: '900',
-    letterSpacing: 0.8
+    letterSpacing: 0.6,
   },
-  moduleSub: {
+  moduleDescText: {
     color: NoxColors.muted,
-    fontSize: 10,
-    fontWeight: '600'
+    fontSize: 11,
+    fontWeight: '500',
+    lineHeight: 15,
   },
-  moduleArrowContainer: {
-    position: 'absolute',
-    top: 18,
-    right: 18,
-    opacity: 0.5
+  moduleActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 4,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.04)',
+    marginTop: 6,
+  },
+  moduleActionText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.4,
   },
 
   /* Estilos Tablero EDA (Business Intelligence) */
