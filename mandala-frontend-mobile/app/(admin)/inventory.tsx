@@ -371,8 +371,8 @@ export default function AdmInventarioScreen() {
     return t ? t.nombre : '';
   };
 
-  return (
-    <View style={styles.container}>
+  const renderHeader = () => (
+    <View style={styles.headerWrapper}>
       {/* 1. Header Premium con Botón de Historial y Agregar */}
       <View style={styles.header}>
         <View style={styles.headerTitleContainer}>
@@ -422,7 +422,7 @@ export default function AdmInventarioScreen() {
           horizontal 
           showsHorizontalScrollIndicator={false} 
           style={styles.catScroll} 
-          contentContainerStyle={{ paddingHorizontal: 20 }}
+          contentContainerStyle={styles.catScrollContent}
         >
           {categoriasFiltro.map(cat => (
             <TouchableOpacity 
@@ -437,36 +437,42 @@ export default function AdmInventarioScreen() {
           ))}
         </ScrollView>
       </View>
+    </View>
+  );
 
-      {/* 3. Lista de Productos en Grid Responsivo */}
-      {isLoading ? (
-        <View style={styles.loadingWrapper}>
-          <ActivityIndicator size="large" color={NoxColors.aura} />
-          <Text style={styles.loadingText}>Cargando catálogo...</Text>
-        </View>
-      ) : (
-        <FlatList 
-          key={numColumns}
-          numColumns={numColumns}
-          columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
-          data={filteredProductos} 
-          keyExtractor={it => String(it.id)} 
-          contentContainerStyle={styles.listContent}
-          refreshControl={
-            <RefreshControl 
-              refreshing={refreshing} 
-              onRefresh={() => fetchData(true)} 
-              tintColor={NoxColors.aura} 
-            />
-          }
-          ListEmptyComponent={
+  return (
+    <View style={styles.container}>
+      <FlatList 
+        key={numColumns}
+        style={styles.flatListFull}
+        numColumns={numColumns}
+        columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
+        data={isLoading ? [] : filteredProductos} 
+        keyExtractor={it => String(it.id)} 
+        contentContainerStyle={styles.listContent}
+        ListHeaderComponent={renderHeader}
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={() => fetchData(true)} 
+            tintColor={NoxColors.aura} 
+          />
+        }
+        ListEmptyComponent={
+          isLoading ? (
+            <View style={styles.loadingWrapper}>
+              <ActivityIndicator size="large" color={NoxColors.aura} />
+              <Text style={styles.loadingText}>Cargando catálogo...</Text>
+            </View>
+          ) : (
             <View style={styles.emptyContainer}>
               <Ionicons name="cube-outline" size={48} color={NoxColors.muted} />
               <Text style={styles.emptyTitle}>No se encontraron productos</Text>
               <Text style={styles.emptySub}>Añade un nuevo producto o prueba cambiando los filtros</Text>
             </View>
-          }
-          renderItem={({ item }) => (
+          )
+        }
+        renderItem={({ item }) => (
             <View style={[styles.card, isDesktop && { maxWidth: '48.8%' }]}>
               <View style={styles.cardAccent} />
               
@@ -525,7 +531,6 @@ export default function AdmInventarioScreen() {
             </View>
           )} 
         />
-      )}
 
       {/* ============================================================ */}
       {/* 4. MODAL MOVIMIENTO DE STOCK (SOLO ENTRADA Y SALIDA)          */}
@@ -984,17 +989,37 @@ export default function AdmInventarioScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { 
+    flex: 1, 
+    backgroundColor: NoxColors.deep,
+    width: '100%',
+    height: '100%',
+  },
+  flatListFull: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  listContent: { 
+    paddingHorizontal: 20, 
+    paddingBottom: 100, 
+    maxWidth: 1240, 
+    width: '100%', 
+    alignSelf: 'center',
+    flexGrow: 1,
+  },
+  headerWrapper: {
+    width: '100%',
+    alignSelf: 'center',
+    marginBottom: 6,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 25,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 20,
-    maxWidth: 1200,
+    paddingTop: Platform.OS === 'ios' ? 60 : 35,
+    paddingBottom: 18,
     width: '100%',
-    alignSelf: 'center',
   },
   headerTitleContainer: { gap: 4 },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
@@ -1028,21 +1053,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
 
-  searchSection: { marginBottom: 8, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  searchSection: { width: '100%', marginBottom: 10 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: NoxColors.card,
-    marginHorizontal: 20,
     marginBottom: 12,
     paddingHorizontal: 16,
     height: 48,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: NoxColors.border,
+    width: '100%',
   },
   searchInput: { flex: 1, marginLeft: 10, color: NoxColors.text, fontSize: 14 },
-  catScroll: { marginBottom: 10, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  catScroll: { width: '100%', marginBottom: 6 },
+  catScrollContent: { paddingRight: 20 },
   catBtn: {
     paddingHorizontal: 18,
     paddingVertical: 9,
@@ -1056,10 +1082,9 @@ const styles = StyleSheet.create({
   catText: { fontSize: 11, fontWeight: 'bold', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
   catTextActive: { color: NoxColors.text },
 
-  loadingWrapper: { marginTop: 60, alignItems: 'center', gap: 12 },
+  loadingWrapper: { paddingVertical: 60, alignItems: 'center', gap: 12, width: '100%' },
   loadingText: { color: NoxColors.muted, fontSize: 13, letterSpacing: 1 },
 
-  listContent: { padding: 20, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   columnWrapper: { gap: 16 },
   card: {
     flex: 1,
