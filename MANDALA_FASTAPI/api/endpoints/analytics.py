@@ -37,8 +37,9 @@ def get_analytics_dashboard(db: Session = Depends(get_db)):
     stock_bajo_count = sum(1 for p in prods if (p.stock_actual or 0) <= 5)
 
     # 2. Curva de demanda horaria (Agrupación por hora de la noche)
-    # Rango operativo habitual de discoteca: 8 PM (20h) a 3 AM (03h)
+    # Rango operativo habitual de discoteca: 7 PM (19h) a 2 AM (02h)
     HORAS_NOCTURNAS = [
+        {"hora_24": 19, "label": "7 PM"},
         {"hora_24": 20, "label": "8 PM"},
         {"hora_24": 21, "label": "9 PM"},
         {"hora_24": 22, "label": "10 PM"},
@@ -46,7 +47,6 @@ def get_analytics_dashboard(db: Session = Depends(get_db)):
         {"hora_24": 0,  "label": "12 AM"},
         {"hora_24": 1,  "label": "1 AM"},
         {"hora_24": 2,  "label": "2 AM"},
-        {"hora_24": 3,  "label": "3 AM"},
     ]
 
     # Contar pedidos reales por hora
@@ -58,29 +58,31 @@ def get_analytics_dashboard(db: Session = Depends(get_db)):
                 conteo_horas[h]["pedidos"] += 1
                 conteo_horas[h]["ventas"] += float(p.total or 0)
 
-    # Perfil porcentual base (EDA de 6to semestre en Melgar)
-    baseline_pct = {20: 4.2, 21: 7.1, 22: 12.5, 23: 26.4, 0: 34.0, 1: 28.8, 2: 15.6, 3: 5.2}
+    total_pedidos_curva = sum(conteo_horas[h["hora_24"]]["pedidos"] for h in HORAS_NOCTURNAS)
+    max_pedidos_hora = max((conteo_horas[h["hora_24"]]["pedidos"] for h in HORAS_NOCTURNAS), default=1)
+    if max_pedidos_hora == 0:
+        max_pedidos_hora = 1
 
     curva_demanda = []
-    total_pedidos_curva = sum(conteo_horas[h["hora_24"]]["pedidos"] for h in HORAS_NOCTURNAS)
-
     for h in HORAS_NOCTURNAS:
         h24 = h["hora_24"]
         ped_count = conteo_horas[h24]["pedidos"]
         ventas_h = conteo_horas[h24]["ventas"]
 
-        if total_pedidos_curva > 0:
-            pct = round((ped_count / total_pedidos_curva) * 100, 1)
-        else:
-            pct = baseline_pct.get(h24, 5.0)
+        # Porcentaje sobre el total general
+        pct = round((ped_count / total_pedidos_curva) * 100, 1) if total_pedidos_curva > 0 else 0.0
 
-        es_pico = h24 in (23, 0, 1)
+        # Altura relativa sobre la hora pico para escala visual perfecta
+        altura_relativa = max(15, int((ped_count / max_pedidos_hora) * 100)) if ped_count > 0 else 10
+
+        es_pico = ped_count >= (max_pedidos_hora * 0.75) # Considerar pico si está al 75%+ del máximo
         curva_demanda.append({
             "hora": h["label"],
             "hora_24": h24,
             "pedidos": ped_count,
             "ventas": round(ventas_h, 2),
             "porcentaje": pct,
+            "altura_relativa": altura_relativa,
             "es_pico": es_pico
         })
 

@@ -114,10 +114,6 @@ export default function AdminDashboard() {
         <View style={styles.statsSection}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Métricas del Turno Actual</Text>
-            <View style={styles.liveIndicatorPill}>
-              <View style={styles.pulseDot} />
-              <Text style={styles.liveIndicatorText}>EN VIVO • MELGAR</Text>
-            </View>
           </View>
 
           <View style={styles.statsGrid}>
@@ -193,9 +189,6 @@ export default function AdminDashboard() {
                 <Ionicons name="analytics" size={20} color={NoxColors.aura} />
                 <Text style={styles.sectionTitle}>Dashboard Analítico (EDA)</Text>
               </View>
-              <View style={styles.edaBadge}>
-                <Text style={styles.edaBadgeText}>PostgreSQL 3FN Sync</Text>
-              </View>
             </View>
 
             {/* KPIs EDA */}
@@ -219,35 +212,38 @@ export default function AdminDashboard() {
 
             {/* Curva de Demanda por Hora */}
             <View style={styles.edaChartCard}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                 <Text style={styles.chartTitle}>Curva de Demanda Temporal por Hora</Text>
                 <View style={styles.peakPill}>
-                  <Text style={styles.peakPillText}>Pico: 11:30 PM - 2 AM</Text>
+                  <Text style={styles.peakPillText}>Pico: 10 PM - 12 AM</Text>
                 </View>
               </View>
 
-              {/* Bar Chart Visual */}
+              {/* Bar Chart Visual con Diferenciación Real */}
               <View style={styles.barChartContainer}>
                 {edaData.curva_demanda?.map((h: any, idx: number) => {
-                  const barHeight = Math.max(12, Math.min(100, (h.porcentaje || 5) * 2.8));
+                  const barHeight = Math.max(16, h.altura_relativa || 16);
+                  const isPeak = h.es_pico || h.pedidos >= 4;
                   return (
                     <View key={idx} style={styles.chartCol}>
-                      <Text style={styles.chartPct}>{h.porcentaje}%</Text>
+                      <Text style={[styles.chartPedCount, isPeak ? { color: NoxColors.aura, fontWeight: '900' } : null]}>
+                        {h.pedidos > 0 ? `${h.pedidos}p` : '0'}
+                      </Text>
                       <View style={styles.barTrack}>
                         <View style={[
                           styles.barFill, 
                           { height: `${barHeight}%` },
-                          h.es_pico ? styles.barPeak : null
+                          isPeak ? styles.barPeak : (h.pedidos > 0 ? styles.barActive : null)
                         ]} />
                       </View>
-                      <Text style={[styles.chartLbl, h.es_pico ? { color: NoxColors.aura, fontWeight: '800' } : null]}>{h.hora}</Text>
+                      <Text style={[styles.chartLbl, isPeak ? { color: NoxColors.aura, fontWeight: '800' } : null]}>{h.hora}</Text>
                     </View>
                   );
                 })}
               </View>
 
               <Text style={styles.edaInsightNote}>
-                💡 <Text style={{ fontWeight: '700', color: NoxColors.amber }}>Hallazgo EDA:</Text> El {edaData.insights_eda?.porcentaje_concentracion_pico || 74.2}% de las comandas nocturnas se concentran entre 11:30 PM y 2:00 AM.
+                💡 <Text style={{ fontWeight: '700', color: NoxColors.amber }}>Concentración:</Text> {edaData.curva_demanda?.filter((h: any) => h.es_pico).reduce((acc: number, h: any) => acc + h.pedidos, 0)} de los {edaData.kpis?.total_pedidos} pedidos del turno se concentran entre 10 PM y 12 AM.
               </Text>
             </View>
 
@@ -743,6 +739,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 4,
   },
+  chartPedCount: {
+    color: NoxColors.muted,
+    fontSize: 9,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
   chartPct: {
     color: NoxColors.muted,
     fontSize: 8,
@@ -750,17 +752,20 @@ const styles = StyleSheet.create({
   },
   barTrack: {
     width: '100%',
-    height: 75,
+    height: 80,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderRadius: 6,
     overflow: 'hidden',
   },
   barFill: {
     width: '100%',
-    backgroundColor: NoxColors.container,
+    backgroundColor: '#4c1d95',
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
+  },
+  barActive: {
+    backgroundColor: '#8b5cf6',
   },
   barPeak: {
     backgroundColor: NoxColors.aura,
