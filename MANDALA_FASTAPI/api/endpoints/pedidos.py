@@ -402,6 +402,20 @@ def despachar_producto(
         prod = db.query(models.Producto).filter(models.Producto.id == item.producto_id).first()
         if prod:
             prod.stock_actual -= pendiente
+            
+            # Registrar Kardex de salida por venta
+            tipo_salida = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.ilike("Venta")).first()
+            if not tipo_salida:
+                tipo_salida = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.ilike("Salida")).first()
+            if tipo_salida:
+                nuevo_mov = models.MovimientoInventario(
+                    producto_id=prod.id,
+                    tipo_id=tipo_salida.id,
+                    cantidad=pendiente,
+                    motivo=f"Venta Pedido #{pedido_id}",
+                    usuario_id=current_user.id
+                )
+                db.add(nuevo_mov)
         
         item.cantidad_despachada = item.cantidad
         db.commit()

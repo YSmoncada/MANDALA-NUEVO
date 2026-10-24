@@ -120,6 +120,25 @@ def create_producto(
     db.add(db_prod)
     db.commit()
     db.refresh(db_prod)
+
+    # Registrar Kardex inicial si entra con stock
+    if db_prod.stock_actual and db_prod.stock_actual > 0:
+        tipo_ent = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.ilike("Entrada")).first()
+        if not tipo_ent:
+            tipo_ent = models.TipoMovimiento(nombre="Entrada")
+            db.add(tipo_ent)
+            db.commit()
+            db.refresh(tipo_ent)
+        db_mov = models.MovimientoInventario(
+            producto_id=db_prod.id,
+            tipo_id=tipo_ent.id,
+            cantidad=db_prod.stock_actual,
+            motivo="Carga inicial de producto",
+            usuario_id=current_user.id
+        )
+        db.add(db_mov)
+        db.commit()
+
     logger.info(f"Producto {db_prod.nombre} creado por {current_user.username}")
     return db_prod
 
@@ -134,8 +153,34 @@ def update_producto(
     db_prod = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
     if not db_prod:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
-    for key, value in producto.dict(exclude_unset=True).items():
+    
+    update_data = producto.dict(exclude_unset=True)
+    viejo_stock = db_prod.stock_actual or 0
+
+    for key, value in update_data.items():
         setattr(db_prod, key, value)
+    
+    # Registrar Kardex si se modificó el stock_actual
+    if "stock_actual" in update_data and update_data["stock_actual"] is not None:
+        nuevo_stock = update_data["stock_actual"]
+        diff = nuevo_stock - viejo_stock
+        if diff != 0:
+            tipo_nombre = "Entrada" if diff > 0 else "Salida"
+            tipo_mov = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.ilike(tipo_nombre)).first()
+            if not tipo_mov:
+                tipo_mov = models.TipoMovimiento(nombre=tipo_nombre)
+                db.add(tipo_mov)
+                db.commit()
+                db.refresh(tipo_mov)
+            db_mov = models.MovimientoInventario(
+                producto_id=db_prod.id,
+                tipo_id=tipo_mov.id,
+                cantidad=abs(diff),
+                motivo=f"Ajuste manual de catálogo ({viejo_stock} -> {nuevo_stock})",
+                usuario_id=current_user.id
+            )
+            db.add(db_mov)
+
     db.commit()
     db.refresh(db_prod)
     logger.info(f"Producto {producto_id} actualizado por {current_user.username}")

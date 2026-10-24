@@ -115,6 +115,10 @@ class MovimientoInventario(Base):
     fecha = Column(DateTime(timezone=True), server_default=func.now())
     usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
 
+    producto = relationship("Producto")
+    tipo = relationship("TipoMovimiento")
+    usuario = relationship("Usuario")
+
 class EmpresaConfig(Base):
     __tablename__ = "empresa_config"
     id = Column(Integer, primary_key=True, index=True)

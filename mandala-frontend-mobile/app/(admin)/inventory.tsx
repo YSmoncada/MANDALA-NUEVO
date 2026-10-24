@@ -350,7 +350,7 @@ export default function AdmInventarioScreen() {
     setHistoryModalOpen(true);
     setIsLoadingHistory(true);
     setHistoryFilterType('todos');
-    setHistorySearch(prodId && selectedProduct ? selectedProduct.nombre : "");
+    setHistorySearch("");
     try {
       const url = prodId ? `/movimientos/?producto_id=${prodId}` : '/movimientos/';
       const res = await apiClient.get(url);
@@ -364,17 +364,18 @@ export default function AdmInventarioScreen() {
   };
 
   const filteredHistory = historialMovimientos.filter(m => {
-    const isEntrada = m.tipo_nombre?.toLowerCase().includes('entrada');
-    const isSalida = m.tipo_nombre?.toLowerCase().includes('salida') || m.tipo_nombre?.toLowerCase().includes('merma') || m.tipo_nombre?.toLowerCase().includes('venta');
+    const tipo = (m.tipo_nombre || '').toLowerCase();
+    const isEntrada = tipo.includes('entrada');
+    const isSalida = tipo.includes('salida') || tipo.includes('merma') || tipo.includes('venta');
 
     if (historyFilterType === 'entrada' && !isEntrada) return false;
     if (historyFilterType === 'salida' && !isSalida) return false;
 
-    if (historySearch.trim()) {
-      const q = historySearch.toLowerCase();
-      const matchProd = m.producto_nombre?.toLowerCase().includes(q);
-      const matchMotivo = m.motivo?.toLowerCase().includes(q);
-      const matchUser = m.usuario_nombre?.toLowerCase().includes(q);
+    if (historySearch && historySearch.trim()) {
+      const q = historySearch.trim().toLowerCase();
+      const matchProd = (m.producto_nombre || '').toLowerCase().includes(q);
+      const matchMotivo = (m.motivo || '').toLowerCase().includes(q);
+      const matchUser = (m.usuario_nombre || '').toLowerCase().includes(q);
       if (!matchProd && !matchMotivo && !matchUser) return false;
     }
 

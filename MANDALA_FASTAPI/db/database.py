@@ -3,9 +3,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Por defecto usamos SQLite para desarrollo, pero se puede cambiar a MySQL/PostgreSQL
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./mandala_v2.db")
-
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Ruta absoluta siempre en MANDALA_FASTAPI/mandala_v2.db sin importar desde dónde se inicie Python
+default_sqlite_path = os.path.abspath(os.path.join(current_dir, "..", "mandala_v2.db"))
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{default_sqlite_path}")
 
 # Corregir URL de Render/Heroku (postgres:// -> postgresql://)
 if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
