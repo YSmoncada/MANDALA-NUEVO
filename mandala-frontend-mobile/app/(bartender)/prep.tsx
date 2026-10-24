@@ -38,14 +38,6 @@ export default function BartenderPrepScreen() {
     setAlertConfig({ visible: true, title: '', message: '', type: 'info', onConfirm: undefined, onCancel: undefined, confirmText: undefined, cancelText: undefined, ...config });
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchPending();
-      const timer = setInterval(() => fetchPending(true), 12000); // Refresca cada 12 segundos moderado, sin saturar
-      return () => clearInterval(timer);
-    }, [fetchPending])
-  );
-
   const fetchPending = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
@@ -67,6 +59,14 @@ export default function BartenderPrepScreen() {
       setRefreshing(false);
     }
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPending();
+      const timer = setInterval(() => fetchPending(true), 12000); // Refresca cada 12 segundos moderado, sin saturar
+      return () => clearInterval(timer);
+    }, [fetchPending])
+  );
 
   const handleUpdateEstado = async (pedidoId: number, nuevoEstado: string) => {
     // Prevenir doble ejecución

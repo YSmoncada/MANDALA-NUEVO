@@ -52,13 +52,7 @@ export default function BartenderHistoryScreen() {
   };
   const router = useRouter();
 
-  useFocusEffect(
-    useCallback(() => {
-      if (user?.id) fetchPedidos(user.id);
-    }, [user?.id])
-  );
-
-  const fetchPedidos = async (uid?: string) => {
+  const fetchPedidos = useCallback(async (uid?: string) => {
     const id = uid || user?.id;
     if (!id) return;
     setLoading(true);
@@ -78,7 +72,13 @@ export default function BartenderHistoryScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [user?.id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) fetchPedidos(user.id);
+    }, [user?.id, fetchPedidos])
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

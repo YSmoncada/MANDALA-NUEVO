@@ -2,14 +2,26 @@ import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 import { useAlertStore } from '../store/alertStore';
 
-// En modo local (Expo Go) se usa la variable de entorno EXPO_PUBLIC_API_URL
-// En producción (Render / Vercel) se usa la URL configurada
-const rawEnvUrl = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_API_URL) || "https://noxos-movil-backend.onrender.com/api";
-let cleanUrl = rawEnvUrl.trim().replace(/\/+$/, '');
-if (!cleanUrl.endsWith('/api')) {
-  cleanUrl = `${cleanUrl}/api`;
-}
-export const API_URL = cleanUrl;
+// Detección automática y robusta del backend para Local y Producción (Render)
+const getBaseApiUrl = (): string => {
+  const envUrl = typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_API_URL : undefined;
+  if (envUrl && envUrl.trim().length > 0) {
+    let clean = envUrl.trim().replace(/\/+$/, '');
+    return clean.endsWith('/api') ? clean : `${clean}/api`;
+  }
+
+  if (typeof window !== 'undefined' && window.location?.hostname) {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return 'http://localhost:8000/api';
+    }
+    return 'https://mandala-backend-n3n6.onrender.com/api';
+  }
+
+  return 'https://mandala-backend-n3n6.onrender.com/api';
+};
+
+export const API_URL = getBaseApiUrl();
 
 const apiClient = axios.create({
   baseURL: API_URL,

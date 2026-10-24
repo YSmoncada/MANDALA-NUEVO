@@ -1,33 +1,42 @@
 from sqlalchemy import inspect, text
 from db.database import engine
+import logging
+
+logger = logging.getLogger("mandala.migration")
 
 def migrate():
     inspector = inspect(engine)
-    
-    # Verificación de la tabla 'turnos'
-    # Base.metadata.create_all(engine) ya crea la tabla si no existe, 
-    # pero para mayor seguridad lo dejamos así.
-    
-    print("Verificando tabla 'pedidos' para columna 'turno_id'...")
     try:
         tables = inspector.get_table_names()
-        if 'pedidos' not in tables:
-            print("Tabla 'pedidos' aún no existe, se creará con create_all.")
-            return
-
-        columns = [c['name'] for c in inspector.get_columns('pedidos')]
         
-        if 'turno_id' not in columns:
-            print("Añadiendo columna 'turno_id' a 'pedidos'...")
+        # 1. Migraciones para tabla 'pedidos'
+        if 'pedidos' in tables:
+            columns = [c['name'] for c in inspector.get_columns('pedidos')]
             with engine.connect() as conn:
-                # SQL compatible con SQLite y PostgreSQL para añadir columna básica
-                conn.execute(text("ALTER TABLE pedidos ADD COLUMN turno_id INTEGER"))
-                conn.commit()
-                print("Columna 'turno_id' añadida exitosamente.")
-        else:
-            print("La columna 'turno_id' ya existe en 'pedidos'.")
+                if 'turno_id' not in columns:
+                    print("Añadiendo columna 'turno_id' a 'pedidos'...")
+                    conn.execute(text("ALTER TABLE pedidos ADD COLUMN turno_id INTEGER"))
+                    conn.commit()
+                if 'origen_cliente' not in columns:
+                    print("Añadiendo columna 'origen_cliente' a 'pedidos'...")
+                    conn.execute(text("ALTER TABLE pedidos ADD COLUMN origen_cliente BOOLEAN DEFAULT FALSE"))
+                    conn.commit()
+
+        # 2. Migraciones para tabla 'mesas'
+        if 'mesas' in tables:
+            m_columns = [c['name'] for c in inspector.get_columns('mesas')]
+            with engine.connect() as conn:
+                if 'pidiendo_cuenta' not in m_columns:
+                    print("Añadiendo columna 'pidiendo_cuenta' a 'mesas'...")
+                    conn.execute(text("ALTER TABLE mesas ADD COLUMN pidiendo_cuenta BOOLEAN DEFAULT FALSE"))
+                    conn.commit()
+                if 'mesero_id' not in m_columns:
+                    print("Añadiendo columna 'mesero_id' a 'mesas'...")
+                    conn.execute(text("ALTER TABLE mesas ADD COLUMN mesero_id INTEGER"))
+                    conn.commit()
+        print("Migraciones de esquema verificadas correctamente.")
     except Exception as e:
-        print(f"Verificación de migración omitida: {e}")
+        print(f"Verificación de migración omitida o error: {e}")
 
 if __name__ == "__main__":
     migrate()
