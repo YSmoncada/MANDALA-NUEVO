@@ -199,47 +199,55 @@ export default function AdminDashboard() {
         {/* Tablero EDA (Análisis Exploratorio de Datos) */}
         {edaData && (
           <View style={styles.edaSection}>
-            <View style={styles.edaHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Ionicons name="analytics" size={20} color={NoxColors.aura} />
-                <Text style={styles.sectionTitle}>Dashboard Analítico (EDA)</Text>
+            {/* Header del Dashboard Analítico con Filtros Dedicados */}
+            <View style={styles.edaHeaderStacked}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Ionicons name="analytics" size={22} color={NoxColors.aura} />
+                  <Text style={styles.sectionTitle}>Dashboard Analítico (EDA)</Text>
+                </View>
+                {loadingEda && <ActivityIndicator size="small" color={NoxColors.aura} />}
               </View>
 
-              {/* Selector de Periodo Temporal: Día | Semana | Mes */}
-              <View style={styles.periodSelector}>
+              {/* Selector de Periodo Temporal Grande y Visible: Día | Semana | Mes */}
+              <View style={styles.periodSelectorFull}>
                 <TouchableOpacity 
-                  style={[styles.periodTab, periodo === 'dia' && styles.periodTabActive]}
+                  style={[styles.periodTabFull, periodo === 'dia' && styles.periodTabActiveFull]}
                   onPress={() => handlePeriodoChange('dia')}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.periodTabText, periodo === 'dia' && styles.periodTabTextActive]}>Día</Text>
+                  <Ionicons name="today-outline" size={15} color={periodo === 'dia' ? '#fff' : NoxColors.muted} />
+                  <Text style={[styles.periodTabTextFull, periodo === 'dia' && styles.periodTabTextActiveFull]}>Día</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
-                  style={[styles.periodTab, periodo === 'semana' && styles.periodTabActive]}
+                  style={[styles.periodTabFull, periodo === 'semana' && styles.periodTabActiveFull]}
                   onPress={() => handlePeriodoChange('semana')}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.periodTabText, periodo === 'semana' && styles.periodTabTextActive]}>Semana</Text>
+                  <Ionicons name="calendar-outline" size={15} color={periodo === 'semana' ? '#fff' : NoxColors.muted} />
+                  <Text style={[styles.periodTabTextFull, periodo === 'semana' && styles.periodTabTextActiveFull]}>Semana</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
-                  style={[styles.periodTab, periodo === 'mes' && styles.periodTabActive]}
+                  style={[styles.periodTabFull, periodo === 'mes' && styles.periodTabActiveFull]}
                   onPress={() => handlePeriodoChange('mes')}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.periodTabText, periodo === 'mes' && styles.periodTabTextActive]}>Mes</Text>
+                  <Ionicons name="stats-chart-outline" size={15} color={periodo === 'mes' ? '#fff' : NoxColors.muted} />
+                  <Text style={[styles.periodTabTextFull, periodo === 'mes' && styles.periodTabTextActiveFull]}>Mes</Text>
                 </TouchableOpacity>
               </View>
-            </View>
 
-            {/* Subtítulo dinámico con la ventana temporal analizada */}
-            {edaData.descripcion_periodo ? (
+              {/* Rango de Fechas Analizado */}
               <View style={styles.periodBadgeRow}>
-                <Ionicons name="calendar-outline" size={12} color={NoxColors.muted} />
-                <Text style={styles.periodBadgeText}>{edaData.descripcion_periodo}</Text>
+                <Ionicons name="time-outline" size={13} color={NoxColors.emerald} />
+                <Text style={styles.periodBadgeText}>
+                  Filtrado por: <Text style={{ color: '#fff', fontWeight: '800' }}>{edaData.etiqueta_periodo || "Turno Diario"}</Text>
+                  {edaData.descripcion_periodo ? ` • ${edaData.descripcion_periodo}` : ''}
+                </Text>
               </View>
-            ) : null}
+            </View>
 
             {/* KPIs EDA */}
             <View style={[styles.edaKpisRow, { flexDirection: isDesktop ? 'row' : 'column' }]}>
@@ -911,42 +919,56 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '800',
   },
-  periodSelector: {
+  edaHeaderStacked: {
+    marginBottom: 14,
+    gap: 10,
+  },
+  periodSelectorFull: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 10,
-    padding: 3,
+    backgroundColor: '#0E0D23',
+    borderRadius: 14,
+    padding: 4,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    gap: 3,
+    borderColor: 'rgba(169, 68, 255, 0.35)',
+    gap: 6,
   },
-  periodTab: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 7,
+  periodTabFull: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 9,
+    borderRadius: 10,
+    gap: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
   },
-  periodTabActive: {
+  periodTabActiveFull: {
     backgroundColor: NoxColors.aura,
+    shadowColor: NoxColors.aura,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 4,
   },
-  periodTabText: {
+  periodTabTextFull: {
     color: NoxColors.muted,
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '700',
   },
-  periodTabTextActive: {
+  periodTabTextActiveFull: {
     color: '#ffffff',
-    fontWeight: '800',
+    fontWeight: '900',
   },
   periodBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    marginBottom: 10,
-    marginTop: -4,
+    gap: 6,
+    paddingHorizontal: 2,
+    marginTop: 2,
   },
   periodBadgeText: {
     color: NoxColors.muted,
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '500',
   }
 });
