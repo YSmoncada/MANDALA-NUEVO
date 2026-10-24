@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
+import TicketModal from '../../components/TicketModal';
 
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: keyof typeof Ionicons.glyphMap }> = {
@@ -31,6 +32,34 @@ export default function MonitorOrdenesScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filtro, setFiltro] = useState('todos');
+  const [ticketData, setTicketData] = useState<{
+    visible: boolean;
+    mesaNumero: number | string;
+    pedidoId?: number | string;
+    meseraNombre?: string;
+    productos: any[];
+    total: number;
+  }>({
+    visible: false,
+    mesaNumero: '',
+    productos: [],
+    total: 0
+  });
+
+  const handleOpenTicket = (item: any) => {
+    setTicketData({
+      visible: true,
+      mesaNumero: item.mesa_numero ?? item.mesa ?? 'Barra',
+      pedidoId: item.id,
+      meseraNombre: item.usuario_nombre || 'Mesera',
+      productos: (item.detalles || item.productos_detalle || []).map((p: any) => ({
+        nombre: p.producto_nombre || p.nombre,
+        cantidad: p.cantidad,
+        precio: p.producto_precio || p.precio_unitario || 0
+      })),
+      total: parseFloat(item.total || 0)
+    });
+  };
   
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -110,7 +139,17 @@ export default function MonitorOrdenesScreen() {
             <Ionicons name="time-outline" size={12} color={NoxColors.muted} />
             <Text style={styles.hora}>{horaStr}</Text>
           </View>
-          <Text style={styles.total}>${parseFloat(item.total || 0).toLocaleString()}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <TouchableOpacity 
+              style={styles.printTicketBtnAdmin}
+              onPress={() => handleOpenTicket(item)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="receipt-outline" size={13} color={NoxColors.aura} />
+              <Text style={styles.printTicketBtnAdminText}>TICKET</Text>
+            </TouchableOpacity>
+            <Text style={styles.total}>${parseFloat(item.total || 0).toLocaleString()}</Text>
+          </View>
         </View>
       </View>
     );
@@ -168,6 +207,16 @@ export default function MonitorOrdenesScreen() {
           }
         />
       )}
+      <TicketModal
+        visible={ticketData.visible}
+        onClose={() => setTicketData(prev => ({ ...prev, visible: false }))}
+        mesaNumero={ticketData.mesaNumero}
+        pedidoId={ticketData.pedidoId}
+        meseraNombre={ticketData.meseraNombre}
+        productos={ticketData.productos}
+        total={ticketData.total}
+        tituloTicket="TICKET DE CONSUMO"
+      />
     </View>
   );
 }

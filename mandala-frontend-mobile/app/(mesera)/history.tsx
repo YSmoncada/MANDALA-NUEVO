@@ -6,6 +6,7 @@ import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
 import LogoutModal from '../../components/LogoutModal';
 import NoxAlert from '../../components/NoxAlert';
+import TicketModal from '../../components/TicketModal';
 import { NoxColors } from '../../constants/theme';
 
 
@@ -31,6 +32,45 @@ export default function MisPedidosScreen() {
   const router = useRouter();
 
   // Estado de alerta personalizada
+  const [ticketData, setTicketData] = useState<{
+    visible: boolean;
+    mesaNumero: number | string;
+    pedidoId?: number | string;
+    productos: any[];
+    total: number;
+    tituloTicket?: string;
+  }>({
+    visible: false,
+    mesaNumero: '',
+    productos: [],
+    total: 0
+  });
+
+  const handleOpenTicketMesa = (mesaGroup: any) => {
+    setTicketData({
+      visible: true,
+      mesaNumero: mesaGroup.mesa_numero,
+      productos: mesaGroup.productos || [],
+      total: mesaGroup.total || 0,
+      tituloTicket: 'PRE-CUENTA DE MESA'
+    });
+  };
+
+  const handleOpenTicketPedido = (item: any) => {
+    setTicketData({
+      visible: true,
+      mesaNumero: item.mesa_numero ?? item.mesa,
+      pedidoId: item.id,
+      productos: (item.productos_detalle || []).map((p: any) => ({
+        nombre: p.producto_nombre || p.nombre,
+        cantidad: p.cantidad,
+        precio: p.producto_precio || p.precio_unitario || 0
+      })),
+      total: parseFloat(item.total || 0),
+      tituloTicket: 'TICKET DE PEDIDO'
+    });
+  };
+
   const [alertConfig, setAlertConfig] = useState<{
     visible: boolean,
     title: string,
@@ -219,6 +259,15 @@ export default function MisPedidosScreen() {
           );
         })}
       </View>
+
+      <TouchableOpacity 
+        style={styles.printTicketBtn}
+        onPress={() => handleOpenTicketMesa(item)}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="receipt-outline" size={16} color="#fff" />
+        <Text style={styles.printTicketBtnText}>VER PRE-CUENTA / IMPRIMIR TICKET</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -314,6 +363,17 @@ export default function MisPedidosScreen() {
         onConfirm={confirmLogout} 
       />
 
+      <TicketModal
+        visible={ticketData.visible}
+        onClose={() => setTicketData(prev => ({ ...prev, visible: false }))}
+        mesaNumero={ticketData.mesaNumero}
+        pedidoId={ticketData.pedidoId}
+        meseraNombre={user?.nombre_completo || user?.username || 'Mesera'}
+        productos={ticketData.productos}
+        total={ticketData.total}
+        tituloTicket={ticketData.tituloTicket}
+      />
+
       <NoxAlert 
         {...alertConfig} 
         onConfirm={() => {
@@ -373,5 +433,45 @@ const styles = StyleSheet.create({
   alertBtnText: { color: NoxColors.text, fontWeight: '900', fontSize: 12 },
 
   billAlertInline: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(169,68,255,0.1)', padding: 10, borderRadius: 12, marginTop: 10, marginBottom: 5, gap: 8 },
-  billAlertText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', letterSpacing: 1 }
+  billAlertText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
+  printTicketBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: NoxColors.aura,
+    paddingVertical: 12,
+    borderRadius: 14,
+    marginTop: 14,
+    shadowColor: NoxColors.aura,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  printTicketBtnText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  printTicketBtnSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(169, 68, 255, 0.12)',
+    borderWidth: 1,
+    borderColor: NoxColors.aura,
+    paddingVertical: 9,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  printTicketBtnSecondaryText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+  }
 });

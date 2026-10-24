@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
 import LogoutModal from '../../components/LogoutModal';
+import TicketModal from '../../components/TicketModal';
 import { NoxColors } from '../../constants/theme';
 
 
@@ -23,6 +24,32 @@ export default function BartenderHistoryScreen() {
   const clearAuth = useAuthStore(state => state.clearAuth);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [showLogout, setShowLogout] = useState(false);
+  const [ticketData, setTicketData] = useState<{
+    visible: boolean;
+    mesaNumero: number | string;
+    pedidoId?: number | string;
+    productos: any[];
+    total: number;
+  }>({
+    visible: false,
+    mesaNumero: '',
+    productos: [],
+    total: 0
+  });
+
+  const handleOpenTicket = (item: any) => {
+    setTicketData({
+      visible: true,
+      mesaNumero: item.mesa_numero ?? item.mesa ?? 'Barra',
+      pedidoId: item.id,
+      productos: (item.productos_detalle || []).map((p: any) => ({
+        nombre: p.producto_nombre || p.nombre,
+        cantidad: p.cantidad,
+        precio: p.producto_precio || p.precio_unitario || 0
+      })),
+      total: parseFloat(item.total || 0)
+    });
+  };
   const router = useRouter();
 
   useEffect(() => {
@@ -146,6 +173,15 @@ export default function BartenderHistoryScreen() {
               </View>
             )}
 
+            <TouchableOpacity 
+              style={styles.printTicketBtnBar}
+              onPress={() => handleOpenTicket(item)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="receipt-outline" size={15} color="#fff" />
+              <Text style={styles.printTicketBtnBarText}>IMPRIMIR TICKET POS</Text>
+            </TouchableOpacity>
+
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>TOTAL</Text>
               <Text style={styles.totalValue}>${parseFloat(item.total || 0).toLocaleString()}</Text>
@@ -185,6 +221,17 @@ export default function BartenderHistoryScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={NoxColors.aura} />}
         />
       )}
+
+      <TicketModal
+        visible={ticketData.visible}
+        onClose={() => setTicketData(prev => ({ ...prev, visible: false }))}
+        mesaNumero={ticketData.mesaNumero}
+        pedidoId={ticketData.pedidoId}
+        meseraNombre={user?.nombre_completo || user?.username || 'Bartender'}
+        productos={ticketData.productos}
+        total={ticketData.total}
+        tituloTicket="TICKET DE BARRA"
+      />
 
       <LogoutModal 
         visible={showLogout} 
