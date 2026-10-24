@@ -23,6 +23,7 @@ function BrandConfigScreen({ onBack }: { onBack: () => void }) {
   const [moneda, setMoneda] = useState('$');
   const [impuesto, setImpuesto] = useState('0');
   const [empresa, setEmpresa] = useState<any>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
@@ -49,19 +50,27 @@ function BrandConfigScreen({ onBack }: { onBack: () => void }) {
   }, []);
 
   const handleGuardar = async () => {
-    if (!nombre.trim()) return Alert.alert('Error', 'El nombre no puede estar vacío');
+    setFeedback(null);
+    if (!nombre.trim()) {
+      setFeedback({ type: 'error', message: 'El nombre del establecimiento no puede estar vacío.' });
+      return;
+    }
     setSaving(true);
     try {
       const id = empresa?.id;
       const payload = { nombre, nit, telefono, direccion, mensaje_footer: mensajeFooter, moneda, impuesto_porcentaje: parseFloat(impuesto) || 0 };
+      let res;
       if (id) {
-        await apiClient.patch(`/config/${id}/`, payload);
+        res = await apiClient.patch(`/config/${id}/`, payload);
       } else {
-        await apiClient.post('/config/', payload);
+        res = await apiClient.post('/config/', payload);
       }
-      Alert.alert('✅ Guardado', 'La identidad de la empresa ha sido actualizada.');
+      if (res?.data) {
+        setEmpresa(res.data);
+      }
+      setFeedback({ type: 'success', message: '¡Datos del ticket guardados correctamente en la base de datos!' });
     } catch (e: any) {
-      Alert.alert('Error', e?.response?.data?.detail ?? 'No se pudo guardar');
+      setFeedback({ type: 'error', message: e?.response?.data?.detail ?? 'No se pudo guardar la configuración.' });
     } finally {
       setSaving(false);
     }
@@ -116,6 +125,25 @@ function BrandConfigScreen({ onBack }: { onBack: () => void }) {
           <Text style={styles.fieldLabel}>IMPUESTO (%)</Text>
           <TextInput style={styles.input} value={impuesto} onChangeText={setImpuesto} placeholder="0" placeholderTextColor={NoxColors.gray} keyboardType="decimal-pad" />
         </View>
+
+        {feedback && (
+          <View style={[
+            styles.feedbackBox,
+            feedback.type === 'success' ? styles.feedbackBoxSuccess : styles.feedbackBoxError
+          ]}>
+            <Ionicons
+              name={feedback.type === 'success' ? "checkmark-circle" : "alert-circle"}
+              size={18}
+              color={feedback.type === 'success' ? NoxColors.emerald : NoxColors.rose}
+            />
+            <Text style={[
+              styles.feedbackText,
+              { color: feedback.type === 'success' ? NoxColors.emerald : NoxColors.rose }
+            ]}>
+              {feedback.message}
+            </Text>
+          </View>
+        )}
 
         <TouchableOpacity style={styles.saveBtn} onPress={handleGuardar} disabled={saving}>
           {saving
@@ -294,5 +322,28 @@ const styles = StyleSheet.create({
   cancelLinkText: { color: NoxColors.muted, fontWeight: '900', fontSize: 10, letterSpacing: 2, textDecorationLine: 'underline' },
 
   logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 40, padding: 20, borderRadius: 20, backgroundColor: 'rgba(255, 68, 68, 0.05)', borderWidth: 1, borderColor: 'rgba(255, 68, 68, 0.1)' },
-  logoutText: { color: NoxColors.rose, fontWeight: '900', fontSize: 12, letterSpacing: 2 }
+  logoutText: { color: NoxColors.rose, fontWeight: '900', fontSize: 12, letterSpacing: 2 },
+  feedbackBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 14,
+    borderRadius: 16,
+    marginBottom: 15,
+    marginHorizontal: 5,
+    borderWidth: 1,
+  },
+  feedbackBoxSuccess: {
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+  },
+  feedbackBoxError: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  feedbackText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    flex: 1,
+  },
 });

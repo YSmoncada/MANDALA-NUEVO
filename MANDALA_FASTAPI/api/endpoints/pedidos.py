@@ -119,20 +119,14 @@ def create_pedido(
 
         # 3. Extraer data y mapear usuario
         data = pedido.dict(exclude={'productos', 'detalles', 'estado_nombre', 'mesa_numero', 'usuario', 'force_append', 'pidiendo_cuenta'})
-        # Si no viene un usuario en el payload, usamos el que está logueado o un admin por defecto
+        # Si viene un usuario autenticado (mesera/personal), registramos quién tomó el pedido,
+        # pero NO se le auto-asigna la mesa (la asignación está reservada para el cliente vía QR).
         if current_user:
             data['creado_por'] = current_user.id
-            # Si el mesero hace el pedido, asignamos la mesa a él si está libre
-            if mesa_obj and not mesa_obj.mesero_id:
-                mesa_obj.mesero_id = current_user.id
         elif pedido.usuario:
             data['creado_por'] = pedido.usuario
-            if mesa_obj and not mesa_obj.mesero_id:
-                mesa_obj.mesero_id = pedido.usuario
         elif pedido.creado_por:
             data['creado_por'] = pedido.creado_por
-            if mesa_obj and not mesa_obj.mesero_id:
-                mesa_obj.mesero_id = pedido.creado_por
         else:
             # Pedido realizado directamente por el cliente desde el QR
             if mesa_obj and mesa_obj.mesero_id:

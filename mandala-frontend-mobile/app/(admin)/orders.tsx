@@ -139,18 +139,17 @@ export default function MonitorOrdenesScreen() {
             <Ionicons name="time-outline" size={12} color={NoxColors.muted} />
             <Text style={styles.hora}>{horaStr}</Text>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <TouchableOpacity 
-              style={styles.printTicketBtnAdmin}
-              onPress={() => handleOpenTicket(item)}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="receipt-outline" size={13} color={NoxColors.aura} />
-              <Text style={styles.printTicketBtnAdminText}>TICKET</Text>
-            </TouchableOpacity>
-            <Text style={styles.total}>${parseFloat(item.total || 0).toLocaleString()}</Text>
-          </View>
+          <Text style={styles.total}>${parseFloat(item.total || 0).toLocaleString()}</Text>
         </View>
+
+        <TouchableOpacity 
+          style={styles.orderTicketBtn}
+          onPress={() => handleOpenTicket(item)}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="receipt-outline" size={14} color={NoxColors.aura} />
+          <Text style={styles.orderTicketBtnText}>IMPRIMIR TICKET POS</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -298,6 +297,25 @@ const styles = StyleSheet.create({
   timeContainer: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   hora: { color: NoxColors.muted, fontSize: 11, fontWeight: 'bold' },
   total: { color: NoxColors.emerald, fontSize: 18, fontWeight: '900' },
+  orderTicketBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    backgroundColor: 'rgba(169, 68, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(169, 68, 255, 0.25)',
+  },
+  orderTicketBtnText: {
+    color: NoxColors.aura,
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
 
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 100, gap: 15, opacity: 0.5 },
   emptyText: { color: NoxColors.muted, fontWeight: '900', fontSize: 11, letterSpacing: 3 },

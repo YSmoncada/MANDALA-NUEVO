@@ -77,10 +77,8 @@ def get_mesa(
     if est:
         db_mesa.estado_nombre = est.nombre
         
-    # Asignación automática si la mesa aún no tiene mesero asignado
-    if not db_mesa.mesero_id:
-        assign_waiter(db, db_mesa)
-        
+    # La asignación automática de mesero SOLO ocurre cuando el cliente escanea o pide por QR,
+    # no cuando el staff consulta o toma pedidos directamente.
     if db_mesa.rel_mesero:
         db_mesa.mesero_nombre = db_mesa.rel_mesero.nombre_completo or db_mesa.rel_mesero.username
         
