@@ -202,6 +202,8 @@ def create_pedido(
         creador = current_user.username if current_user else "Cliente QR"
         logger.info(f"Pedido {db_pedido.id} creado por {creador}")
         return db_pedido
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
         logger.error(f"Error creando pedido: {str(e)}")
@@ -302,8 +304,15 @@ def update_pedido(
             if nombre_lower == "despachado" or nombre_lower == "aceptado":
                 logger.info(f"Pedido {pedido_id}: cambio a {nombre_lower.upper()} — descontando stock")
                 
-                # Obtener el ID del tipo de movimiento "Venta"
+                # Obtener el ID del tipo de movimiento "Venta" o "Salida"
                 tipo_venta = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.ilike("Venta")).first()
+                if not tipo_venta:
+                    tipo_venta = db.query(models.TipoMovimiento).filter(models.TipoMovimiento.nombre.ilike("Salida")).first()
+                if not tipo_venta:
+                    tipo_venta = models.TipoMovimiento(nombre="Venta")
+                    db.add(tipo_venta)
+                    db.commit()
+                    db.refresh(tipo_venta)
                 tipo_venta_id = tipo_venta.id if tipo_venta else None
 
                 for det in db_pedido.detalles:
@@ -354,6 +363,9 @@ def update_pedido(
             asyncio.ensure_future(ws_manager.broadcast_all(ws_event))
     except Exception as ws_err:
         logger.warning(f"WS broadcast fallido (no crítico): {ws_err}")
+
+    if estado_actual:
+        db_pedido.estado_nombre = estado_actual.nombre
 
     return db_pedido
 
