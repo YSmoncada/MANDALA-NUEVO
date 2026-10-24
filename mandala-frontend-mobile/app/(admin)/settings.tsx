@@ -52,7 +52,7 @@ function BrandConfigScreen({ onBack }: { onBack: () => void }) {
     if (!nombre.trim()) return Alert.alert('Error', 'El nombre no puede estar vacío');
     setSaving(true);
     try {
-      const id = empresa?.id ?? 1;
+      const id = empresa?.id;
       const payload = { nombre, nit, telefono, direccion, mensaje_footer: mensajeFooter, moneda, impuesto_porcentaje: parseFloat(impuesto) || 0 };
       if (id) {
         await apiClient.patch(`/config/${id}/`, payload);

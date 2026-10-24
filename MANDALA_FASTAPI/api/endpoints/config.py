@@ -14,7 +14,23 @@ def get_config(
     db: Session = Depends(deps.get_db),
     current_user: models.Usuario = Depends(deps.get_current_active_user)
 ):
-    return db.query(models.EmpresaConfig).all()
+    configs = db.query(models.EmpresaConfig).all()
+    if not configs:
+        # Auto-inicializar configuración base si la tabla está vacía
+        default_config = models.EmpresaConfig(
+            nombre="Mandala Disco Club",
+            nit="901.482.391-4",
+            direccion="Calle 7 # 14-22, Melgar, Tolima",
+            telefono="+57 312 456 7890",
+            mensaje_footer="¡Gracias por su visita a Mandala! Síguenos en @mandala_melgar",
+            moneda="$",
+            impuesto_porcentaje=0
+        )
+        db.add(default_config)
+        db.commit()
+        db.refresh(default_config)
+        configs = [default_config]
+    return configs
 
 @router.post("/", response_model=schemas.EmpresaConfig)
 def create_config(
@@ -22,6 +38,16 @@ def create_config(
     db: Session = Depends(deps.get_db),
     current_user: models.Usuario = Depends(deps.check_admin_role)
 ):
+    # Si ya existe una configuración, actualizarla en lugar de duplicar
+    existing = db.query(models.EmpresaConfig).first()
+    if existing:
+        for key, value in config.dict(exclude_unset=True).items():
+            setattr(existing, key, value)
+        db.commit()
+        db.refresh(existing)
+        logger.info(f"Configuración de empresa actualizada por {current_user.username}")
+        return existing
+
     db_config = models.EmpresaConfig(**config.dict())
     db.add(db_config)
     db.commit()
@@ -39,7 +65,16 @@ def update_config(
 ):
     db_config = db.query(models.EmpresaConfig).filter(models.EmpresaConfig.id == config_id).first()
     if not db_config:
-        raise HTTPException(status_code=404, detail="Configuración no encontrada")
+        # Upsert: si no existe el ID específico, actualizar el primero o crear uno nuevo
+        db_config = db.query(models.EmpresaConfig).first()
+        if not db_config:
+            db_config = models.EmpresaConfig(**config.dict(exclude_unset=True))
+            db.add(db_config)
+            db.commit()
+            db.refresh(db_config)
+            logger.info(f"Configuración inicial creada en update por {current_user.username}")
+            return db_config
+
     for key, value in config.dict(exclude_unset=True).items():
         setattr(db_config, key, value)
     db.commit()
