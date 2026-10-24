@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import apiClient from '../../utils/apiClient';
 import { formatImageUrl } from '../../utils/imageHelpers';
@@ -33,6 +34,7 @@ const INITIAL_FORM = {
 
 export default function AdmInventarioScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { isDesktop } = useResponsive();
   const numColumns = isDesktop ? 2 : 1;
 
@@ -405,32 +407,61 @@ export default function AdmInventarioScreen() {
 
   const renderHeader = () => (
     <View style={styles.headerWrapper}>
-      {/* 1. Header Premium con Botón de Historial y Agregar */}
-      <View style={styles.header}>
+      {/* 1. Header Principal con Branding */}
+      <View style={[styles.header, { paddingTop: Math.max(insets.top + 8, Platform.OS === 'ios' ? 56 : 28) }]}>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
-          <Text style={styles.subtitle}>CONTROL DE EXISTENCIAS & ALMACÉN</Text>
+          <Text style={styles.subtitle} numberOfLines={1}>
+            {isDesktop ? "CONTROL DE EXISTENCIAS & ALMACÉN" : "CONTROL DE ALMACÉN"}
+          </Text>
         </View>
 
-        <View style={styles.headerActions}>
+        {/* Acciones en Desktop: alineados a la derecha */}
+        {isDesktop && (
+          <View style={styles.headerActions}>
+            <TouchableOpacity 
+              style={styles.historyBtn} 
+              onPress={() => openHistoryModal()}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="time-outline" size={20} color={NoxColors.aura} />
+              <Text style={styles.historyBtnText}>HISTORIAL</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.addBtnDesktop} 
+              onPress={handleOpenNew}
+              activeOpacity={0.85}
+            >
+              <Ionicons name="add" size={22} color={NoxColors.text} />
+              <Text style={styles.addBtnDesktopText}>NUEVO PRODUCTO</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+
+      {/* En Móvil: Barra de Acciones Dedicada 100% visible, amplia y accesible */}
+      {!isDesktop && (
+        <View style={styles.mobileActionBar}>
           <TouchableOpacity 
-            style={styles.historyBtn} 
+            style={styles.mobileHistoryBtn} 
             onPress={() => openHistoryModal()}
             activeOpacity={0.8}
           >
-            <Ionicons name="time-outline" size={20} color={NoxColors.aura} />
-            <Text style={styles.historyBtnText}>HISTORIAL</Text>
+            <Ionicons name="time-outline" size={18} color={NoxColors.aura} />
+            <Text style={styles.mobileHistoryBtnText} numberOfLines={1}>HISTORIAL</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={styles.addBtn} 
+            style={styles.mobileAddBtn} 
             onPress={handleOpenNew}
             activeOpacity={0.85}
           >
-            <Ionicons name="add" size={24} color={NoxColors.text} />
+            <Ionicons name="add-circle" size={19} color={NoxColors.text} />
+            <Text style={styles.mobileAddBtnText} numberOfLines={1}>AGREGAR PRODUCTO</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      )}
 
       {/* 2. Buscador y Filtro Horizontal de Categorías */}
       <View style={styles.searchSection}>
@@ -1027,6 +1058,17 @@ export default function AdmInventarioScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Floating Action Button (FAB) en Móvil para agregar productos de forma rápida */}
+      {!isDesktop && (
+        <TouchableOpacity 
+          style={styles.mobileFab}
+          onPress={handleOpenNew}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="add" size={28} color={NoxColors.text} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -1045,7 +1087,7 @@ const styles = StyleSheet.create({
   },
   listContent: { 
     paddingHorizontal: 20, 
-    paddingBottom: 100, 
+    paddingBottom: 120, 
     maxWidth: 1240, 
     width: '100%', 
     alignSelf: 'center',
@@ -1060,20 +1102,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 60 : 35,
-    paddingBottom: 18,
+    paddingBottom: 12,
     width: '100%',
   },
-  headerTitleContainer: { gap: 4 },
+  headerTitleContainer: { 
+    flex: 1, 
+    gap: 4 
+  },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.aura },
-  subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, textTransform: 'uppercase' },
+  subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
   
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   historyBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     backgroundColor: 'rgba(169, 68, 255, 0.1)',
     borderWidth: 1,
     borderColor: 'rgba(169, 68, 255, 0.3)',
@@ -1082,6 +1126,21 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   historyBtnText: { color: NoxColors.aura, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
+
+  addBtnDesktop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: NoxColors.aura,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 18,
+    shadowColor: NoxColors.aura,
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  addBtnDesktopText: { color: NoxColors.text, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
 
   addBtn: {
     backgroundColor: NoxColors.aura,
@@ -1094,6 +1153,70 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 15,
     shadowOffset: { width: 0, height: 4 },
+  },
+
+  mobileActionBar: {
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+    marginBottom: 14,
+  },
+  mobileHistoryBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(169, 68, 255, 0.12)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(169, 68, 255, 0.4)',
+    paddingVertical: 13,
+    borderRadius: 18,
+  },
+  mobileHistoryBtnText: {
+    color: NoxColors.aura,
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  mobileAddBtn: {
+    flex: 1.25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: NoxColors.aura,
+    paddingVertical: 13,
+    borderRadius: 18,
+    shadowColor: NoxColors.aura,
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+  },
+  mobileAddBtnText: {
+    color: NoxColors.text,
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+
+  mobileFab: {
+    position: 'absolute',
+    bottom: 85,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: NoxColors.aura,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: NoxColors.aura,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 8,
+    zIndex: 999,
   },
 
   searchSection: { width: '100%', marginBottom: 10 },

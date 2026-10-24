@@ -19,6 +19,7 @@ export default function BartenderHistoryScreen() {
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
   const user = useAuthStore(state => state.user);
   const clearAuth = useAuthStore(state => state.clearAuth);
   const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -225,7 +226,7 @@ export default function BartenderHistoryScreen() {
         onClose={() => setTicketData(prev => ({ ...prev, visible: false }))}
         mesaNumero={ticketData.mesaNumero}
         pedidoId={ticketData.pedidoId}
-        meseraNombre={user?.nombre_completo || user?.username || 'Bartender'}
+        meseraNombre={(user as any)?.nombre_completo || user?.username || 'Bartender'}
         productos={ticketData.productos}
         total={ticketData.total}
         tituloTicket="TICKET DE BARRA"

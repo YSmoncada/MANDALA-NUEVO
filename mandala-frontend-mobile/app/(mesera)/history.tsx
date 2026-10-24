@@ -387,7 +387,7 @@ export default function MisPedidosScreen() {
         onClose={() => setTicketData(prev => ({ ...prev, visible: false }))}
         mesaNumero={ticketData.mesaNumero}
         pedidoId={ticketData.pedidoId}
-        meseraNombre={user?.nombre_completo || user?.username || 'Mesera'}
+        meseraNombre={(user as any)?.nombre_completo || user?.username || 'Mesera'}
         productos={ticketData.productos}
         total={ticketData.total}
         tituloTicket={ticketData.tituloTicket}

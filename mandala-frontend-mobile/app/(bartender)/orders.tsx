@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Activity
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import { formatImageUrl } from '../../utils/imageHelpers';
+import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/authStore';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
 
 
 export default function PedidosScreen() {
+  const router = useRouter();
   const { isDesktop, isLargeScreen } = useResponsive();
   const numColumns = isLargeScreen ? 4 : (isDesktop ? 3 : 2);
   const [productos, setProductos] = useState<any[]>([]);
