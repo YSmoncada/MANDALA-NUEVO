@@ -69,16 +69,16 @@ export default function MeseraLayout() {
             if (isMyTable && m.pidiendo_cuenta) {
               if (!knownPidiendoMesas.current.has(m.id)) {
                 knownPidiendoMesas.current.add(m.id);
+                // Limpiar de inmediato en backend para que no se repita en cada ciclo
+                try {
+                  await apiClient.post(`/mesas/${m.id}/limpiar-cuenta/`);
+                } catch (e) {}
+
                 useAlertStore.getState().showAlert(
                   '💳 ¡CUENTA SOLICITADA!',
                   `La Mesa #${m.numero} ha solicitado la cuenta.`,
                   'warning',
-                  async () => {
-                    try {
-                      await apiClient.post(`/mesas/${m.id}/limpiar-cuenta/`);
-                    } catch (e) {}
-                    router.push('/(mesera)/history');
-                  },
+                  () => router.push('/(mesera)/history'),
                   'IR A LA MESA'
                 );
               }

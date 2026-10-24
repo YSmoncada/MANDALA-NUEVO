@@ -45,7 +45,7 @@ class Producto(Base):
     stock_actual = Column(Integer, default=0)
     activo = Column(Boolean, default=True)
     categoria = Column(Integer, ForeignKey("categorias.id"), nullable=True)
-    imagen = Column(String(255), nullable=True)
+    imagen = Column(Text, nullable=True)
 
     rel_categoria = relationship("Categoria", back_populates="productos")
 

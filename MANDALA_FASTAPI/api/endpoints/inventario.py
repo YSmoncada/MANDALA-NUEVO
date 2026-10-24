@@ -1,3 +1,7 @@
+import uuid
+import os
+import shutil
+from fastapi import UploadFile, File
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db import database, models
@@ -83,6 +87,26 @@ def get_productos(
             p.categoria_nombre = cat.nombre
             
     return productos_list
+
+@router.post("/productos/upload-imagen/")
+async def upload_producto_imagen(
+    file: UploadFile = File(...),
+    db: Session = Depends(deps.get_db),
+    current_user: Optional[models.Usuario] = Depends(deps.get_optional_user)
+):
+    media_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "media", "productos")
+    os.makedirs(media_dir, exist_ok=True)
+    
+    ext = os.path.splitext(file.filename)[1] or ".jpg"
+    filename = f"prod_{uuid.uuid4().hex[:10]}{ext}"
+    filepath = os.path.join(media_dir, filename)
+    
+    with open(filepath, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    url = f"/media/productos/{filename}"
+    logger.info(f"Imagen subida exitosamente: {url}")
+    return {"url": url, "filename": filename}
 
 @router.post("/productos/", response_model=schemas.Producto)
 def create_producto(

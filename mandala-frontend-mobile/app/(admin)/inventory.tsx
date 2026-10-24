@@ -108,6 +108,7 @@ export default function AdmInventarioScreen() {
 
       const prods = Array.isArray(prodRes.data) ? prodRes.data : [];
       setProductos(prods);
+      setBrokenImages({});
 
       const rawCats = Array.isArray(catRes.data) ? catRes.data : (catRes.data?.results || []);
       setDbCategorias(rawCats);
@@ -140,7 +141,10 @@ export default function AdmInventarioScreen() {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        uploadToCloudinary(result.assets[0].uri);
+        const uri = result.assets[0].uri;
+        // Establecer previsualización inmediata para que el usuario no pierda su selección
+        setForm(prev => ({ ...prev, imagen: uri }));
+        uploadToCloudinary(uri);
       }
     } catch (e) {
       console.error("Error al seleccionar imagen:", e);
@@ -151,11 +155,20 @@ export default function AdmInventarioScreen() {
   const uploadToCloudinary = async (uri: string) => {
     setIsUploadingImage(true);
     try {
+      // 1. Intentar Cloudinary
       const data = new FormData();
       if (Platform.OS === 'web') {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        data.append("file", blob, "image.jpg");
+        if (uri.startsWith('data:')) {
+          data.append("file", uri);
+        } else {
+          try {
+            const response = await fetch(uri);
+            const blob = await response.blob();
+            data.append("file", blob, "image.jpg");
+          } catch (fetchErr) {
+            data.append("file", uri);
+          }
+        }
       } else {
         data.append("file", { uri, type: "image/jpeg", name: "upload.jpg" } as any);
       }
@@ -169,14 +182,29 @@ export default function AdmInventarioScreen() {
       const result = await res.json();
       if (result.secure_url) {
         setForm(prev => ({ ...prev, imagen: result.secure_url }));
-        Alert.alert("¡Imagen cargada!", "La fotografía se guardó correctamente.");
+        return;
+      }
+
+      // 2. Fallback: subir al servidor backend de Mandala
+      console.warn("Cloudinary sin secure_url, intentando subir a backend:", result);
+      const bForm = new FormData();
+      if (Platform.OS === 'web') {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        bForm.append("file", blob, "image.jpg");
       } else {
-        console.error("Cloudinary response:", result);
-        Alert.alert("Aviso", "No se pudo subir a Cloudinary. Puedes pegar la URL directa en el campo.");
+        bForm.append("file", { uri, type: "image/jpeg", name: "upload.jpg" } as any);
+      }
+      const bRes = await apiClient.post('/productos/upload-imagen/', bForm, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (bRes.data?.url) {
+        setForm(prev => ({ ...prev, imagen: bRes.data.url }));
+        return;
       }
     } catch (e) {
-      console.error("Cloudinary error:", e);
-      Alert.alert("Error", "Hubo un problema al subir la foto.");
+      console.warn("Fallo en servicio externo, manteniendo URI de imagen local:", e);
+      // Se mantiene la imagen uri (o base64) para que no se pierda al guardar
     } finally {
       setIsUploadingImage(false);
     }
@@ -226,6 +254,9 @@ export default function AdmInventarioScreen() {
   };
 
   const handleSave = async () => {
+    if (isUploadingImage) {
+      return Alert.alert('Subiendo imagen', 'Por favor espera a que la imagen termine de procesarse.');
+    }
     if (!form.nombre.trim()) {
       return Alert.alert('Campo requerido', 'Por favor ingresa el nombre del producto.');
     }
@@ -814,10 +845,21 @@ export default function AdmInventarioScreen() {
                 </View>
 
                 {/* Botón Guardar */}
-                <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-                  <Text style={styles.saveBtnText}>
-                    {editId ? 'ACTUALIZAR PRODUCTO' : 'GUARDAR EN CATÁLOGO'}
-                  </Text>
+                <TouchableOpacity 
+                  style={[styles.saveBtn, isUploadingImage && { opacity: 0.6 }]} 
+                  onPress={handleSave}
+                  disabled={isUploadingImage}
+                >
+                  {isUploadingImage ? (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      <ActivityIndicator size="small" color="#fff" />
+                      <Text style={styles.saveBtnText}>SUBIENDO FOTOGRAFÍA...</Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.saveBtnText}>
+                      {editId ? 'ACTUALIZAR PRODUCTO' : 'GUARDAR EN CATÁLOGO'}
+                    </Text>
+                  )}
                 </TouchableOpacity>
               </ScrollView>
             </View>

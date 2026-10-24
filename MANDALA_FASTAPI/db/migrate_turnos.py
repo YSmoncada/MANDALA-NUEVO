@@ -34,6 +34,20 @@ def migrate():
                     print("Añadiendo columna 'mesero_id' a 'mesas'...")
                     conn.execute(text("ALTER TABLE mesas ADD COLUMN mesero_id INTEGER"))
                     conn.commit()
+                # Limpiar solicitud residual de cuenta en mesa 3
+                conn.execute(text("UPDATE mesas SET pidiendo_cuenta = FALSE WHERE numero = 3"))
+                conn.commit()
+
+        # 3. Soporte para imágenes largas / base64 en 'productos'
+        if 'productos' in tables:
+            with engine.connect() as conn:
+                try:
+                    # Compatible con PostgreSQL
+                    conn.execute(text("ALTER TABLE productos ALTER COLUMN imagen TYPE TEXT"))
+                    conn.commit()
+                except Exception:
+                    pass
+
         print("Migraciones de esquema verificadas correctamente.")
     except Exception as e:
         print(f"Verificación de migración omitida o error: {e}")

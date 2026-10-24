@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useFocusEffect } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
-import LogoutModal from '../../components/LogoutModal';
 import TicketModal from '../../components/TicketModal';
 import { NoxColors } from '../../constants/theme';
 
@@ -23,7 +22,6 @@ export default function BartenderHistoryScreen() {
   const user = useAuthStore(state => state.user);
   const clearAuth = useAuthStore(state => state.clearAuth);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [showLogout, setShowLogout] = useState(false);
   const [ticketData, setTicketData] = useState<{
     visible: boolean;
     mesaNumero: number | string;
@@ -201,9 +199,7 @@ export default function BartenderHistoryScreen() {
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
           <Text style={styles.subtitle}>MIS PEDIDOS</Text>
         </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
-          <Ionicons name="log-out-outline" size={22} color={NoxColors.rose} />
-        </TouchableOpacity>
+
       </View>
 
       {loading && !refreshing ? (
@@ -235,11 +231,7 @@ export default function BartenderHistoryScreen() {
         tituloTicket="TICKET DE BARRA"
       />
 
-      <LogoutModal 
-        visible={showLogout} 
-        onCancel={() => setShowLogout(false)} 
-        onConfirm={confirmLogout} 
-      />
+
     </View>
   );
 }

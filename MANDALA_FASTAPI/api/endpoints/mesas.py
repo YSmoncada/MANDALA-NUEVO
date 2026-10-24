@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from db import database, models
 from schemas import schemas
 from api import deps
-from typing import List
+from typing import List, Optional
 import logging
 import random
 
@@ -115,7 +115,7 @@ def pedir_cuenta(mesa_id: int, db: Session = Depends(deps.get_db)):
 def limpiar_cuenta(
     mesa_id: int, 
     db: Session = Depends(deps.get_db),
-    current_user: models.Usuario = Depends(deps.get_current_active_user)
+    current_user: Optional[models.Usuario] = Depends(deps.get_optional_user)
 ):
     db_mesa = db.query(models.Mesa).filter(models.Mesa.id == mesa_id).first()
     if not db_mesa:

@@ -127,10 +127,9 @@ export default function MisPedidosScreen() {
     if (!mesaAlerta) return;
     try {
       await apiClient.post(`/mesas/${mesaAlerta.id}/limpiar-cuenta/`);
-      setMesaAlerta(null);
-    } catch (e) {
-      showAlert("Error", "No se pudo limpiar la alerta", "error");
-    }
+    } catch (e) {}
+    setMesaAlerta(null);
+    fetchPedidos();
   };
 
   useFocusEffect(
@@ -240,12 +239,26 @@ export default function MisPedidosScreen() {
         </View>
       </View>
 
-      {item.pidiendo_cuenta && (
-        <View style={styles.billAlertInline}>
-          <Ionicons name="notifications-outline" size={16} color={NoxColors.aura} />
-          <Text style={styles.billAlertText}>SOLICITÓ LA CUENTA</Text>
+      {item.pidiendo_cuenta ? (
+        <View style={[styles.billAlertInline, { justifyContent: 'space-between' }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Ionicons name="notifications-outline" size={16} color={NoxColors.aura} />
+            <Text style={styles.billAlertText}>SOLICITÓ LA CUENTA</Text>
+          </View>
+          <TouchableOpacity 
+            style={{ paddingHorizontal: 10, paddingVertical: 4, backgroundColor: 'rgba(255, 180, 0, 0.15)', borderRadius: 6, borderWidth: 1, borderColor: NoxColors.amber }}
+            onPress={async () => {
+              try {
+                await apiClient.post(`/mesas/${item.mesa_id}/limpiar-cuenta/`);
+                item.pidiendo_cuenta = false;
+                fetchPedidos();
+              } catch (e) {}
+            }}
+          >
+            <Text style={{ color: NoxColors.amber, fontSize: 10, fontWeight: '800' }}>DESMARCAR</Text>
+          </TouchableOpacity>
         </View>
-      )}
+      ) : null}
 
       <View style={styles.detail}>
         <Text style={styles.detailLabel}>DETALLE DE PRODUCTOS</Text>
