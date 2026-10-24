@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
 import LogoutModal from '../../components/LogoutModal';
@@ -52,9 +52,11 @@ export default function BartenderHistoryScreen() {
   };
   const router = useRouter();
 
-  useEffect(() => {
-    if (user?.id) fetchPedidos(user.id);
-  }, [user?.id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) fetchPedidos(user.id);
+    }, [user?.id])
+  );
 
   const fetchPedidos = async (uid?: string) => {
     const id = uid || user?.id;
@@ -150,6 +152,11 @@ export default function BartenderHistoryScreen() {
             ))}
             <View style={styles.divider} />
             
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>TOTAL</Text>
+              <Text style={styles.totalValue}>${parseFloat(item.total || 0).toLocaleString()}</Text>
+            </View>
+
             {/* Gestión de Estado */}
             {isActive && (
               <View style={styles.actionsHistory}>
@@ -178,14 +185,9 @@ export default function BartenderHistoryScreen() {
               onPress={() => handleOpenTicket(item)}
               activeOpacity={0.8}
             >
-              <Ionicons name="receipt-outline" size={15} color="#fff" />
+              <Ionicons name="receipt-outline" size={15} color={NoxColors.aura} />
               <Text style={styles.printTicketBtnBarText}>IMPRIMIR TICKET POS</Text>
             </TouchableOpacity>
-
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>TOTAL</Text>
-              <Text style={styles.totalValue}>${parseFloat(item.total || 0).toLocaleString()}</Text>
-            </View>
           </View>
         )}
       </TouchableOpacity>
@@ -285,4 +287,22 @@ const styles = StyleSheet.create({
   empty: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
   emptyTitle: { color: NoxColors.text, fontSize: 20, fontWeight: 'bold' },
   emptyText: { color: NoxColors.muted, fontSize: 13 },
+  printTicketBtnBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 14,
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(169, 68, 255, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(169, 68, 255, 0.35)',
+  },
+  printTicketBtnBarText: {
+    color: NoxColors.aura,
+    fontWeight: '900',
+    fontSize: 11,
+    letterSpacing: 2,
+  },
 });

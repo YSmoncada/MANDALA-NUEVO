@@ -117,6 +117,7 @@ class PedidoBase(BaseModel):
     mesa_numero: Optional[int] = None
     creado_por: Optional[int] = None
     pidiendo_cuenta: Optional[bool] = False
+    origen_cliente: Optional[bool] = False
 
 class PedidoCreate(PedidoBase):
     productos: Optional[List[PedidoProductoCreate]] = None

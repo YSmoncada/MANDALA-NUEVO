@@ -40,11 +40,15 @@ export default function MeseraLayout() {
             for (const p of pedidos) {
               if (!knownPedidoIds.current.has(p.id)) {
                 knownPedidoIds.current.add(p.id);
+                // Si el pedido fue tomado por personal/mesera, NO alertar asignación
+                if (!p.origen_cliente) {
+                  continue;
+                }
                 const mesaNum = p.mesa_numero || p.mesa;
                 const itemsCount = (p.productos_detalle || p.detalles || []).length;
                 useAlertStore.getState().showAlert(
-                  '🛎️ ¡NUEVO PEDIDO ASIGNADO!',
-                  `Se asignó a tu atención un nuevo pedido en la Mesa #${mesaNum} (${itemsCount} producto${itemsCount > 1 ? 's' : ''}).`,
+                  '🛎️ ¡NUEVO PEDIDO DE CLIENTE (QR)!',
+                  `Un cliente en la Mesa #${mesaNum} realizó un pedido (${itemsCount} producto${itemsCount > 1 ? 's' : ''}).`,
                   'info',
                   () => router.push('/(mesera)/history'),
                   'VER COMANDA'
@@ -69,7 +73,12 @@ export default function MeseraLayout() {
                   '💳 ¡CUENTA SOLICITADA!',
                   `La Mesa #${m.numero} ha solicitado la cuenta.`,
                   'warning',
-                  () => router.push('/(mesera)/history'),
+                  async () => {
+                    try {
+                      await apiClient.post(`/mesas/${m.id}/limpiar-cuenta/`);
+                    } catch (e) {}
+                    router.push('/(mesera)/history');
+                  },
                   'IR A LA MESA'
                 );
               }

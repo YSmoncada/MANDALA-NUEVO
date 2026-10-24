@@ -81,6 +81,7 @@ class Pedido(Base):
     mesa = Column(Integer, ForeignKey("mesas.id"))
     creado_por = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     turno_id = Column(Integer, ForeignKey("turnos.id"), nullable=True)
+    origen_cliente = Column(Boolean, default=False)
 
     rel_estado = relationship("EstadoPedido")
     rel_mesa = relationship("Mesa")

@@ -57,6 +57,7 @@ def read_pedidos(
         if ms: 
             p.mesa_numero = ms.numero
             p.pidiendo_cuenta = ms.pidiendo_cuenta
+        p.origen_cliente = bool(getattr(p, 'origen_cliente', False))
         
         u = db.query(models.Usuario).filter(models.Usuario.id == p.creado_por).first() if p.creado_por else None
         if u:
@@ -123,12 +124,16 @@ def create_pedido(
         # pero NO se le auto-asigna la mesa (la asignación está reservada para el cliente vía QR).
         if current_user:
             data['creado_por'] = current_user.id
+            data['origen_cliente'] = False
         elif pedido.usuario:
             data['creado_por'] = pedido.usuario
+            data['origen_cliente'] = False
         elif pedido.creado_por:
             data['creado_por'] = pedido.creado_por
+            data['origen_cliente'] = False
         else:
             # Pedido realizado directamente por el cliente desde el QR
+            data['origen_cliente'] = True
             if mesa_obj and mesa_obj.mesero_id:
                 data['creado_por'] = mesa_obj.mesero_id
             else:

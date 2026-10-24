@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, RefreshControl, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
@@ -37,11 +38,13 @@ export default function BartenderPrepScreen() {
     setAlertConfig({ visible: true, title: '', message: '', type: 'info', onConfirm: undefined, onCancel: undefined, confirmText: undefined, cancelText: undefined, ...config });
   };
 
-  useEffect(() => {
-    fetchPending();
-    const timer = setInterval(fetchPending, 60000); // Refresca cada 60 segundos
-    return () => clearInterval(timer);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchPending();
+      const timer = setInterval(() => fetchPending(true), 12000); // Refresca cada 12 segundos moderado, sin saturar
+      return () => clearInterval(timer);
+    }, [fetchPending])
+  );
 
   const fetchPending = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);

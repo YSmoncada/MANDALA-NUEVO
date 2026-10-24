@@ -46,7 +46,13 @@ export default function MisPedidosScreen() {
     total: 0
   });
 
-  const handleOpenTicketMesa = (mesaGroup: any) => {
+  const handleOpenTicketMesa = async (mesaGroup: any) => {
+    if (mesaGroup.pidiendo_cuenta && mesaGroup.mesa_id) {
+      try {
+        await apiClient.post(`/mesas/${mesaGroup.mesa_id}/limpiar-cuenta/`);
+        mesaGroup.pidiendo_cuenta = false;
+      } catch (e) {}
+    }
     setTicketData({
       visible: true,
       mesaNumero: mesaGroup.mesa_numero,

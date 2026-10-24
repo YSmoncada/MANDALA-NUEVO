@@ -95,7 +95,10 @@ export default function PedidosScreen() {
     try {
       const res = await apiClient.post('/pedidos/', payload);
       if (res.status === 201 || res.status === 200) {
-        Alert.alert('¡Excelente!', 'Pedido enviado a cocina/barra');
+        Alert.alert('¡Excelente!', 'Pedido enviado a cocina/barra', [
+          { text: 'Ver en Pendientes', onPress: () => router.push('/(bartender)/prep') },
+          { text: 'Aceptar' }
+        ]);
         setOrder([]);
         setSelectedMesa(null);
         setShowCheckout(false);
