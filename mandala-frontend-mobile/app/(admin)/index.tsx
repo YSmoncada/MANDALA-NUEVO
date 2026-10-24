@@ -21,6 +21,8 @@ const MODULES = [
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>({ totalVentas: 0, pedidosHoy: 0, stockBajoCount: 0 });
   const [edaData, setEdaData] = useState<any>(null);
+  const [periodo, setPeriodo] = useState<'dia' | 'semana' | 'mes'>('dia');
+  const [loadingEda, setLoadingEda] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { clearAuth, user } = useAuthStore();
@@ -32,13 +34,32 @@ export default function AdminDashboard() {
     }, [])
   );
 
+  const fetchEda = async (selectedPeriod: 'dia' | 'semana' | 'mes') => {
+    setLoadingEda(true);
+    try {
+      const res = await apiClient.get(`/analytics/dashboard/?periodo=${selectedPeriod}`);
+      if (res && res.data) {
+        setEdaData(res.data);
+      }
+    } catch (err) {
+      console.error("Error fetching EDA data:", err);
+    } finally {
+      setLoadingEda(false);
+    }
+  };
+
+  const handlePeriodoChange = (newPeriod: 'dia' | 'semana' | 'mes') => {
+    setPeriodo(newPeriod);
+    fetchEda(newPeriod);
+  };
+
   const fetchStats = async () => {
     setLoading(true);
     try {
       const [prodRes, pedRes, edaRes] = await Promise.allSettled([
         apiClient.get('/productos/'),
         apiClient.get('/pedidos/'),
-        apiClient.get('/analytics/dashboard/')
+        apiClient.get(`/analytics/dashboard/?periodo=${periodo}`)
       ]);
 
       const prods = prodRes.status === 'fulfilled' ? prodRes.value.data : [];
@@ -183,7 +204,42 @@ export default function AdminDashboard() {
                 <Ionicons name="analytics" size={20} color={NoxColors.aura} />
                 <Text style={styles.sectionTitle}>Dashboard Analítico (EDA)</Text>
               </View>
+
+              {/* Selector de Periodo Temporal: Día | Semana | Mes */}
+              <View style={styles.periodSelector}>
+                <TouchableOpacity 
+                  style={[styles.periodTab, periodo === 'dia' && styles.periodTabActive]}
+                  onPress={() => handlePeriodoChange('dia')}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.periodTabText, periodo === 'dia' && styles.periodTabTextActive]}>Día</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={[styles.periodTab, periodo === 'semana' && styles.periodTabActive]}
+                  onPress={() => handlePeriodoChange('semana')}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.periodTabText, periodo === 'semana' && styles.periodTabTextActive]}>Semana</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={[styles.periodTab, periodo === 'mes' && styles.periodTabActive]}
+                  onPress={() => handlePeriodoChange('mes')}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.periodTabText, periodo === 'mes' && styles.periodTabTextActive]}>Mes</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+
+            {/* Subtítulo dinámico con la ventana temporal analizada */}
+            {edaData.descripcion_periodo ? (
+              <View style={styles.periodBadgeRow}>
+                <Ionicons name="calendar-outline" size={12} color={NoxColors.muted} />
+                <Text style={styles.periodBadgeText}>{edaData.descripcion_periodo}</Text>
+              </View>
+            ) : null}
 
             {/* KPIs EDA */}
             <View style={[styles.edaKpisRow, { flexDirection: isDesktop ? 'row' : 'column' }]}>
@@ -207,9 +263,16 @@ export default function AdminDashboard() {
             {/* Curva de Demanda por Hora */}
             <View style={styles.edaChartCard}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <Text style={styles.chartTitle}>Curva de Demanda Temporal por Hora</Text>
+                <View style={{ flex: 1, paddingRight: 8 }}>
+                  <Text style={styles.chartTitle}>Curva de Demanda Temporal por Hora</Text>
+                  <Text style={{ fontSize: 10, color: NoxColors.muted, marginTop: 2 }}>
+                    {edaData.etiqueta_periodo ? `Periodo: ${edaData.etiqueta_periodo}` : "Distribución horaria"}
+                  </Text>
+                </View>
                 <View style={styles.peakPill}>
-                  <Text style={styles.peakPillText}>Pico: 10 PM - 12 AM</Text>
+                  <Text style={styles.peakPillText}>
+                    {edaData.insights_eda?.pico_critico ? `Pico: ${edaData.insights_eda.pico_critico}` : "Pico: 10 PM - 12 AM"}
+                  </Text>
                 </View>
               </View>
 
@@ -217,7 +280,7 @@ export default function AdminDashboard() {
               <View style={styles.barChartContainer}>
                 {edaData.curva_demanda?.map((h: any, idx: number) => {
                   const barHeight = Math.max(16, h.altura_relativa || 16);
-                  const isPeak = h.es_pico || h.pedidos >= 4;
+                  const isPeak = h.es_pico;
                   return (
                     <View key={idx} style={styles.chartCol}>
                       <Text style={[styles.chartPedCount, isPeak ? { color: NoxColors.aura, fontWeight: '900' } : null]}>
@@ -237,8 +300,13 @@ export default function AdminDashboard() {
               </View>
 
               <Text style={styles.edaInsightNote}>
-                💡 <Text style={{ fontWeight: '700', color: NoxColors.amber }}>Concentración:</Text> {edaData.curva_demanda?.filter((h: any) => h.es_pico).reduce((acc: number, h: any) => acc + h.pedidos, 0)} de los {edaData.kpis?.total_pedidos} pedidos del turno se concentran entre 10 PM y 12 AM.
+                💡 <Text style={{ fontWeight: '700', color: NoxColors.amber }}>Concentración:</Text> {edaData.insights_eda?.resumen_demanda || `${edaData.curva_demanda?.filter((h: any) => h.es_pico).reduce((acc: number, h: any) => acc + h.pedidos, 0)} de los ${edaData.kpis?.total_pedidos} pedidos del periodo se concentran en las horas pico.`}
               </Text>
+              {edaData.insights_eda?.recomendacion ? (
+                <Text style={[styles.edaInsightNote, { marginTop: 6 }]}>
+                  🎯 <Text style={{ fontWeight: '700', color: NoxColors.aura }}>Estrategia:</Text> {edaData.insights_eda.recomendacion}
+                </Text>
+              ) : null}
             </View>
 
             {/* Categorías (Pareto) & Top Productos */}
@@ -842,5 +910,43 @@ const styles = StyleSheet.create({
     color: NoxColors.emerald,
     fontSize: 11,
     fontWeight: '800',
+  },
+  periodSelector: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 10,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    gap: 3,
+  },
+  periodTab: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 7,
+  },
+  periodTabActive: {
+    backgroundColor: NoxColors.aura,
+  },
+  periodTabText: {
+    color: NoxColors.muted,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  periodTabTextActive: {
+    color: '#ffffff',
+    fontWeight: '800',
+  },
+  periodBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginBottom: 10,
+    marginTop: -4,
+  },
+  periodBadgeText: {
+    color: NoxColors.muted,
+    fontSize: 11,
+    fontWeight: '600',
   }
 });
