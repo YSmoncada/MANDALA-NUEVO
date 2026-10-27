@@ -10,7 +10,9 @@ import { useAuthStore } from '../store/authStore';
 interface NoxSidebarTabBarProps {
   state: any;
   descriptors: any;
-  navigation: any;
+  navigation?: any;
+  emitter?: any;
+  navigateToTab?: (routeKey: string) => void;
   insets?: any;
   roleTitle?: string;
   roleSubtitle?: string;
@@ -21,6 +23,8 @@ export default function NoxSidebarTabBar({
   state,
   descriptors,
   navigation,
+  emitter,
+  navigateToTab,
   roleTitle = 'SISTEMA',
   roleSubtitle = 'Mandala NoxOS',
   hideSettingsOnDesktop = false,
@@ -29,6 +33,34 @@ export default function NoxSidebarTabBar({
   const router = useRouter();
   const { user, clearAuth } = useAuthStore();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  // Manejador seguro de cambio de pestaña compatible con Expo SDK 58 (Expo Router / React Navigation)
+  const handleTabPress = (route: any, isFocused: boolean) => {
+    let event: any = undefined;
+    if (emitter?.emit) {
+      event = emitter.emit({
+        type: 'tabPress',
+        target: route.key,
+        canPreventDefault: true,
+      });
+    } else if (navigation?.emit) {
+      event = navigation.emit({
+        type: 'tabPress',
+        target: route.key,
+        canPreventDefault: true,
+      });
+    }
+
+    if (!isFocused && !event?.defaultPrevented) {
+      if (typeof navigateToTab === 'function') {
+        navigateToTab(route.key);
+      } else if (navigation?.navigate) {
+        navigation.navigate(route.name);
+      } else {
+        router.push(route.name as any);
+      }
+    }
+  };
 
   // Filtrar estrictamente solo las rutas principales con ícono y sin href: null / display: none
   const visibleRoutes = (state.routes || []).filter((route: any) => {
@@ -72,17 +104,7 @@ export default function NoxSidebarTabBar({
               : route.name;
           const label = typeof rawLabel === 'string' ? rawLabel : route.name;
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
+          const onPress = () => handleTabPress(route, isFocused);
 
           return (
             <TouchableOpacity
@@ -148,17 +170,7 @@ export default function NoxSidebarTabBar({
                 : route.name;
             const label = typeof rawLabel === 'string' ? rawLabel : route.name;
 
-            const onPress = () => {
-              const event = navigation.emit({
-                type: 'tabPress',
-                target: route.key,
-                canPreventDefault: true,
-              });
-
-              if (!isFocused && !event.defaultPrevented) {
-                navigation.navigate(route.name);
-              }
-            };
+            const onPress = () => handleTabPress(route, isFocused);
 
             return (
               <TouchableOpacity
