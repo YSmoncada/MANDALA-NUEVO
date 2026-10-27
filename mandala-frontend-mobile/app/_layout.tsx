@@ -8,7 +8,7 @@ import { useAlertStore } from '../store/alertStore';
 import NoxAlert from '../components/NoxAlert';
 
 export const unstable_settings = {
-  initialRouteName: '(auth)',
+  anchor: '(auth)',
 };
 
 export default function RootLayout() {
