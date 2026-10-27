@@ -46,12 +46,12 @@ export default function AdminLayout() {
           tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} />
         }} 
       />
-      {/* Ocultar pantallas secundarias de la barra inferior */}
-      <Tabs.Screen name="users" options={{ href: null }} />
-      <Tabs.Screen name="mesas" options={{ href: null }} />
-      <Tabs.Screen name="bartender" options={{ href: null }} />
-      <Tabs.Screen name="accounting" options={{ href: null }} />
-      <Tabs.Screen name="history" options={{ href: null }} />
+      {/* Pantallas secundarias de gestión accesibles sin botón en la barra */}
+      <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarItemStyle: { display: 'none' } }} />
+      <Tabs.Screen name="mesas" options={{ title: "Mesas", tabBarItemStyle: { display: 'none' } }} />
+      <Tabs.Screen name="bartender" options={{ title: "Barra", tabBarItemStyle: { display: 'none' } }} />
+      <Tabs.Screen name="accounting" options={{ title: "Contabilidad", tabBarItemStyle: { display: 'none' } }} />
+      <Tabs.Screen name="history" options={{ title: "Historial", tabBarItemStyle: { display: 'none' } }} />
     </Tabs>
   );
 }

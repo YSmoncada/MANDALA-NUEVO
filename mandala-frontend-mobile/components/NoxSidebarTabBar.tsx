@@ -94,7 +94,9 @@ export default function NoxSidebarTabBar({
     return (
       <View style={styles.mobileTabBar}>
         {visibleRoutes.map((route: any) => {
-          const isFocused = state.routes[state.index]?.key === route.key;
+          const currentRouteName = state.routes[state.index]?.name;
+          const isSettingsSubroute = ['users', 'mesas', 'bartender', 'accounting', 'history'].includes(currentRouteName);
+          const isFocused = state.routes[state.index]?.key === route.key || (route.name === 'settings' && isSettingsSubroute);
           const { options } = descriptors[route.key];
           const rawLabel =
             options.tabBarLabel !== undefined
@@ -160,7 +162,9 @@ export default function NoxSidebarTabBar({
 
         <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
           {visibleRoutes.map((route: any) => {
-            const isFocused = state.routes[state.index]?.key === route.key;
+            const currentRouteName = state.routes[state.index]?.name;
+            const isSettingsSubroute = ['users', 'mesas', 'bartender', 'accounting', 'history'].includes(currentRouteName);
+            const isFocused = state.routes[state.index]?.key === route.key || (route.name === 'settings' && isSettingsSubroute);
             const { options } = descriptors[route.key];
             const rawLabel =
               options.tabBarLabel !== undefined

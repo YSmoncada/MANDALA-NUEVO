@@ -135,7 +135,7 @@ export default function MeseraLayout() {
       {/* Ocultar index (pantalla de Mesas) de la navegación del mesero */}
       <Tabs.Screen
         name="index"
-        options={{ href: null }}
+        options={{ tabBarItemStyle: { display: 'none' } }}
       />
     </Tabs>
   );

@@ -54,7 +54,7 @@ export default function BartenderLayout() {
       />
 
       {/* Ocultar index genérico */}
-      <Tabs.Screen name="index" options={{ href: null }} />
+      <Tabs.Screen name="index" options={{ tabBarItemStyle: { display: 'none' } }} />
     </Tabs>
   );
 }
