@@ -8,7 +8,8 @@ import {
   ScrollView,
   Share,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Print from 'expo-print';
@@ -21,6 +22,12 @@ export interface TicketItem {
   cantidad: number;
   precio_unitario?: number;
   precio?: number;
+  producto_precio?: number;
+  producto?: {
+    id?: number;
+    nombre?: string;
+    precio?: number;
+  };
 }
 
 interface TicketModalProps {
@@ -31,7 +38,7 @@ interface TicketModalProps {
   meseraNombre?: string;
   productos: TicketItem[];
   total?: number;
-  tituloTicket?: string; // "PRE-CUENTA" | "TICKET DE CONSUMO" | "RECIBO DE CAJA"
+  tituloTicket?: string; // "PRE-CUENTA DE MESA" | "TICKET DE CONSUMO" | "RECIBO DE CAJA" | "COMANDA DE BARRA"
 }
 
 export default function TicketModal({
@@ -77,14 +84,14 @@ export default function TicketModal({
     }
   };
 
-  // Cálculos matemáticos
-  const subtotalCalculado = productos.reduce((acc, p) => {
-    const pr = parseFloat(String(p.precio || p.precio_unitario || 0));
+  // Cálculos matemáticos ultra-robustos ante cualquier estructura de producto
+  const subtotalCalculado = (productos || []).reduce((acc, p) => {
+    const pr = parseFloat(String(p.precio || p.precio_unitario || p.producto_precio || p.producto?.precio || 0));
     const cant = parseInt(String(p.cantidad || 1), 10);
     return acc + (pr * cant);
   }, 0);
 
-  const subtotalFinal = total !== undefined ? total : subtotalCalculado;
+  const subtotalFinal = total !== undefined && total > 0 ? total : subtotalCalculado;
   const propinaSugerida = Math.round(subtotalFinal * 0.10);
   const impuestoMonto = empresa.impuesto_porcentaje > 0 
     ? Math.round(subtotalFinal * (parseFloat(empresa.impuesto_porcentaje) / 100)) 
@@ -92,18 +99,11 @@ export default function TicketModal({
 
   const granTotal = subtotalFinal + (incluirPropina ? propinaSugerida : 0) + impuestoMonto;
 
-  const fechaActual = new Date().toLocaleDateString('es-CO', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-  const horaActual = new Date().toLocaleTimeString('es-CO', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
+  const now = new Date();
+  const fechaActual = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+  const horaActual = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 
-  // Generador de texto plano para compartir / WhatsApp / Bluetooth ESC-POS
+  // Generador de texto plano para compartir / WhatsApp / RawBT
   const generateReceiptText = () => {
     const sep = "------------------------------------------\n";
     let t = `*${(empresa.nombre || 'MANDALA DISCO CLUB').toUpperCase()}*\n`;
@@ -120,11 +120,11 @@ export default function TicketModal({
     t += `CANT  DESCRIPCIÓN             TOTAL\n`;
     t += sep;
 
-    productos.forEach((item) => {
+    (productos || []).forEach((item) => {
       const cant = String(item.cantidad || 1).padEnd(4, ' ');
-      const rawName = (item.producto_nombre || item.nombre || 'Producto');
+      const rawName = (item.producto_nombre || item.nombre || item.producto?.nombre || 'Producto');
       const nom = rawName.substring(0, 18).padEnd(18, ' ');
-      const pUnit = parseFloat(String(item.precio || item.precio_unitario || 0));
+      const pUnit = parseFloat(String(item.precio || item.precio_unitario || item.producto_precio || item.producto?.precio || 0));
       const totItem = `$${(pUnit * (item.cantidad || 1)).toLocaleString()}`;
       t += `${cant}  ${nom} ${totItem}\n`;
     });
@@ -215,10 +215,10 @@ export default function TicketModal({
           </div>
           <div class="divider"></div>
 
-          ${productos.map(p => {
-            const pr = parseFloat(String(p.precio || p.precio_unitario || p.producto_precio || (p as any).producto?.precio || 0));
+          ${(productos || []).map(p => {
+            const pr = parseFloat(String(p.precio || p.precio_unitario || p.producto_precio || p.producto?.precio || 0));
             const cant = parseInt(String(p.cantidad || 1), 10);
-            const nom = p.producto_nombre || p.nombre || (p as any).producto?.nombre || 'Producto';
+            const nom = p.producto_nombre || p.nombre || p.producto?.nombre || 'Producto';
             return `
               <div class="row">
                 <span style="width: 15%">${cant}x</span>
@@ -278,19 +278,27 @@ export default function TicketModal({
           window.print();
         }
       } else {
-        // En iOS / Android (Expo Go) abre la vista de impresión nativa del sistema
+        // En iOS / Android (Expo Go) abre la cola nativa de impresión
         await Print.printAsync({ html });
       }
     } catch (error) {
-      console.warn('Fallo en impresión directa, abriendo diálogo nativo para compartir:', error);
+      console.warn('Fallo en impresión directa, abriendo diálogo alternativo:', error);
       handleShare();
     }
   };
 
+  const screenH = Dimensions.get('window').height;
+
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onClose}
+      statusBarTranslucent={true}
+    >
       <View style={styles.overlay}>
-        <View style={styles.modalCard}>
+        <View style={[styles.modalCard, { height: Platform.OS === 'web' ? '90%' : Math.min(screenH * 0.88, 720) }]}>
           {/* Header Superior del Modal */}
           <View style={styles.topBar}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -321,10 +329,14 @@ export default function TicketModal({
           </View>
 
           {/* Vista Previa de la Tirilla Térmica de Papel */}
-          <ScrollView style={styles.receiptScroll} contentContainerStyle={styles.receiptScrollContent}>
+          <ScrollView
+            style={styles.receiptScroll}
+            contentContainerStyle={styles.receiptScrollContent}
+            showsVerticalScrollIndicator={true}
+          >
             <View style={styles.thermalPaper}>
               {/* Borde Superior Perforado */}
-              <View style={styles.sawtoothTop} />
+              <View style={styles.perforationLine} />
 
               {loadingConfig && (
                 <ActivityIndicator size="small" color="#000" style={{ marginVertical: 8 }} />
@@ -336,7 +348,7 @@ export default function TicketModal({
               {empresa.direccion ? <Text style={styles.receiptMeta}>{empresa.direccion}</Text> : null}
               {empresa.telefono ? <Text style={styles.receiptMeta}>Tel: {empresa.telefono}</Text> : null}
 
-              <Text style={styles.receiptDashedLine}>----------------------------------------------</Text>
+              <View style={styles.dashedDivider} />
 
               {/* Tipo y Metadatos de la Mesa */}
               <Text style={styles.receiptTicketType}>{tituloTicket}</Text>
@@ -353,11 +365,11 @@ export default function TicketModal({
 
               {meseraNombre ? (
                 <View style={styles.receiptRow}>
-                  <Text style={styles.receiptMono}>ATENDIDO POR: {meseraNombre}</Text>
+                  <Text style={styles.receiptMono}>ATENDIÓ: {meseraNombre}</Text>
                 </View>
               ) : null}
 
-              <Text style={styles.receiptDashedLine}>----------------------------------------------</Text>
+              <View style={styles.dashedDivider} />
 
               {/* Encabezado de Columnas */}
               <View style={styles.receiptRow}>
@@ -365,17 +377,20 @@ export default function TicketModal({
                 <Text style={[styles.receiptBold, { width: '55%' }]}>DESCRIPCIÓN</Text>
                 <Text style={[styles.receiptBold, { width: '30%', textAlign: 'right' }]}>TOTAL</Text>
               </View>
-              <Text style={styles.receiptDashedLine}>----------------------------------------------</Text>
+              
+              <View style={styles.dashedDivider} />
 
               {/* Lista de Productos */}
-              {productos.length === 0 ? (
-                <Text style={[styles.receiptMono, { textAlign: 'center', marginVertical: 8 }]}>Sin productos registrados</Text>
+              {(!productos || productos.length === 0) ? (
+                <Text style={[styles.receiptMono, { textAlign: 'center', marginVertical: 12, color: '#666' }]}>
+                  Sin productos registrados
+                </Text>
               ) : (
                 productos.map((item, idx) => {
-                  const pr = parseFloat(String(item.precio || item.precio_unitario || (item as any).producto_precio || (item as any).producto?.precio || 0));
+                  const pr = parseFloat(String(item.precio || item.precio_unitario || item.producto_precio || item.producto?.precio || 0));
                   const cant = parseInt(String(item.cantidad || 1), 10);
                   const subItem = pr * cant;
-                  const nombreItem = item.producto_nombre || item.nombre || (item as any).producto?.nombre || 'Producto';
+                  const nombreItem = item.producto_nombre || item.nombre || item.producto?.nombre || 'Producto';
                   return (
                     <View key={idx} style={styles.receiptItemRow}>
                       <Text style={[styles.receiptMono, { width: '15%' }]}>{cant}x</Text>
@@ -386,7 +401,7 @@ export default function TicketModal({
                 })
               )}
 
-              <Text style={styles.receiptDashedLine}>----------------------------------------------</Text>
+              <View style={styles.dashedDivider} />
 
               {/* Resumen Monetario */}
               <View style={styles.receiptRow}>
@@ -408,14 +423,14 @@ export default function TicketModal({
                 </View>
               ) : null}
 
-              <Text style={styles.receiptDoubleLine}>==============================================</Text>
+              <View style={styles.doubleDivider} />
 
               <View style={styles.receiptRowTotal}>
                 <Text style={styles.receiptTotalLabel}>TOTAL A PAGAR:</Text>
                 <Text style={styles.receiptTotalVal}>${granTotal.toLocaleString()}</Text>
               </View>
 
-              <Text style={styles.receiptDoubleLine}>==============================================</Text>
+              <View style={styles.doubleDivider} />
 
               {/* Pie de Página del Ticket */}
               <Text style={styles.receiptFooterMethods}>MEDIOS DE PAGO: Efectivo, Nequi, Daviplata, Tarjeta</Text>
@@ -429,7 +444,7 @@ export default function TicketModal({
               <Text style={styles.receiptWatermark}>Software POS operado por NoxOS</Text>
 
               {/* Borde Inferior Perforado */}
-              <View style={styles.sawtoothBottom} />
+              <View style={styles.perforationLine} />
             </View>
           </ScrollView>
 
@@ -454,7 +469,7 @@ export default function TicketModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
@@ -464,7 +479,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '100%',
     maxWidth: 440,
-    maxHeight: '92%',
+    maxHeight: '94%',
     borderWidth: 1,
     borderColor: 'rgba(169, 68, 255, 0.3)',
     overflow: 'hidden',
@@ -491,16 +506,16 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   closeBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   optionsRow: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.02)',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.05)',
@@ -510,7 +525,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    paddingVertical: 7,
+    paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 10,
     borderWidth: 1,
@@ -531,44 +546,58 @@ const styles = StyleSheet.create({
   },
   receiptScroll: {
     flex: 1,
+    width: '100%',
     backgroundColor: '#06050F',
   },
   receiptScrollContent: {
     padding: 16,
     alignItems: 'center',
+    flexGrow: 1,
   },
   thermalPaper: {
     width: '100%',
     maxWidth: 340,
     backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 18,
+    borderRadius: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    minHeight: 320,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
-    elevation: 6,
+    elevation: 8,
   },
-  sawtoothTop: {
-    borderTopWidth: 2,
-    borderTopColor: '#DDDDDD',
+  perforationLine: {
+    width: '100%',
+    height: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: '#CBD5E1',
     borderStyle: 'dashed',
-    marginBottom: 8,
+    marginVertical: 4,
   },
-  sawtoothBottom: {
+  dashedDivider: {
+    width: '100%',
+    height: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: '#475569',
+    borderStyle: 'dashed',
+    marginVertical: 8,
+  },
+  doubleDivider: {
+    width: '100%',
+    height: 2,
     borderBottomWidth: 2,
-    borderBottomColor: '#DDDDDD',
-    borderStyle: 'dashed',
-    marginTop: 10,
+    borderBottomColor: '#000000',
+    marginVertical: 8,
   },
   receiptBrandName: {
     color: '#000000',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '900',
     textAlign: 'center',
     letterSpacing: 0.5,
-    marginBottom: 2,
+    marginBottom: 3,
   },
   receiptMeta: {
     color: '#333333',
@@ -579,26 +608,11 @@ const styles = StyleSheet.create({
   },
   receiptTicketType: {
     color: '#000000',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '900',
     textAlign: 'center',
     marginVertical: 4,
     letterSpacing: 0.5,
-  },
-  receiptDashedLine: {
-    color: '#444444',
-    fontSize: 10,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textAlign: 'center',
-    marginVertical: 3,
-  },
-  receiptDoubleLine: {
-    color: '#000000',
-    fontSize: 10,
-    fontWeight: '900',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textAlign: 'center',
-    marginVertical: 3,
   },
   receiptRow: {
     flexDirection: 'row',
@@ -638,7 +652,7 @@ const styles = StyleSheet.create({
   },
   receiptTotalVal: {
     color: '#000000',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '900',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
@@ -679,7 +693,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     backgroundColor: NoxColors.aura,
-    paddingVertical: 12,
+    paddingVertical: 13,
     borderRadius: 12,
     shadowColor: NoxColors.aura,
     shadowOffset: { width: 0, height: 4 },
@@ -699,8 +713,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#25D366', // WhatsApp Green
-    paddingVertical: 12,
+    backgroundColor: '#25D366',
+    paddingVertical: 13,
     borderRadius: 12,
   },
   shareBtnText: {
