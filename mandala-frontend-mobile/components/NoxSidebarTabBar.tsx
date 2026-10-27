@@ -35,7 +35,7 @@ export default function NoxSidebarTabBar({
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Manejador seguro de cambio de pestaña compatible con Expo SDK 58 (Expo Router / React Navigation)
-  const handleTabPress = (route: any, isFocused: boolean) => {
+  const handleTabPress = (route: any, isActuallyFocused: boolean) => {
     let event: any = undefined;
     if (emitter?.emit) {
       event = emitter.emit({
@@ -51,9 +51,13 @@ export default function NoxSidebarTabBar({
       });
     }
 
-    if (!isFocused && !event?.defaultPrevented) {
+    if (!isActuallyFocused && !event?.defaultPrevented) {
       if (typeof navigateToTab === 'function') {
-        navigateToTab(route.key);
+        try {
+          navigateToTab(route.key);
+        } catch (e) {
+          router.push(route.name as any);
+        }
       } else if (navigation?.navigate) {
         navigation.navigate(route.name);
       } else {
@@ -95,8 +99,9 @@ export default function NoxSidebarTabBar({
       <View style={styles.mobileTabBar}>
         {visibleRoutes.map((route: any) => {
           const currentRouteName = state.routes[state.index]?.name;
-          const isSettingsSubroute = ['users', 'mesas', 'bartender', 'accounting', 'history'].includes(currentRouteName);
-          const isFocused = state.routes[state.index]?.key === route.key || (route.name === 'settings' && isSettingsSubroute);
+          const isSettingsSubroute = roleTitle === 'ADMINISTRADOR' && ['users', 'mesas', 'bartender', 'accounting', 'history'].includes(currentRouteName);
+          const isActuallyFocused = state.routes[state.index]?.key === route.key;
+          const isFocused = isActuallyFocused || (route.name === 'settings' && isSettingsSubroute);
           const { options } = descriptors[route.key];
           const rawLabel =
             options.tabBarLabel !== undefined
@@ -106,7 +111,7 @@ export default function NoxSidebarTabBar({
               : route.name;
           const label = typeof rawLabel === 'string' ? rawLabel : route.name;
 
-          const onPress = () => handleTabPress(route, isFocused);
+          const onPress = () => handleTabPress(route, isActuallyFocused);
 
           return (
             <TouchableOpacity
@@ -163,8 +168,9 @@ export default function NoxSidebarTabBar({
         <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
           {visibleRoutes.map((route: any) => {
             const currentRouteName = state.routes[state.index]?.name;
-            const isSettingsSubroute = ['users', 'mesas', 'bartender', 'accounting', 'history'].includes(currentRouteName);
-            const isFocused = state.routes[state.index]?.key === route.key || (route.name === 'settings' && isSettingsSubroute);
+            const isSettingsSubroute = roleTitle === 'ADMINISTRADOR' && ['users', 'mesas', 'bartender', 'accounting', 'history'].includes(currentRouteName);
+            const isActuallyFocused = state.routes[state.index]?.key === route.key;
+            const isFocused = isActuallyFocused || (route.name === 'settings' && isSettingsSubroute);
             const { options } = descriptors[route.key];
             const rawLabel =
               options.tabBarLabel !== undefined
@@ -174,7 +180,7 @@ export default function NoxSidebarTabBar({
                 : route.name;
             const label = typeof rawLabel === 'string' ? rawLabel : route.name;
 
-            const onPress = () => handleTabPress(route, isFocused);
+            const onPress = () => handleTabPress(route, isActuallyFocused);
 
             return (
               <TouchableOpacity

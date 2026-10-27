@@ -11,6 +11,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Print from 'expo-print';
 import apiClient from '../utils/apiClient';
 import { NoxColors } from '../constants/theme';
 
@@ -158,123 +159,130 @@ export default function TicketModal({
     }
   };
 
-  const handlePrint = () => {
-    if (Platform.OS === 'web') {
-      const printWindow = window.open('', '_blank', 'width=400,height=650');
-      if (printWindow) {
-        const text = generateReceiptText();
-        const html = `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <title>Ticket Mesa ${mesaNumero}</title>
-              <style>
-                @page { margin: 0; size: 80mm auto; }
-                body {
-                  font-family: 'Courier New', Courier, monospace;
-                  font-size: 13px;
-                  line-height: 1.35;
-                  margin: 0;
-                  padding: 14px 10px;
-                  width: 72mm;
-                  color: #000000;
-                  background: #FFFFFF;
-                }
-                .center { text-align: center; }
-                .bold { font-weight: bold; }
-                .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
-                .double-divider { border-bottom: 2px solid #000; margin: 8px 0; }
-                .row { display: flex; justify-content: space-between; margin: 3px 0; }
-                .title { font-size: 16px; font-weight: 900; letter-spacing: 0.5px; }
-                .total-row { font-size: 16px; font-weight: 900; margin: 8px 0; border-top: 2px solid #000; padding-top: 6px; }
-                .footer { font-size: 11px; text-align: center; margin-top: 12px; }
-              </style>
-            </head>
-            <body>
-              <div class="center bold title">${empresa.nombre || 'MANDALA DISCO CLUB'}</div>
-              ${empresa.nit ? `<div class="center">NIT: ${empresa.nit}</div>` : ''}
-              ${empresa.direccion ? `<div class="center">${empresa.direccion}</div>` : ''}
-              ${empresa.telefono ? `<div class="center">Tel: ${empresa.telefono}</div>` : ''}
-              
-              <div class="divider"></div>
-              <div class="center bold">${tituloTicket}</div>
+  const generateTicketHtml = () => {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+          <meta charset="utf-8">
+          <title>Ticket Mesa ${mesaNumero}</title>
+          <style>
+            @page { margin: 0; size: 80mm auto; }
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              font-size: 13px;
+              line-height: 1.35;
+              margin: 0;
+              padding: 14px 10px;
+              width: 72mm;
+              color: #000000;
+              background: #FFFFFF;
+            }
+            .center { text-align: center; }
+            .bold { font-weight: bold; }
+            .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
+            .double-divider { border-bottom: 2px solid #000; margin: 8px 0; }
+            .row { display: flex; justify-content: space-between; margin: 3px 0; }
+            .title { font-size: 16px; font-weight: 900; letter-spacing: 0.5px; }
+            .total-row { font-size: 16px; font-weight: 900; margin: 8px 0; border-top: 2px solid #000; padding-top: 6px; }
+            .footer { font-size: 11px; text-align: center; margin-top: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="center bold title">${(empresa.nombre || 'MANDALA DISCO CLUB').toUpperCase()}</div>
+          ${empresa.nit ? `<div class="center">NIT: ${empresa.nit}</div>` : ''}
+          ${empresa.direccion ? `<div class="center">${empresa.direccion}</div>` : ''}
+          ${empresa.telefono ? `<div class="center">Tel: ${empresa.telefono}</div>` : ''}
+          
+          <div class="divider"></div>
+          <div class="center bold">${tituloTicket}</div>
+          <div class="row">
+            <span>MESA: #${mesaNumero}</span>
+            ${pedidoId ? `<span>ORDEN: #${pedidoId}</span>` : ''}
+          </div>
+          <div class="row">
+            <span>FECHA: ${fechaActual}</span>
+            <span>HORA: ${horaActual}</span>
+          </div>
+          ${meseraNombre ? `<div class="row"><span>ATENDIÓ: ${meseraNombre}</span></div>` : ''}
+          
+          <div class="divider"></div>
+          <div class="row bold">
+            <span style="width: 15%">CANT</span>
+            <span style="width: 55%">PRODUCTO</span>
+            <span style="width: 30%; text-align: right">TOTAL</span>
+          </div>
+          <div class="divider"></div>
+
+          ${productos.map(p => {
+            const pr = parseFloat(String(p.precio || p.precio_unitario || p.producto_precio || (p as any).producto?.precio || 0));
+            const cant = parseInt(String(p.cantidad || 1), 10);
+            const nom = p.producto_nombre || p.nombre || (p as any).producto?.nombre || 'Producto';
+            return `
               <div class="row">
-                <span>MESA: #${mesaNumero}</span>
-                ${pedidoId ? `<span>ORDEN: #${pedidoId}</span>` : ''}
+                <span style="width: 15%">${cant}x</span>
+                <span style="width: 55%">${nom}</span>
+                <span style="width: 30%; text-align: right">$${(pr * cant).toLocaleString()}</span>
               </div>
-              <div class="row">
-                <span>FECHA: ${fechaActual}</span>
-                <span>HORA: ${horaActual}</span>
-              </div>
-              ${meseraNombre ? `<div class="row"><span>ATENDIÓ: ${meseraNombre}</span></div>` : ''}
-              
-              <div class="divider"></div>
-              <div class="row bold">
-                <span style="width: 15%">CANT</span>
-                <span style="width: 55%">PRODUCTO</span>
-                <span style="width: 30%; text-align: right">TOTAL</span>
-              </div>
-              <div class="divider"></div>
+            `;
+          }).join('')}
 
-              ${productos.map(p => {
-                const pr = parseFloat(String(p.precio || p.precio_unitario || 0));
-                const cant = parseInt(String(p.cantidad || 1), 10);
-                const nom = p.producto_nombre || p.nombre || 'Producto';
-                return `
-                  <div class="row">
-                    <span style="width: 15%">${cant}x</span>
-                    <span style="width: 55%">${nom}</span>
-                    <span style="width: 30%; text-align: right">$${(pr * cant).toLocaleString()}</span>
-                  </div>
-                `;
-              }).join('')}
+          <div class="divider"></div>
+          <div class="row">
+            <span>SUBTOTAL:</span>
+            <span>$${subtotalFinal.toLocaleString()}</span>
+          </div>
+          ${impuestoMonto > 0 ? `
+            <div class="row">
+              <span>IMPOCONSUMO / IVA:</span>
+              <span>$${impuestoMonto.toLocaleString()}</span>
+            </div>
+          ` : ''}
+          ${incluirPropina ? `
+            <div class="row">
+              <span>PROPINA (10%):</span>
+              <span>$${propinaSugerida.toLocaleString()}</span>
+            </div>
+          ` : ''}
 
-              <div class="divider"></div>
-              <div class="row">
-                <span>SUBTOTAL:</span>
-                <span>$${subtotalFinal.toLocaleString()}</span>
-              </div>
-              ${impuestoMonto > 0 ? `
-                <div class="row">
-                  <span>IMPOCONSUMO / IVA:</span>
-                  <span>$${impuestoMonto.toLocaleString()}</span>
-                </div>
-              ` : ''}
-              ${incluirPropina ? `
-                <div class="row">
-                  <span>PROPINA (10%):</span>
-                  <span>$${propinaSugerida.toLocaleString()}</span>
-                </div>
-              ` : ''}
+          <div class="row total-row">
+            <span>TOTAL A PAGAR:</span>
+            <span>$${granTotal.toLocaleString()}</span>
+          </div>
 
-              <div class="row total-row">
-                <span>TOTAL A PAGAR:</span>
-                <span>$${granTotal.toLocaleString()}</span>
-              </div>
+          <div class="divider"></div>
+          <div class="footer">
+            <div>PAGOS: Efectivo, Nequi, Daviplata, Tarjeta</div>
+            ${empresa.mensaje_footer ? `<div style="margin-top: 6px;">${empresa.mensaje_footer}</div>` : ''}
+            <div style="margin-top: 4px; font-size: 9px; color: #555;">Software POS operado por NoxOS</div>
+          </div>
+        </body>
+      </html>
+    `;
+  };
 
-              <div class="divider"></div>
-              <div class="footer">
-                <div>PAGOS: Efectivo, Nequi, Daviplata, Tarjeta</div>
-                ${empresa.mensaje_footer ? `<div style="margin-top: 6px;">${empresa.mensaje_footer}</div>` : ''}
-                <div style="margin-top: 4px; font-size: 9px; color: #555;">Software POS operado por NoxOS</div>
-              </div>
-              <script>
-                window.onload = function() {
-                  window.print();
-                  setTimeout(() => { window.close(); }, 500);
-                };
-              </script>
-            </body>
-          </html>
-        `;
-        printWindow.document.write(html);
-        printWindow.document.close();
+  const handlePrint = async () => {
+    try {
+      const html = generateTicketHtml();
+      if (Platform.OS === 'web') {
+        const printWindow = window.open('', '_blank', 'width=400,height=650');
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.onload = function() {
+            printWindow.print();
+            setTimeout(() => { printWindow.close(); }, 500);
+          };
+        } else {
+          window.print();
+        }
       } else {
-        window.print();
+        // En iOS / Android (Expo Go) abre la vista de impresión nativa del sistema
+        await Print.printAsync({ html });
       }
-    } else {
-      // En iOS / Android se abre el diálogo nativo para compartir al impresor Bluetooth (RawBT/Print) o WhatsApp
+    } catch (error) {
+      console.warn('Fallo en impresión directa, abriendo diálogo nativo para compartir:', error);
       handleShare();
     }
   };
@@ -364,10 +372,10 @@ export default function TicketModal({
                 <Text style={[styles.receiptMono, { textAlign: 'center', marginVertical: 8 }]}>Sin productos registrados</Text>
               ) : (
                 productos.map((item, idx) => {
-                  const pr = parseFloat(String(item.precio || item.precio_unitario || 0));
+                  const pr = parseFloat(String(item.precio || item.precio_unitario || (item as any).producto_precio || (item as any).producto?.precio || 0));
                   const cant = parseInt(String(item.cantidad || 1), 10);
                   const subItem = pr * cant;
-                  const nombreItem = item.producto_nombre || item.nombre || 'Producto';
+                  const nombreItem = item.producto_nombre || item.nombre || (item as any).producto?.nombre || 'Producto';
                   return (
                     <View key={idx} style={styles.receiptItemRow}>
                       <Text style={[styles.receiptMono, { width: '15%' }]}>{cant}x</Text>

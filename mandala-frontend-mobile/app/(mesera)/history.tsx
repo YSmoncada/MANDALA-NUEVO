@@ -65,12 +65,12 @@ export default function MisPedidosScreen() {
   const handleOpenTicketPedido = (item: any) => {
     setTicketData({
       visible: true,
-      mesaNumero: item.mesa_numero ?? item.mesa,
+      mesaNumero: item.mesa_numero ?? (typeof item.mesa === 'object' ? item.mesa?.numero : item.mesa) ?? 'Mesa',
       pedidoId: item.id,
-      productos: (item.productos_detalle || []).map((p: any) => ({
-        nombre: p.producto_nombre || p.nombre,
-        cantidad: p.cantidad,
-        precio: p.producto_precio || p.precio_unitario || 0
+      productos: (item.detalles || item.productos_detalle || []).map((p: any) => ({
+        nombre: p.producto_nombre || p.nombre || (p.producto ? p.producto.nombre : 'Producto'),
+        cantidad: p.cantidad || 1,
+        precio: p.producto_precio || p.precio_unitario || (p.producto ? p.producto.precio : 0)
       })),
       total: parseFloat(item.total || 0),
       tituloTicket: 'TICKET DE PEDIDO'

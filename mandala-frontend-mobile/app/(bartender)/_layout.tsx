@@ -11,7 +11,7 @@ export default function BartenderLayout() {
 
   return (
     <Tabs
-      tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="BARTENDER" roleSubtitle="Barra & Cocina" hideSettingsOnDesktop={true} />}
+      tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="BARTENDER" roleSubtitle="Barra & Cocina" />}
       screenOptions={{
         tabBarPosition: isDesktop ? 'right' : 'bottom',
         headerShown: false,

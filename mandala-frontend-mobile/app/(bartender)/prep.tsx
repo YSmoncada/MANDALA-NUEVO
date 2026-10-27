@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, 
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import NoxAlert from '../../components/NoxAlert';
+import TicketModal from '../../components/TicketModal';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
 
@@ -16,6 +17,36 @@ export default function BartenderPrepScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [processedIds, setProcessedIds] = useState<Set<number>>(new Set());
+  const [ticketData, setTicketData] = useState<{
+    visible: boolean;
+    mesaNumero: number | string;
+    pedidoId?: number | string;
+    meseraNombre?: string;
+    productos: any[];
+    total: number;
+  }>({
+    visible: false,
+    mesaNumero: '',
+    productos: [],
+    total: 0
+  });
+
+  const handleOpenTicket = (item: any) => {
+    const mesaNum = item.mesa_numero || (typeof item.mesa === 'object' ? item.mesa.numero : item.mesa) || "Barra";
+    const productos = (item.detalles || item.productos_detalle || []).map((p: any) => ({
+      nombre: p.producto_nombre || p.nombre || (p.producto ? p.producto.nombre : 'Bebida'),
+      cantidad: p.cantidad || 1,
+      precio: p.producto_precio || p.precio_unitario || (p.producto ? p.producto.precio : 0)
+    }));
+    setTicketData({
+      visible: true,
+      mesaNumero: mesaNum,
+      pedidoId: item.id,
+      meseraNombre: item.usuario_nombre || item.mesera_nombre || item.mesero_nombre || 'Barra',
+      productos,
+      total: parseFloat(item.total || 0)
+    });
+  };
 
   // Estado de alerta personalizada
   const [alertConfig, setAlertConfig] = useState<{
@@ -188,6 +219,15 @@ export default function BartenderPrepScreen() {
           })}
         </View>
 
+        <TouchableOpacity
+          style={styles.printTicketBtnPrep}
+          onPress={() => handleOpenTicket(item)}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="receipt-outline" size={14} color={NoxColors.aura} />
+          <Text style={styles.printTicketBtnPrepText}>IMPRIMIR COMANDA POS</Text>
+        </TouchableOpacity>
+
         {/* Acciones */}
         {isUpdating ? (
           <ActivityIndicator color={NoxColors.aura} style={{ marginTop: 15 }} />
@@ -271,6 +311,16 @@ export default function BartenderPrepScreen() {
             setAlertConfig(prev => ({ ...prev, visible: false, onConfirm: undefined, onCancel: undefined }));
             if (callback) callback();
         }} 
+      />
+      <TicketModal
+        visible={ticketData.visible}
+        onClose={() => setTicketData(prev => ({ ...prev, visible: false }))}
+        mesaNumero={ticketData.mesaNumero}
+        pedidoId={ticketData.pedidoId}
+        meseraNombre={ticketData.meseraNombre}
+        productos={ticketData.productos}
+        total={ticketData.total}
+        tituloTicket="COMANDA DE BARRA"
       />
     </View>
   );
@@ -360,4 +410,23 @@ const styles = StyleSheet.create({
   emptyContainer: { alignItems: 'center', marginTop: 100, gap: 15 },
   emptyTitle: { color: NoxColors.muted, fontWeight: '900', fontSize: 14, letterSpacing: 3 },
   emptyText: { color: NoxColors.gray, fontWeight: 'bold', fontSize: 12, letterSpacing: 1 },
+  printTicketBtnPrep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(169, 68, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(169, 68, 255, 0.3)',
+    borderRadius: 14,
+    paddingVertical: 10,
+    marginTop: 14,
+    marginBottom: 6,
+  },
+  printTicketBtnPrepText: {
+    color: NoxColors.aura,
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
 });

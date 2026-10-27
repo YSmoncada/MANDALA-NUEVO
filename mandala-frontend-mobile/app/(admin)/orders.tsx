@@ -49,13 +49,13 @@ export default function MonitorOrdenesScreen() {
   const handleOpenTicket = (item: any) => {
     setTicketData({
       visible: true,
-      mesaNumero: item.mesa_numero ?? item.mesa ?? 'Barra',
+      mesaNumero: item.mesa_numero ?? (typeof item.mesa === 'object' ? item.mesa?.numero : item.mesa) ?? 'Barra',
       pedidoId: item.id,
-      meseraNombre: item.usuario_nombre || 'Mesera',
+      meseraNombre: item.usuario_nombre || item.mesera_nombre || 'Mesera',
       productos: (item.detalles || item.productos_detalle || []).map((p: any) => ({
-        nombre: p.producto_nombre || p.nombre,
-        cantidad: p.cantidad,
-        precio: p.producto_precio || p.precio_unitario || 0
+        nombre: p.producto_nombre || p.nombre || (p.producto ? p.producto.nombre : 'Producto'),
+        cantidad: p.cantidad || 1,
+        precio: p.producto_precio || p.precio_unitario || (p.producto ? p.producto.precio : 0)
       })),
       total: parseFloat(item.total || 0)
     });
