@@ -1,8 +1,9 @@
 import axios from 'axios';
+import Constants from 'expo-constants';
 import { useAuthStore } from '../store/authStore';
 import { useAlertStore } from '../store/alertStore';
 
-// Detección automática y robusta del backend para Local y Producción (Render)
+// Detección automática y robusta del backend para Local, Expo Go y Producción (Render)
 const getBaseApiUrl = (): string => {
   const envUrl = typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_API_URL : undefined;
   if (envUrl && envUrl.trim().length > 0) {
@@ -10,15 +11,31 @@ const getBaseApiUrl = (): string => {
     return clean.endsWith('/api') ? clean : `${clean}/api`;
   }
 
+  // 1. Entorno Web (navegador)
   if (typeof window !== 'undefined' && window.location?.hostname) {
     const host = window.location.hostname;
     if (host === 'localhost' || host === '127.0.0.1') {
       return 'http://localhost:8000/api';
     }
+    if (host.startsWith('192.168.') || host.startsWith('10.') || host.startsWith('172.')) {
+      return `http://${host}:8000/api`;
+    }
     return 'https://mandala-backend-n3n6.onrender.com/api';
   }
 
-  return 'https://mandala-backend-n3n6.onrender.com/api';
+  // 2. Dispositivo Móvil en Expo Go (extraer IP de la máquina de desarrollo de Metro)
+  const hostUri = Constants.expoConfig?.hostUri || 
+                  (Constants as any).manifest?.debuggerHost || 
+                  (Constants as any).manifest2?.extra?.expoGo?.debuggerHost;
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+      return `http://${ip}:8000/api`;
+    }
+  }
+
+  // 3. Fallback a la IP de red local del servidor de desarrollo
+  return 'http://192.168.18.11:8000/api';
 };
 
 export const API_URL = getBaseApiUrl();

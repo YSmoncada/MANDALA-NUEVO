@@ -1,3 +1,5 @@
+import base64
+from pydantic import BaseModel
 import uuid
 import os
 import shutil
@@ -87,6 +89,38 @@ def get_productos(
             p.categoria_nombre = cat.nombre
             
     return productos_list
+
+
+class UploadBase64Schema(BaseModel):
+    image: str
+
+@router.post("/productos/upload-base64/")
+async def upload_producto_base64(
+    payload: UploadBase64Schema,
+    db: Session = Depends(deps.get_db),
+    current_user: Optional[models.Usuario] = Depends(deps.get_optional_user)
+):
+    media_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "media", "productos")
+    os.makedirs(media_dir, exist_ok=True)
+    
+    img_data = payload.image
+    ext = ".jpg"
+    if "," in img_data:
+        header, img_data = img_data.split(",", 1)
+        if "png" in header:
+            ext = ".png"
+        elif "webp" in header:
+            ext = ".webp"
+            
+    filename = f"prod_{uuid.uuid4().hex[:10]}{ext}"
+    filepath = os.path.join(media_dir, filename)
+    
+    with open(filepath, "wb") as fh:
+        fh.write(base64.b64decode(img_data))
+        
+    url = f"/media/productos/{filename}"
+    logger.info(f"Imagen base64 subida exitosamente: {url}")
+    return {"url": url, "filename": filename}
 
 @router.post("/productos/upload-imagen/")
 async def upload_producto_imagen(
