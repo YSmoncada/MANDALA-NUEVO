@@ -1,0 +1,27 @@
+# Presentaciones, documentos y diagramas
+*.pptx
+*.pdf
+*.docx
+*.xlsx
+DOCUMENTO_MAESTRO_BASES_DATOS.md
+*.png
+!media/**
+
+# Bases de datos locales
+*.db
+*.sqlite3
+
+# Copias de seguridad de repositorios internos
+.git_backup/
+*/.git_backup/
+
+# Python y dependencias
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+
+# Node y Expo
+node_modules/
+.expo/
+dist/
