@@ -150,7 +150,7 @@ export default function AdminBartenderScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: 'transparent' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 

@@ -221,7 +221,7 @@ export default function MonitorOrdenesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   headerWrapper: {
     width: '100%',
     marginBottom: 5,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: NoxColors.border 
   },
-  statActive: { borderColor: NoxColors.aura, backgroundColor: 'rgba(255, 255, 255, 0.04)' },
+  statActive: { borderColor: 'rgba(255, 255, 255, 0.35)', backgroundColor: 'rgba(255, 255, 255, 0.1)' },
   statNum: { fontSize: 18, fontWeight: '900', color: NoxColors.text },
   statLbl: { fontSize: 8, color: NoxColors.muted, fontWeight: '900', letterSpacing: 1.5, marginTop: 4 },
 

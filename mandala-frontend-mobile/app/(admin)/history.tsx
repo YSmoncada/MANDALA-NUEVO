@@ -487,7 +487,7 @@ export default function AdminHistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   header: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 15, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
   summaryReportBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, backgroundColor: 'rgba(16, 185, 129, 0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.25)' },
@@ -499,12 +499,12 @@ const styles = StyleSheet.create({
   filterSection: { paddingHorizontal: 20, marginBottom: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   filterGroup: { flexDirection: 'row', gap: 8 },
   filterChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border },
-  filterChipActive: { backgroundColor: NoxColors.container, borderColor: 'rgba(169,68,255,0.3)' },
+  filterChipActive: { backgroundColor: 'rgba(255, 255, 255, 0.14)', borderColor: 'rgba(255, 255, 255, 0.3)' },
   filterChipText: { color: NoxColors.muted, fontSize: 10, fontWeight: '900' },
   
   userSelectBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: NoxColors.card, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)', maxWidth: 160 },
-  userSelectBtnActive: { backgroundColor: NoxColors.aura, borderColor: NoxColors.aura },
-  userSelectText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', flexShrink: 1 },
+  userSelectBtnActive: { backgroundColor: 'rgba(255, 255, 255, 0.14)', borderColor: 'rgba(255, 255, 255, 0.3)' },
+  userSelectText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900', flexShrink: 1 },
 
   summaryContainer: { paddingHorizontal: 20, marginBottom: 25, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   summaryCard: { 
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
   closeBtn: { backgroundColor: NoxColors.container, width: 44, height: 44, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
   
   userItem: { flexDirection: 'row', alignItems: 'center', gap: 15, padding: 18, borderRadius: 20, marginBottom: 8, backgroundColor: 'rgba(255,255,255,0.02)', borderWidth: 1, borderColor: 'transparent' },
-  userItemActive: { backgroundColor: NoxColors.aura, borderColor: 'rgba(255,255,255,0.2)' },
+  userItemActive: { backgroundColor: 'rgba(255, 255, 255, 0.14)', borderColor: 'rgba(255,255,255,0.2)' },
   miniAvatar: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   miniAvatarText: { fontWeight: '900', fontSize: 16 },
   userItemText: { color: NoxColors.text, fontWeight: 'bold', fontSize: 14 },

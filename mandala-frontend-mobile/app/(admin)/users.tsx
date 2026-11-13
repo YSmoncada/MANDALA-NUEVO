@@ -310,7 +310,7 @@ export default function AdmUsersScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 

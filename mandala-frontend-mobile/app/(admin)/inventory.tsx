@@ -914,7 +914,7 @@ export default function AdmInventarioScreen() {
 
             >
 
-              <Ionicons name="add" size={22} color="#000000" />
+              <Ionicons name="add" size={22} color="#FFFFFF" />
 
               <Text style={styles.addBtnDesktopText}>NUEVO PRODUCTO</Text>
 
@@ -962,7 +962,7 @@ export default function AdmInventarioScreen() {
 
           >
 
-            <Ionicons name="add-circle" size={19} color="#000000" />
+            <Ionicons name="add-circle" size={19} color="#FFFFFF" />
 
             <Text style={styles.mobileAddBtnText} numberOfLines={1}>AGREGAR PRODUCTO</Text>
 
@@ -2206,7 +2206,7 @@ export default function AdmInventarioScreen() {
 
         >
 
-          <Ionicons name="add" size={28} color="#000000" />
+          <Ionicons name="add" size={28} color="#FFFFFF" />
 
         </TouchableOpacity>
 
@@ -2226,7 +2226,7 @@ const styles = StyleSheet.create({
 
     flex: 1, 
 
-    backgroundColor: NoxColors.deep,
+    backgroundColor: 'transparent',
 
     width: '100%',
 
@@ -2336,7 +2336,11 @@ const styles = StyleSheet.create({
 
     gap: 8,
 
-    backgroundColor: NoxColors.aura,
+    backgroundColor: '#181822',
+
+    borderWidth: 1.5,
+
+    borderColor: 'rgba(255, 255, 255, 0.22)',
 
     paddingHorizontal: 18,
 
@@ -2354,7 +2358,7 @@ const styles = StyleSheet.create({
 
   },
 
-  addBtnDesktopText: { color: '#000000', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
+  addBtnDesktopText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
 
 
 
@@ -2444,7 +2448,11 @@ const styles = StyleSheet.create({
 
     gap: 8,
 
-    backgroundColor: NoxColors.aura,
+    backgroundColor: '#181822',
+
+    borderWidth: 1.5,
+
+    borderColor: 'rgba(255, 255, 255, 0.22)',
 
     paddingVertical: 13,
 
@@ -2490,7 +2498,11 @@ const styles = StyleSheet.create({
 
     borderRadius: 28,
 
-    backgroundColor: NoxColors.aura,
+    backgroundColor: '#181822',
+
+    borderWidth: 1.5,
+
+    borderColor: 'rgba(255, 255, 255, 0.25)',
 
     justifyContent: 'center',
 
@@ -2552,21 +2564,21 @@ const styles = StyleSheet.create({
 
     borderRadius: 18,
 
-    backgroundColor: NoxColors.container,
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
 
     marginRight: 10,
 
     borderWidth: 1,
 
-    borderColor: 'transparent',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
 
   },
 
-  catBtnActive: { backgroundColor: NoxColors.aura, borderColor: 'rgba(255,255,255,0.2)' },
+  catBtnActive: { backgroundColor: 'rgba(255, 255, 255, 0.14)', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.4)' },
 
-  catText: { fontSize: 11, fontWeight: 'bold', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  catText: { fontSize: 11, fontWeight: '700', color: '#71717A', textTransform: 'uppercase', letterSpacing: 1 },
 
-  catTextActive: { color: NoxColors.text },
+  catTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
 
 
@@ -2828,11 +2840,11 @@ const styles = StyleSheet.create({
 
   },
 
-  categoryChipActive: { backgroundColor: NoxColors.aura, borderColor: 'rgba(255,255,255,0.3)' },
+  categoryChipActive: { backgroundColor: 'rgba(255, 255, 255, 0.14)', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.35)' },
 
   categoryChipText: { fontSize: 12, fontWeight: 'bold', color: NoxColors.muted },
 
-  categoryChipTextActive: { color: NoxColors.text },
+  categoryChipTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
   noCategoriesHint: { color: NoxColors.muted, fontSize: 12, fontStyle: 'italic', paddingVertical: 8 },
 
@@ -3004,7 +3016,7 @@ const styles = StyleSheet.create({
 
   historyTab: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 11 },
 
-  historyTabActive: { backgroundColor: NoxColors.aura },
+  historyTabActive: { backgroundColor: 'rgba(255, 255, 255, 0.16)' },
 
   historyTabActiveEntrada: { backgroundColor: 'rgba(16, 185, 129, 0.2)' },
 
@@ -3012,7 +3024,7 @@ const styles = StyleSheet.create({
 
   historyTabText: { fontSize: 10, fontWeight: '900', color: NoxColors.muted, letterSpacing: 1 },
 
-  historyTabTextActive: { color: NoxColors.text },
+  historyTabTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
   historySearchBar: {
 

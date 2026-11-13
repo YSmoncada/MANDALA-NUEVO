@@ -1,3 +1,5 @@
+import RollsRoyceStars from '../components/RollsRoyceStars';
+import { View } from 'react-native';
 import React, { useEffect } from 'react';
 import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -58,9 +60,10 @@ export default function RootLayout() {
   }, [token, segments, user, navigationState?.key]);
 
   return (
-    <>
-      <Stack screenOptions={{ headerShown: false }} />
-      <StatusBar style="auto" />
+    <View style={{ flex: 1, backgroundColor: '#000000' }}>
+      <RollsRoyceStars />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }} />
+      <StatusBar style="light" />
 
       {/* Sistema de Alerta Global */}
       <NoxAlert 
@@ -74,6 +77,6 @@ export default function RootLayout() {
           alert.hideAlert();
         }}
       />
-    </>
+    </View>
   );
 }
