@@ -292,7 +292,9 @@ const styles = StyleSheet.create({
   prodImageContainer: { 
     width: 105, 
     height: 105, 
-    backgroundColor: '#FFFFFF', 
+    backgroundColor: '#16161E', 
+    borderWidth: 1, 
+    borderColor: 'rgba(255, 255, 255, 0.08)', 
     borderRadius: 22,
     justifyContent: 'center', 
     alignItems: 'center', 

@@ -371,9 +371,9 @@ const styles = StyleSheet.create({
   
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 30 },
   chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, backgroundColor: NoxColors.container, borderWidth: 1, borderColor: NoxColors.border },
-  chipActive: { backgroundColor: '#FFFFFF', borderColor: 'rgba(255, 255, 255, 0.15)' },
+  chipActive: { backgroundColor: 'rgba(255, 255, 255, 0.14)', borderColor: 'rgba(255, 255, 255, 0.3)' },
   chipText: { fontSize: 10, fontWeight: 'bold', color: NoxColors.muted },
 
-  saveBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 25, alignItems: 'center', marginTop: 10, shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
+  saveBtn: { backgroundColor: NoxColors.emerald, padding: 22, borderRadius: 25, alignItems: 'center', marginTop: 10, shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
   saveBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 14 }
 });

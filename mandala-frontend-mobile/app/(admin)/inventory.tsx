@@ -1144,7 +1144,7 @@ export default function AdmInventarioScreen() {
 
                 ) : (
 
-                  <Ionicons name="cube-outline" size={26} color={NoxColors.aura} />
+                  <Ionicons name="cube-outline" size={26} color="#A1A1AA" />
 
                 )}
 
@@ -2600,9 +2600,9 @@ const styles = StyleSheet.create({
 
   },
 
-  cardAccent: { position: 'absolute', left: 0, top: 25, bottom: 25, width: 4, backgroundColor: NoxColors.aura, borderTopRightRadius: 10, borderBottomRightRadius: 10 },
+  cardAccent: { position: 'absolute', left: 0, top: 25, bottom: 25, width: 3, backgroundColor: 'rgba(255, 255, 255, 0.2)', borderTopRightRadius: 10, borderBottomRightRadius: 10 },
 
-  cardIcon: { width: 56, height: 56, borderRadius: 16, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+  cardIcon: { width: 56, height: 56, borderRadius: 16, backgroundColor: '#16161E', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.08)', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
 
   cardImage: { width: '100%', height: '100%', resizeMode: 'contain' },
 
@@ -2896,7 +2896,7 @@ const styles = StyleSheet.create({
 
     position: 'relative',
 
-    backgroundColor: NoxColors.surface,
+    backgroundColor: '#16161E', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.08)',
 
   },
 

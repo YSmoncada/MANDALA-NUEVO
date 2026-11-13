@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, marginLeft: 10, color: NoxColors.text, fontSize: 14 },
 
   prodCard: { flex: 1, backgroundColor: NoxColors.card, marginVertical: 7, padding: 15, borderRadius: 24, borderWidth: 1, borderColor: NoxColors.border, minHeight: 230, alignItems: 'center' },
-  imgContainer: { width: 110, height: 110, backgroundColor: '#FFFFFF', borderRadius: 25, justifyContent:'center', alignItems:'center', marginBottom: 12, overflow: 'hidden' },
+  imgContainer: { width: 110, height: 110, backgroundColor: '#16161E', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.08)', borderRadius: 25, justifyContent:'center', alignItems:'center', marginBottom: 12, overflow: 'hidden' },
   prodImg: { width: 110, height: 110, borderRadius: 25, resizeMode: 'contain' },
   infoContainer: { alignItems: 'center', width: '100%' },
   prodName: { color: NoxColors.text, fontWeight: 'bold', fontSize: 13, textAlign: 'center', height: 36, lineHeight: 18 },
