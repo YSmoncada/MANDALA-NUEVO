@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import HTMLResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from typing import List, Optional
 import os
+import time
+import json
 import logging
 
 from db import models
+from db.mongo import get_mongo_db, is_mongo_connected
 from api import deps
 from api.endpoints.mesas import assign_waiter
 
@@ -81,3 +85,92 @@ def render_menu_cliente(mesa_id: int, db: Session = Depends(deps.get_db)):
     html = html.replace("{{MESERO_NOMBRE}}", mesero_nombre)
     
     return HTMLResponse(content=html, status_code=200)
+
+# ==============================================================================
+# PILAR 3: ENDPOINT HÍBRIDO POLÍGLOTA - CATÁLOGO DESNORMALIZADO EN MONGODB
+# ==============================================================================
+@router.get("/menu/digital/catalogo/")
+def get_catalogo_digital_hibrido(
+    q: Optional[str] = Query(None, description="Búsqueda de texto completo (reemplaza LIKE con $text)"),
+    tag: Optional[str] = Query(None, description="Filtrado por etiqueta multikey"),
+    categoria: Optional[str] = Query(None, description="Filtrar por categoría"),
+    db_sql: Session = Depends(deps.get_db)
+):
+    """
+    Retorna el menú digital enriquecido para la app móvil y clientes QR.
+    - Si MongoDB está disponible: resuelve la carta en 1 sola lectura sin JOINs (BASE).
+    - Si MongoDB no está corriendo: utiliza fallback relacional con Eager Loading.
+    """
+    t_start = time.perf_counter()
+    mongo_db = get_mongo_db()
+
+    # RUTA A: Lectura desde NoSQL Documental (MongoDB)
+    if mongo_db is not None:
+        try:
+            filtro = {"activo": True}
+            if q:
+                filtro["$text"] = {"$search": q}
+            if tag:
+                filtro["tags"] = tag.lower()
+            if categoria:
+                filtro["categoria"] = {"$regex": f"^{categoria}$", "$options": "i"}
+
+            docs = list(mongo_db["menu_digital"].find(filtro))
+            # Normalizar _id a entero o string para respuesta JSON
+            for d in docs:
+                d["id"] = d.get("_id")
+
+            duracion_ms = round((time.perf_counter() - t_start) * 1000, 3)
+            return {
+                "status": "success",
+                "motor": "MongoDB (NoSQL Documental)",
+                "latencia_ms": duracion_ms,
+                "arquitectura": "Persistencia Políglota - Catálogo Desnormalizado",
+                "total_productos": len(docs),
+                "productos": docs
+            }
+        except Exception as e:
+            logger.warning(f"Error consultando MongoDB: {e}. Activando fallback relacional.")
+
+    # RUTA B: Fallback Relacional (SQL)
+    query = db_sql.query(models.Producto).options(
+        joinedload(models.Producto.rel_categoria)
+    ).filter(models.Producto.activo == True)
+
+    if categoria:
+        query = query.join(models.Categoria).filter(models.Categoria.nombre.ilike(categoria))
+
+    prods_sql = query.all()
+    # Enriquecer con archivo exportado si existe
+    export_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db", "mongo_menu_export.json")
+    meta_cache = {}
+    if os.path.exists(export_path):
+        try:
+            with open(export_path, "r", encoding="utf-8") as f:
+                meta_cache = {d["_id"]: d for d in json.load(f)}
+        except Exception:
+            pass
+
+    resultado = []
+    for p in prods_sql:
+        enriched = meta_cache.get(p.id, {
+            "id": p.id,
+            "nombre": p.nombre,
+            "precio": float(p.precio or 0),
+            "categoria": p.rel_categoria.nombre if p.rel_categoria else "General",
+            "detalles_bebida": {},
+            "tags": [],
+            "ingredientes": []
+        })
+        resultado.append(enriched)
+
+    duracion_ms = round((time.perf_counter() - t_start) * 1000, 3)
+    return {
+        "status": "success",
+        "motor": "SQL Relacional (Fallback Activo)",
+        "latencia_ms": duracion_ms,
+        "arquitectura": "Persistencia Políglota - Modo Resiliencia",
+        "total_productos": len(resultado),
+        "productos": resultado
+    }
+

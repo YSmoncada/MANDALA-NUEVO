@@ -5,12 +5,13 @@ import os
 import shutil
 from fastapi import UploadFile, File
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from db import database, models
 from schemas import schemas
 from api import deps
 from typing import List, Optional
 import logging
+
 
 logger = logging.getLogger("mandala.inventario")
 router = APIRouter()
@@ -77,16 +78,19 @@ def get_productos(
     categoria: Optional[int] = None, 
     db: Session = Depends(deps.get_db)
 ):
-    query = db.query(models.Producto).filter(models.Producto.activo == True)
+    # PILAR 1 (ORM): Carga Ansiosa (Eager Loading) con joinedload
+    # Elimina el problema N+1: resuelve producto y su categoría en 1 sola consulta SQL con LEFT JOIN
+    query = db.query(models.Producto).options(
+        joinedload(models.Producto.rel_categoria)
+    ).filter(models.Producto.activo == True)
+    
     if categoria:
         query = query.filter(models.Producto.categoria == categoria)
 
-    
     productos_list = query.all()
     for p in productos_list:
-        cat = db.query(models.Categoria).filter(models.Categoria.id == p.categoria).first()
-        if cat:
-            p.categoria_nombre = cat.nombre
+        # Se lee de memoria desde la relación pre-cargada; CERO consultas SQL adicionales
+        p.categoria_nombre = p.rel_categoria.nombre if p.rel_categoria else None
             
     return productos_list
 

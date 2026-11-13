@@ -25,8 +25,11 @@ def read_pedidos(
 ):
     if not current_user and not mesa:
         raise HTTPException(status_code=401, detail="Debe especificar una mesa o iniciar sesión")
+    # PILAR 1: ORM Eager Loading - Carga en un solo query las relaciones foráneas (detalles, productos, estado, mesa)
     query = db.query(models.Pedido).options(
-        joinedload(models.Pedido.detalles).joinedload(models.PedidoProducto.producto)
+        joinedload(models.Pedido.detalles).joinedload(models.PedidoProducto.producto),
+        joinedload(models.Pedido.rel_estado),
+        joinedload(models.Pedido.rel_mesa).joinedload(models.Mesa.rel_mesero)
     )
     
     if estado:
@@ -51,19 +54,21 @@ def read_pedidos(
     pedidos_list = query.order_by(models.Pedido.fecha_hora.desc()).offset(skip).limit(limit).all()
     
     for p in pedidos_list:
-        est = db.query(models.EstadoPedido).filter(models.EstadoPedido.id == p.estado).first()
-        if est: p.estado_nombre = est.nombre
-        ms = db.query(models.Mesa).filter(models.Mesa.id == p.mesa).first()
-        if ms: 
-            p.mesa_numero = ms.numero
-            p.pidiendo_cuenta = ms.pidiendo_cuenta
+        # PILAR 1: Leído directamente de memoria gracias a joinedload (Cero queries N+1)
+        p.estado_nombre = p.rel_estado.nombre if p.rel_estado else "Desconocido"
+        if p.rel_mesa:
+            p.mesa_numero = p.rel_mesa.numero
+            p.pidiendo_cuenta = p.rel_mesa.pidiendo_cuenta
+        else:
+            p.mesa_numero = 0
+            p.pidiendo_cuenta = False
         p.origen_cliente = bool(getattr(p, 'origen_cliente', False))
         
         u = db.query(models.Usuario).filter(models.Usuario.id == p.creado_por).first() if p.creado_por else None
         if u:
             p.usuario_nombre = u.nombre_completo or u.username
-        elif ms and ms.rel_mesero:
-            p.usuario_nombre = ms.rel_mesero.nombre_completo or ms.rel_mesero.username
+        elif p.rel_mesa and p.rel_mesa.rel_mesero:
+            p.usuario_nombre = p.rel_mesa.rel_mesero.nombre_completo or p.rel_mesa.rel_mesero.username
         else:
             p.usuario_nombre = "Barra"
         p.mesera_nombre = p.usuario_nombre
@@ -83,45 +88,46 @@ def create_pedido(
     db: Session = Depends(deps.get_db),
     current_user: Optional[models.Usuario] = Depends(deps.get_optional_user)
 ):
+    """
+    PILAR 1 (TRANSACCIONES ACID):
+    - Atomicidad: Unificación en un solo bloque atómico. Si falla un producto o la mesa,
+      se ejecuta ROLLBACK automático sin dejar la mesa ocupada ni pedidos huérfanos.
+    - Concurrencia: Bloqueo de fila pesimista (with_for_update) sobre la mesa para evitar
+      que dos clientes o meseras abran la misma mesa simultáneamente.
+    """
     try:
         # 1. Obtener estado inicial 'Pendiente'
         est_obj = db.query(models.EstadoPedido).filter(models.EstadoPedido.nombre == "Pendiente").first()
         if not est_obj:
             est_obj = models.EstadoPedido(nombre="Pendiente")
             db.add(est_obj)
-            db.commit()
-            db.refresh(est_obj)
+            db.flush()
         
         # --- VALIDACIÓN DE TURNO ---
         turno_actual = db.query(models.Turno).filter(models.Turno.estado == "abierto").first()
         if not turno_actual:
             raise HTTPException(status_code=400, detail="VENTAS BLOQUEADAS: No hay un turno abierto en caja.")
 
-        # 2. Verificar y actualizar estado de la mesa
-        mesa_obj = db.query(models.Mesa).filter(models.Mesa.id == pedido.mesa).first()
+        # 2. Verificar y bloquear fila de la mesa (Control de concurrencia pesimista)
+        mesa_obj = db.query(models.Mesa).filter(models.Mesa.id == pedido.mesa).with_for_update().first()
         if not mesa_obj:
             raise HTTPException(status_code=404, detail="Mesa no encontrada")
         
         # Obtener el estado 'Ocupada'
         estado_ocupada = db.query(models.EstadoMesa).filter(models.EstadoMesa.nombre == "Ocupada").first()
         if not estado_ocupada:
-            # Si no existe el estado Ocupada, lo creamos
             estado_ocupada = models.EstadoMesa(nombre="Ocupada")
             db.add(estado_ocupada)
-            db.commit()
-            db.refresh(estado_ocupada)
+            db.flush()
 
         if mesa_obj.estado == estado_ocupada.id and not pedido.force_append:
             raise HTTPException(status_code=400, detail="Esta mesa ya se encuentra ocupada")
 
         # Marcar mesa como ocupada
         mesa_obj.estado = estado_ocupada.id
-        db.commit()
 
         # 3. Extraer data y mapear usuario
         data = pedido.dict(exclude={'productos', 'detalles', 'estado_nombre', 'mesa_numero', 'usuario', 'force_append', 'pidiendo_cuenta'})
-        # Si viene un usuario autenticado (mesera/personal), registramos quién tomó el pedido,
-        # pero NO se le auto-asigna la mesa (la asignación está reservada para el cliente vía QR).
         if current_user:
             data['creado_por'] = current_user.id
             data['origen_cliente'] = False
@@ -132,7 +138,6 @@ def create_pedido(
             data['creado_por'] = pedido.creado_por
             data['origen_cliente'] = False
         else:
-            # Pedido realizado directamente por el cliente desde el QR
             data['origen_cliente'] = True
             if mesa_obj and mesa_obj.mesero_id:
                 data['creado_por'] = mesa_obj.mesero_id
@@ -149,8 +154,7 @@ def create_pedido(
         
         db_pedido = models.Pedido(**data)
         db.add(db_pedido)
-        db.commit()
-        db.refresh(db_pedido)
+        db.flush()  # Asigna db_pedido.id de forma transaccional sin hacer COMMIT aún
 
         items = pedido.productos if pedido.productos else pedido.detalles
         total_acumulado = Decimal(0)
@@ -159,9 +163,10 @@ def create_pedido(
             for item in items:
                 if not item.producto_id: continue
                 
-                # Obtener precio del producto desde la DB para seguridad
+                # Obtener precio y validar existencia de producto
                 prod_obj = db.query(models.Producto).filter(models.Producto.id == item.producto_id).first()
-                if not prod_obj: continue
+                if not prod_obj:
+                    raise HTTPException(status_code=404, detail=f"Producto #{item.producto_id} no encontrado")
                 
                 precio = prod_obj.precio
                 total_acumulado += precio * item.cantidad
@@ -176,8 +181,10 @@ def create_pedido(
             
             # Actualizar el total del pedido
             db_pedido.total = total_acumulado
-            db.commit()
-            db.refresh(db_pedido)
+
+        # PILAR 1: ÚNICO COMMIT TRANSACCIONAL ATÓMICO (Todo o Nada)
+        db.commit()
+        db.refresh(db_pedido)
 
         # Poblar extras para respuesta inmediata
         ms = db.query(models.Mesa).filter(models.Mesa.id == db_pedido.mesa).first()
@@ -318,8 +325,15 @@ def update_pedido(
                     # Solo descontar lo que no se ha despachado todavía para evitar descuentos duplicados
                     pendiente = det.cantidad - det.cantidad_despachada
                     if pendiente > 0:
-                        prod = db.query(models.Producto).filter(models.Producto.id == det.producto_id).first()
+                        # PILAR 1 (CONCURRENCIA): Bloqueo pesimista de fila (with_for_update)
+                        # Previene la anomalía Lost Update / Ventas dobles bajo concurrencia (Reto de la última botella)
+                        prod = db.query(models.Producto).filter(models.Producto.id == det.producto_id).with_for_update().first()
                         if prod:
+                            if (prod.stock_actual or 0) < pendiente:
+                                raise HTTPException(
+                                    status_code=status.HTTP_409_CONFLICT,
+                                    detail=f"Conflicto de concurrencia: Stock insuficiente para '{prod.nombre}'. Disponible: {prod.stock_actual}, solicitado: {pendiente}"
+                                )
                             prod.stock_actual -= pendiente
                             
                             # Registrar el movimiento en el historial de inventario
@@ -399,8 +413,14 @@ def despachar_producto(
     
     pendiente = item.cantidad - item.cantidad_despachada
     if pendiente > 0:
-        prod = db.query(models.Producto).filter(models.Producto.id == item.producto_id).first()
+        # PILAR 1: Bloqueo Pesimista (FOR UPDATE) - Previene ventas dobles concurrentes
+        prod = db.query(models.Producto).filter(models.Producto.id == item.producto_id).with_for_update().first()
         if prod:
+            if (prod.stock_actual or 0) < pendiente:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=f"Conflicto de concurrencia: Stock insuficiente para '{prod.nombre}'. Disponible: {prod.stock_actual}, solicitado: {pendiente}"
+                )
             prod.stock_actual -= pendiente
             
             # Registrar Kardex de salida por venta

@@ -1,180 +1,355 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore, getDashboardRoute } from '../../store/authStore';
 import { useAlertStore } from '../../store/alertStore';
-import apiClient from "../../utils/apiClient";
-import { NoxColors } from '../../constants/theme';
-
+import apiClient from '../../utils/apiClient';
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 
 export default function LoginScreen() {
-  const setAuth = useAuthStore(state => state.setAuth);
-  const showAlert = useAlertStore(state => state.showAlert);
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   const handleLogin = async () => {
     if (!username || !password) {
-      showAlert("Acceso Requerido", "Por favor ingresa tu usuario y clave de seguridad.", "warning");
+      showAlert('Acceso Requerido', 'Por favor ingresa tu usuario y clave de seguridad.', 'warning');
       return;
     }
 
     setLoading(true);
     try {
-      const response = await apiClient.post("/login/", {
+      const response = await apiClient.post('/login/', {
         username: username.trim(),
-        password: password
+        password: password,
       });
 
       const { token, refresh, role, username: responseUsername, user_id } = response.data;
 
       if (!token) {
-        throw new Error("No se recibió el token de seguridad.");
+        throw new Error('No se recibió el token de seguridad.');
       }
 
-      // Guardar en el Store (Zustand se encarga del almacenamiento persistente)
       setAuth(token, refresh || '', {
         id: String(user_id || ''),
         username: responseUsername || username,
-        role: role || 'usuario'
+        role: role || 'usuario',
       });
 
-      // Redirección inmediata según el rol
       const dashboardRoute = getDashboardRoute(role);
       router.replace(dashboardRoute as any);
-
     } catch (error: any) {
-      // El error de red o credenciales incorrectas ya es manejado por el interceptor de apiClient
+      // Manejado automáticamente por el interceptor de apiClient
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} keyboardShouldPersistTaps="handled">
-        <View style={styles.card}>
-          {/* Identidad de Marca de NoxOS */}
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Text style={styles.logoText}>Nox<Text style={styles.logoAltText}>OS</Text></Text>
-              <View style={styles.logoLine} />
-            </View>
+    <View style={styles.screen}>
+      <StatusBar style="light" />
 
+      {/* Fondo Techo Rolls-Royce Starlight */}
+      <RollsRoyceStars />
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Logo y Encabezado Superior */}
+          <View style={styles.header}>
+            <View style={styles.logoRow}>
+              <Text style={styles.logoNox}>NOX</Text>
+              <Text style={styles.logoOs}>OS</Text>
+            </View>
+            <View style={styles.glowLine} />
+            <Text style={styles.subtitle}>SISTEMA DE GESTIÓN PREMIUM</Text>
           </View>
 
-          {/* Campos del Formulario */}
-          <View style={styles.form}>
+          {/* Tarjeta Central Oscura */}
+          <View style={styles.card}>
+            {/* Campo: Usuario */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Usuario</Text>
+              <Text style={styles.label}>USUARIO</Text>
               <View style={styles.inputWrapper}>
-                <Ionicons name="person-outline" size={18} color={NoxColors.muted} style={styles.inputIcon} />
+                <Ionicons
+                  name="person-outline"
+                  size={17}
+                  color="#52525B"
+                  style={styles.inputIcon}
+                />
                 <TextInput
-                  placeholder="Nombre de usuario"
-                  placeholderTextColor="#8A7BAF50"
+                  placeholder="NOMBRE DE USUARIO"
+                  placeholderTextColor="#3F3F46"
                   style={styles.input}
                   value={username}
                   onChangeText={setUsername}
                   autoCapitalize="none"
+                  autoCorrect={false}
                 />
               </View>
             </View>
 
+            {/* Campo: Clave de Seguridad */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Clave de Seguridad</Text>
+              <Text style={styles.label}>CLAVE DE SEGURIDAD</Text>
               <View style={styles.inputWrapper}>
-                <Ionicons name="lock-closed-outline" size={18} color={NoxColors.muted} style={styles.inputIcon} />
+                <Ionicons
+                  name="lock-closed-outline"
+                  size={17}
+                  color="#52525B"
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   placeholder="••••••••••••"
-                  placeholderTextColor="#8A7BAF50"
+                  placeholderTextColor="#3F3F46"
                   style={styles.input}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
                 />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
-                  <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color={NoxColors.muted} />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeBtn}
+                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                >
+                  <Ionicons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={18}
+                    color="#52525B"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
 
+            {/* Opción: Recordar Sesión */}
             <TouchableOpacity
-              style={[styles.btn, (!username || !password) && styles.btnDisabled]}
-              onPress={handleLogin}
-              disabled={loading || !username || !password}
+              style={styles.rememberRow}
+              onPress={() => setRememberMe(!rememberMe)}
+              activeOpacity={0.7}
             >
-              {loading ? (
-                <ActivityIndicator color={NoxColors.text} />
-              ) : (
-                <Text style={styles.btnText}>ACCEDER AL SISTEMA</Text>
-              )}
+              <View style={[styles.circleCheckbox, rememberMe && styles.circleCheckboxActive]}>
+                {rememberMe && <View style={styles.circleInnerDot} />}
+              </View>
+              <Text style={styles.rememberText}>RECORDAR SESIÓN</Text>
             </TouchableOpacity>
 
-
+            {/* Botón Principal Blanco Sólido */}
+            <TouchableOpacity
+              style={[
+                styles.btnSubmit,
+                (!username || !password) && styles.btnDisabled,
+              ]}
+              onPress={handleLogin}
+              disabled={loading || !username || !password}
+              activeOpacity={0.88}
+            >
+              {loading ? (
+                <ActivityIndicator color="#000000" size="small" />
+              ) : (
+                <Text style={styles.btnSubmitText}>ACCEDER AL SISTEMA</Text>
+              )}
+            </TouchableOpacity>
           </View>
-        </View>
 
-      </ScrollView>
-    </KeyboardAvoidingView>
+          {/* Pie de Página de Seguridad */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>ACCESO RESTRINGIDO — PERSONAL AUTORIZADO</Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
-  card: {
-    backgroundColor: NoxColors.container,
-    marginHorizontal: 20,
-    maxWidth: 460,
-    width: '92%',
-    alignSelf: 'center',
-    borderRadius: 40,
-    padding: 35,
-    borderWidth: 1,
-    borderColor: NoxColors.border,
-    shadowColor: NoxColors.deep,
-    shadowOpacity: 0.5,
-    shadowRadius: 30,
-    elevation: 10
+  screen: {
+    flex: 1,
+    backgroundColor: '#000000',
   },
-  header: { alignItems: 'center', marginBottom: 45 },
-  logoContainer: { alignItems: 'center', marginBottom: 10 },
-  logoText: { fontSize: 48, fontWeight: '900', color: NoxColors.text, letterSpacing: 5 },
-  logoAltText: { color: NoxColors.subtext },
-  logoLine: { width: 60, height: 4, backgroundColor: NoxColors.aura, borderRadius: 2, marginTop: -5, opacity: 0.5 },
-  form: { width: '100%' },
-  inputGroup: { marginBottom: 25 },
-  label: { fontSize: 10, color: NoxColors.muted, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10, marginLeft: 5 },
+  container: {
+    flex: 1,
+    zIndex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 40,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoNox: {
+    fontSize: 42,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: 6,
+  },
+  logoOs: {
+    fontSize: 42,
+    fontWeight: '900',
+    color: '#71717A',
+    letterSpacing: 6,
+  },
+  glowLine: {
+    width: 70,
+    height: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 1,
+    marginTop: 2,
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 10,
+    color: '#71717A',
+    fontWeight: '700',
+    letterSpacing: 4,
+    textTransform: 'uppercase',
+  },
+  card: {
+    backgroundColor: '#0E0E11',
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 28,
+    paddingHorizontal: 28,
+    paddingVertical: 36,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.9,
+    shadowRadius: 36,
+    elevation: 16,
+  },
+  inputGroup: {
+    marginBottom: 22,
+  },
+  label: {
+    fontSize: 10,
+    color: '#71717A',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    marginBottom: 8,
+    marginLeft: 2,
+  },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: NoxColors.card,
-    borderRadius: 20,
-    paddingHorizontal: 15,
+    backgroundColor: '#070709',
+    borderRadius: 14,
+    paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: 'rgba(108, 63, 168, 0.3)'
+    borderColor: '#1C1C22',
   },
-  inputIcon: { marginRight: 12 },
-  input: { flex: 1, paddingVertical: 18, fontSize: 14, color: NoxColors.text, fontWeight: '600' },
-  eyeBtn: { padding: 10 },
-
-  btn: {
-    backgroundColor: '#441E73',
-    padding: 22,
+  inputIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    paddingVertical: Platform.OS === 'ios' ? 14 : 12,
+    fontSize: 13,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    letterSpacing: 1,
+  },
+  eyeBtn: {
+    padding: 6,
+  },
+  rememberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+    marginBottom: 26,
+    marginLeft: 2,
+  },
+  circleCheckbox: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: '#3F3F46',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  circleCheckboxActive: {
+    borderColor: '#A1A1AA',
+  },
+  circleInnerDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#E4E4E7',
+  },
+  rememberText: {
+    color: '#71717A',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.5,
+  },
+  btnSubmit: {
+    backgroundColor: '#FFFFFF',
+    height: 52,
     borderRadius: 20,
     alignItems: 'center',
-    marginTop: 20,
-    shadowColor: NoxColors.aura,
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 5
+    justifyContent: 'center',
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 4,
   },
-  btnDisabled: { opacity: 0.4 },
-  btnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 3, fontSize: 11 }
+  btnDisabled: {
+    opacity: 0.45,
+  },
+  btnSubmitText: {
+    color: '#000000',
+    fontWeight: '900',
+    letterSpacing: 2.5,
+    fontSize: 12,
+    textTransform: 'uppercase',
+  },
+  footer: {
+    marginTop: 28,
+    alignItems: 'center',
+  },
+  footerText: {
+    color: '#3F3F46',
+    fontSize: 9.5,
+    fontWeight: '700',
+    letterSpacing: 2.5,
+    textAlign: 'center',
+  },
 });

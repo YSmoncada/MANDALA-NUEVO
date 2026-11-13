@@ -1,0 +1,300 @@
+[
+  {
+    "_id": 1,
+    "nombre": "Cerveza Corona",
+    "precio": 12000.0,
+    "categoria": "Cervezas",
+    "categoria_id": 1,
+    "activo": true,
+    "imagen": "productos/corona.png",
+    "descripcion": "Cerveza clara tipo Pilsner de origen mexicano, suave y refrescante.",
+    "detalles_bebida": {
+      "grados_alcohol": 4.5,
+      "temperatura_ideal": "3°C - 5°C",
+      "presentacion": "Botella 355ml"
+    },
+    "ingredientes": [
+      "Cebada malteada",
+      "Lúpulo",
+      "Agua purificada",
+      "Maíz"
+    ],
+    "maridaje": [
+      "Nachos con queso",
+      "Ceviche de camarón",
+      "Alitas BBQ"
+    ],
+    "tags": [
+      "cerveza",
+      "importada",
+      "refrescante",
+      "corona",
+      "suave"
+    ],
+    "reviews_destacadas": [
+      {
+        "usuario": "carlos_m",
+        "estrellas": 5,
+        "comentario": "Siempre fría y con limón, perfecta."
+      }
+    ]
+  },
+  {
+    "_id": 2,
+    "nombre": "Cerveza Aguila",
+    "precio": 6000.0,
+    "categoria": "Cervezas",
+    "categoria_id": 1,
+    "activo": true,
+    "imagen": "productos/aguila.png",
+    "descripcion": "La cerveza clásica tradicional de Colombia, balanceada y con cuerpo medio.",
+    "detalles_bebida": {
+      "grados_alcohol": 4.0,
+      "temperatura_ideal": "2°C - 4°C",
+      "presentacion": "Botella 330ml"
+    },
+    "ingredientes": [
+      "Cebada malteada",
+      "Lúpulo",
+      "Arroz",
+      "Agua purificada"
+    ],
+    "maridaje": [
+      "Picadas mixtas",
+      "Empanaditas de carne",
+      "Chicharrón"
+    ],
+    "tags": [
+      "cerveza",
+      "nacional",
+      "popular",
+      "clasica",
+      "aguila"
+    ],
+    "reviews_destacadas": [
+      {
+        "usuario": "andres_b",
+        "estrellas": 4,
+        "comentario": "Infaltable en toda noche de rumba."
+      }
+    ]
+  },
+  {
+    "_id": 3,
+    "nombre": "Aguila Light",
+    "precio": 6500.0,
+    "categoria": "Cervezas",
+    "categoria_id": 1,
+    "activo": true,
+    "imagen": "productos/aguila-light.png",
+    "descripcion": "Cerveza baja en calorías, ligera y fácil de tomar durante toda la noche.",
+    "detalles_bebida": {
+      "grados_alcohol": 3.4,
+      "temperatura_ideal": "2°C - 4°C",
+      "presentacion": "Botella 330ml"
+    },
+    "ingredientes": [
+      "Cebada malteada",
+      "Lúpulo seleccionado",
+      "Agua purificada"
+    ],
+    "maridaje": [
+      "Tacos ligeros",
+      "Papas bravas"
+    ],
+    "tags": [
+      "cerveza",
+      "light",
+      "baja en calorias",
+      "nacional"
+    ],
+    "reviews_destacadas": [
+      {
+        "usuario": "valen_g",
+        "estrellas": 5,
+        "comentario": "Mi favorita para no embriagarme rápido."
+      }
+    ]
+  },
+  {
+    "_id": 4,
+    "nombre": "Aguardiente Amarillo",
+    "precio": 110000.0,
+    "categoria": "Licores",
+    "categoria_id": 2,
+    "activo": true,
+    "imagen": "productos/aguardiente-amarillo.png",
+    "descripcion": "El legendario pionero de Manizales desde 1885. Fórmula tradicional sin azúcar y con anís suave.",
+    "detalles_bebida": {
+      "grados_alcohol": 24.0,
+      "temperatura_ideal": "Shot frío",
+      "presentacion": "Botella 750ml"
+    },
+    "ingredientes": [
+      "Alcohol extraneutro de caña",
+      "Anís natural sembrado",
+      "Agua de cordillera"
+    ],
+    "maridaje": [
+      "Picada criolla",
+      "Ceviche de chicharrón",
+      "Frutas cítricas"
+    ],
+    "tags": [
+      "aguardiente",
+      "licor",
+      "nacional",
+      "popular",
+      "shots",
+      "amarillo",
+      "sin azucar"
+    ],
+    "reviews_destacadas": [
+      {
+        "usuario": "yoiner_l",
+        "estrellas": 5,
+        "comentario": "Pasa suave y no da guayabo, el mejor para la mesa."
+      }
+    ]
+  },
+  {
+    "_id": 5,
+    "nombre": "Aguardiente Néctar",
+    "precio": 95000.0,
+    "categoria": "Licores",
+    "categoria_id": 2,
+    "activo": true,
+    "imagen": "productos/aguardiente-nectar.png",
+    "descripcion": "Aguardiente tradicional de Cundinamarca, notas secas y anisadas.",
+    "detalles_bebida": {
+      "grados_alcohol": 24.0,
+      "temperatura_ideal": "Temperatura ambiente o frío",
+      "presentacion": "Botella 750ml"
+    },
+    "ingredientes": [
+      "Alcohol de caña",
+      "Esencia de anís verde",
+      "Agua purificada"
+    ],
+    "maridaje": [
+      "Carnes frías",
+      "Chicharrón"
+    ],
+    "tags": [
+      "aguardiente",
+      "licor",
+      "cundinamarca",
+      "nectar",
+      "tradicional"
+    ],
+    "reviews_destacadas": [
+      {
+        "usuario": "maria_j",
+        "estrellas": 4,
+        "comentario": "Clásico de la casa."
+      }
+    ]
+  },
+  {
+    "_id": 6,
+    "nombre": "Buchanans Deluxe",
+    "precio": 210000.0,
+    "categoria": "Whisky",
+    "categoria_id": 3,
+    "activo": true,
+    "imagen": "productos/buchanas.png",
+    "descripcion": "Whisky escocés añejado por un mínimo de 12 años en barricas de roble europeo y americano.",
+    "detalles_bebida": {
+      "grados_alcohol": 40.0,
+      "temperatura_ideal": "En las rocas o con agua mineral",
+      "presentacion": "Botella 750ml"
+    },
+    "ingredientes": [
+      "Cebada malteada escocesa",
+      "Granos seleccionados",
+      "Agua pura de manantial"
+    ],
+    "maridaje": [
+      "Cortes de carne madurados",
+      "Chocolates amargos 70%",
+      "Quesos fuertes"
+    ],
+    "tags": [
+      "whisky",
+      "scotch",
+      "premium",
+      "buchanans",
+      "12 años",
+      "vip"
+    ],
+    "reviews_destacadas": [
+      {
+        "usuario": "kemer_g",
+        "estrellas": 5,
+        "comentario": "Elegante y con notas ahumadas perfectas para celebrar."
+      }
+    ]
+  },
+  {
+    "_id": 7,
+    "nombre": "Bacardi Limón",
+    "precio": 130000.0,
+    "categoria": "Licores",
+    "categoria_id": 2,
+    "activo": true,
+    "imagen": "productos/bacardi-limon.png",
+    "descripcion": "Ron blanco infusionado con notas naturales de limón italiano, toronja y lima.",
+    "detalles_bebida": {
+      "grados_alcohol": 32.0,
+      "temperatura_ideal": "Con hielo y gaseosa de lima-limón",
+      "presentacion": "Botella 750ml"
+    },
+    "ingredientes": [
+      "Ron Bacardi Carta Blanca",
+      "Esencia natural de cítricos"
+    ],
+    "maridaje": [
+      "Alitas picantes",
+      "Dips de queso crema"
+    ],
+    "tags": [
+      "ron",
+      "citrico",
+      "cocteles",
+      "bacardi",
+      "refrescante"
+    ],
+    "reviews_destacadas": [
+      {
+        "usuario": "camila_t",
+        "estrellas": 5,
+        "comentario": "Sabe a verano, me encanta en cóctel."
+      }
+    ]
+  },
+  {
+    "_id": 9,
+    "nombre": "lola",
+    "precio": 5000000.0,
+    "categoria": "Licores",
+    "categoria_id": 2,
+    "activo": true,
+    "imagen": "https://res.cloudinary.com/dakfgzabb/image/upload/v1793063707/obamfddsrbmzvnwdgjq3.jpg",
+    "descripcion": "Producto selecto de nuestra categoría Licores.",
+    "detalles_bebida": {
+      "presentacion": "Porción estándar"
+    },
+    "ingredientes": [
+      "Ingredientes seleccionados de la casa"
+    ],
+    "maridaje": [
+      "Pregunte a su mesero por las mejores sugerencias"
+    ],
+    "tags": [
+      "licores",
+      "gastrobar",
+      "mandala"
+    ],
+    "reviews_destacadas": []
+  }
+]

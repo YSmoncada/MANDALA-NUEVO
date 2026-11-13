@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, desc
 from typing import List, Dict, Any, Optional
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 from db.database import get_db
 from db import models
 from api.deps import get_db, get_current_active_user, check_admin_role
@@ -27,16 +27,25 @@ def get_analytics_dashboard(
     today_date = now.date()
     today_str = today_date.strftime("%Y-%m-%d")
 
-    # 1. Pedidos base válidos (excluyendo cancelados si estado es 5)
-    pedidos_query = db.query(models.Pedido).filter(models.Pedido.estado != 5).order_by(models.Pedido.fecha_hora.desc())
-    todos_pedidos = pedidos_query.all()
-    
-    # Fechas con actividad en la base de datos
-    fechas_disponibles = sorted(
-        list(set(p.fecha_hora.date() for p in todos_pedidos if p.fecha_hora is not None)),
-        reverse=True
-    )
-    ultima_fecha_operativa = fechas_disponibles[0] if fechas_disponibles else None
+    # PILAR 2 (CONSULTAS SARGABLES):
+    # En lugar de traer toda la tabla a memoria con .all() y filtrar en Python,
+    # ejecutamos consultas SARGables directas con rangos limpios de fecha [inicio, fin)
+    # permitiendo que el motor aproveche el índice B-Tree idx_pedidos_fecha_estado en O(log N).
+
+    # Obtener última fecha con actividad en la base de datos de forma indexada
+    ultimo_pedido = db.query(models.Pedido).filter(models.Pedido.estado != 5).order_by(models.Pedido.fecha_hora.desc()).first()
+    ultima_fecha_operativa = ultimo_pedido.fecha_hora.date() if (ultimo_pedido and ultimo_pedido.fecha_hora) else today_date
+
+    fechas_raw = db.query(func.date(models.Pedido.fecha_hora)).filter(models.Pedido.estado != 5).distinct().order_by(desc(func.date(models.Pedido.fecha_hora))).limit(15).all()
+    fechas_disponibles = []
+    for row in fechas_raw:
+        f = row[0]
+        if f:
+            if isinstance(f, str):
+                try: fechas_disponibles.append(datetime.strptime(f, "%Y-%m-%d").date())
+                except: pass
+            elif hasattr(f, "strftime"):
+                fechas_disponibles.append(f)
 
     periodo_norm = (periodo or "dia").lower().strip()
     pedidos_periodo = []
@@ -53,14 +62,17 @@ def get_analytics_dashboard(
                 target_date = None
 
         if not target_date:
-            # Si hay pedidos hoy los usamos; si no, tomamos la última fecha operativa registrada
-            pedidos_hoy = [p for p in todos_pedidos if p.fecha_hora and p.fecha_hora.date() == today_date]
-            if len(pedidos_hoy) > 0 or not ultima_fecha_operativa:
-                target_date = today_date
-            else:
-                target_date = ultima_fecha_operativa
+            target_date = today_date if ultimo_pedido and ultimo_pedido.fecha_hora and ultimo_pedido.fecha_hora.date() == today_date else ultima_fecha_operativa
 
-        pedidos_periodo = [p for p in todos_pedidos if p.fecha_hora and p.fecha_hora.date() == target_date]
+        # PREDICADO SARGABLE: Rango cerrado-abierto [inicio_dia, fin_dia)
+        inicio_dia = datetime.combine(target_date, time.min)
+        fin_dia = inicio_dia + timedelta(days=1)
+        pedidos_periodo = db.query(models.Pedido).filter(
+            models.Pedido.fecha_hora >= inicio_dia,
+            models.Pedido.fecha_hora < fin_dia,
+            models.Pedido.estado != 5
+        ).order_by(models.Pedido.fecha_hora.desc()).all()
+
         if target_date == today_date:
             etiqueta_periodo = "Hoy (Turno en curso)"
             descripcion_periodo = f"Ventas y demanda de hoy ({today_str})"
@@ -73,10 +85,15 @@ def get_analytics_dashboard(
     elif periodo_norm in ["semana", "7dias", "week"]:
         referencia = now
         if ultima_fecha_operativa and (now.date() - ultima_fecha_operativa).days > 7:
-            referencia = datetime.combine(ultima_fecha_operativa, datetime.max.time())
+            referencia = datetime.combine(ultima_fecha_operativa, time.max)
         
         fecha_inicio = referencia - timedelta(days=7)
-        pedidos_periodo = [p for p in todos_pedidos if p.fecha_hora and p.fecha_hora >= fecha_inicio]
+        # PREDICADO SARGABLE SEMANAL
+        pedidos_periodo = db.query(models.Pedido).filter(
+            models.Pedido.fecha_hora >= fecha_inicio,
+            models.Pedido.estado != 5
+        ).order_by(models.Pedido.fecha_hora.desc()).all()
+
         etiqueta_periodo = "Semana (Últimos 7 días)"
         descripcion_periodo = f"Consolidado semanal ({fecha_inicio.strftime('%d %b')} - {referencia.strftime('%d %b')})"
         recomendacion_periodo = "Reabastecer stock de cervezas y aguardiente antes del pico fuerte del fin de semana (viernes y sábado)."
@@ -84,16 +101,21 @@ def get_analytics_dashboard(
     elif periodo_norm in ["mes", "30dias", "month"]:
         referencia = now
         if ultima_fecha_operativa and (now.date() - ultima_fecha_operativa).days > 30:
-            referencia = datetime.combine(ultima_fecha_operativa, datetime.max.time())
+            referencia = datetime.combine(ultima_fecha_operativa, time.max)
         
         fecha_inicio = referencia - timedelta(days=30)
-        pedidos_periodo = [p for p in todos_pedidos if p.fecha_hora and p.fecha_hora >= fecha_inicio]
+        # PREDICADO SARGABLE MENSUAL
+        pedidos_periodo = db.query(models.Pedido).filter(
+            models.Pedido.fecha_hora >= fecha_inicio,
+            models.Pedido.estado != 5
+        ).order_by(models.Pedido.fecha_hora.desc()).all()
+
         etiqueta_periodo = "Mes (Últimos 30 días)"
         descripcion_periodo = f"Consolidado mensual ({fecha_inicio.strftime('%d %b')} - {referencia.strftime('%d %b')})"
         recomendacion_periodo = "Analizar rentabilidad de cócteles y fidelizar a clientes recurrentes que lideran el ticket promedio mensual."
 
     else: # 'todos' o 'historico'
-        pedidos_periodo = todos_pedidos
+        pedidos_periodo = db.query(models.Pedido).filter(models.Pedido.estado != 5).order_by(models.Pedido.fecha_hora.desc()).all()
         etiqueta_periodo = "Histórico Completo"
         descripcion_periodo = "Acumulado total de todas las operaciones registradas"
         recomendacion_periodo = "El 78.5% del ingreso proviene de Cervezas y Licores; mantener convenios con distribuidores clave."
@@ -103,8 +125,14 @@ def get_analytics_dashboard(
     total_pedidos_periodo = len(pedidos_periodo)
     ticket_promedio = round(total_ventas_periodo / total_pedidos_periodo, 2) if total_pedidos_periodo > 0 else 0.0
 
-    # Pedidos de hoy (fijos de referencia)
-    pedidos_hoy_reales = [p for p in todos_pedidos if p.fecha_hora and p.fecha_hora.date() == today_date]
+    # Pedidos de hoy (fijos de referencia con filtro SARGable)
+    inicio_hoy = datetime.combine(today_date, time.min)
+    fin_hoy = inicio_hoy + timedelta(days=1)
+    pedidos_hoy_reales = db.query(models.Pedido).filter(
+        models.Pedido.fecha_hora >= inicio_hoy,
+        models.Pedido.fecha_hora < fin_hoy,
+        models.Pedido.estado != 5
+    ).all()
     total_ventas_hoy = float(sum(p.total or 0 for p in pedidos_hoy_reales))
     total_pedidos_hoy = len(pedidos_hoy_reales)
 
@@ -174,18 +202,21 @@ def get_analytics_dashboard(
             "es_pico": es_pico
         })
 
-    # 3. Distribución por Categorías para el periodo
-    pedido_ids_periodo = {p.id for p in pedidos_periodo}
-    detalles_todos = db.query(models.PedidoProducto).all()
-    detalles_periodo = [d for d in detalles_todos if d.pedido_id in pedido_ids_periodo]
-    detalles_uso = detalles_periodo if len(detalles_periodo) > 0 else detalles_todos
+    # 3. Distribución por Categorías para el periodo (Eager Loading para eliminar N+1 en analítica)
+    pedido_ids_periodo = [p.id for p in pedidos_periodo]
+    detalles_query = db.query(models.PedidoProducto).options(
+        joinedload(models.PedidoProducto.producto).joinedload(models.Producto.rel_categoria)
+    )
+    if pedido_ids_periodo:
+        detalles_uso = detalles_query.filter(models.PedidoProducto.pedido_id.in_(pedido_ids_periodo)).all()
+    else:
+        detalles_uso = []
 
     categorias_map: Dict[str, float] = {}
     for d in detalles_uso:
-        prod = db.query(models.Producto).filter(models.Producto.id == d.producto_id).first()
+        prod = d.producto
         if prod:
-            cat_obj = db.query(models.Categoria).filter(models.Categoria.id == prod.categoria).first() if prod.categoria else None
-            cat_nombre = cat_obj.nombre if cat_obj else "Otras Bebidas"
+            cat_nombre = prod.rel_categoria.nombre if prod.rel_categoria else "Otras Bebidas"
             subtotal = float(d.cantidad or 1) * float(d.precio_unitario or prod.precio or 0)
             categorias_map[cat_nombre] = categorias_map.get(cat_nombre, 0.0) + subtotal
 
@@ -212,15 +243,14 @@ def get_analytics_dashboard(
         })
         idx += 1
 
-    # 4. Top Productos para el periodo
+    # 4. Top Productos para el periodo (Resuelto de memoria con los productos precargados)
     prod_counts: Dict[int, Dict[str, Any]] = {}
     for d in detalles_uso:
         pid = d.producto_id
         if pid not in prod_counts:
-            prod_obj = db.query(models.Producto).filter(models.Producto.id == pid).first()
             prod_counts[pid] = {
                 "id": pid,
-                "nombre": prod_obj.nombre if prod_obj else f"Producto #{pid}",
+                "nombre": d.producto.nombre if d.producto else f"Producto #{pid}",
                 "unidades": 0,
                 "total": 0.0
             }

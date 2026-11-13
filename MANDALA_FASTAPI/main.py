@@ -24,6 +24,13 @@ logger = logging.getLogger("mandala")
 # Crear tablas y semillar si es necesario
 Base.metadata.create_all(bind=engine)
 
+# PILAR 2: Aplicar y verificar índices avanzados al iniciar la aplicación
+try:
+    from db.create_indexes import aplicar_indices
+    aplicar_indices()
+except Exception as e:
+    logger.warning(f"No se pudieron verificar los índices automáticos: {e}")
+
 # Auto-seed si la base de datos está vacía (Especialmente para Render)
 from db.database import SessionLocal
 from db.models import Usuario

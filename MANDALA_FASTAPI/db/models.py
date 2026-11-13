@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric, Text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric, Text, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
@@ -74,6 +74,15 @@ class EstadoPedido(Base):
 
 class Pedido(Base):
     __tablename__ = "pedidos"
+    __table_args__ = (
+        # PILAR 2: INDEXACIÓN AVANZADA
+        # 1. Índice compuesto respetando la Regla del Prefijo Izquierdo (Leftmost Prefix Rule)
+        Index("idx_pedidos_turno_estado", "turno_id", "estado"),
+        # 2. Índice Cubriente (Covering Index): resuelve SUM(total) de caja con Using index / Heap Fetches: 0
+        Index("idx_pedidos_cierre_cubriente", "turno_id", "estado", "total"),
+        # 3. Índice para filtrado temporal SARGable en analítica y reportes
+        Index("idx_pedidos_fecha_estado", "fecha_hora", "estado"),
+    )
     id = Column(Integer, primary_key=True, index=True)
     fecha_hora = Column(DateTime(timezone=True), server_default=func.now())
     estado = Column(Integer, ForeignKey("estados_pedido.id"))
@@ -90,6 +99,9 @@ class Pedido(Base):
 
 class PedidoProducto(Base):
     __tablename__ = "pedido_productos"
+    __table_args__ = (
+        Index("idx_pedido_prod_lookup", "pedido_id", "producto_id"),
+    )
     id = Column(Integer, primary_key=True, index=True)
     pedido_id = Column(Integer, ForeignKey("pedidos.id"))
     producto_id = Column(Integer, ForeignKey("productos.id"))
