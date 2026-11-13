@@ -914,7 +914,7 @@ export default function AdmInventarioScreen() {
 
             >
 
-              <Ionicons name="add" size={22} color={NoxColors.text} />
+              <Ionicons name="add" size={22} color="#000000" />
 
               <Text style={styles.addBtnDesktopText}>NUEVO PRODUCTO</Text>
 
@@ -944,7 +944,7 @@ export default function AdmInventarioScreen() {
 
           >
 
-            <Ionicons name="time-outline" size={18} color={NoxColors.aura} />
+            <Ionicons name="time-outline" size={18} color="#FFFFFF" />
 
             <Text style={styles.mobileHistoryBtnText} numberOfLines={1}>HISTORIAL</Text>
 
@@ -962,7 +962,7 @@ export default function AdmInventarioScreen() {
 
           >
 
-            <Ionicons name="add-circle" size={19} color={NoxColors.text} />
+            <Ionicons name="add-circle" size={19} color="#000000" />
 
             <Text style={styles.mobileAddBtnText} numberOfLines={1}>AGREGAR PRODUCTO</Text>
 
@@ -2206,7 +2206,7 @@ export default function AdmInventarioScreen() {
 
         >
 
-          <Ionicons name="add" size={28} color={NoxColors.text} />
+          <Ionicons name="add" size={28} color="#000000" />
 
         </TouchableOpacity>
 
@@ -2294,7 +2294,7 @@ const styles = StyleSheet.create({
 
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
 
-  brandingOS: { color: NoxColors.aura },
+  brandingOS: { color: NoxColors.subtext },
 
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
 
@@ -2310,11 +2310,11 @@ const styles = StyleSheet.create({
 
     gap: 8,
 
-    backgroundColor: 'rgba(169, 68, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
 
     borderWidth: 1,
 
-    borderColor: 'rgba(169, 68, 255, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
 
     paddingHorizontal: 16,
 
@@ -2324,7 +2324,7 @@ const styles = StyleSheet.create({
 
   },
 
-  historyBtnText: { color: NoxColors.aura, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
+  historyBtnText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
 
 
 
@@ -2354,7 +2354,7 @@ const styles = StyleSheet.create({
 
   },
 
-  addBtnDesktopText: { color: NoxColors.text, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
+  addBtnDesktopText: { color: '#000000', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
 
 
 
@@ -2408,11 +2408,11 @@ const styles = StyleSheet.create({
 
     gap: 8,
 
-    backgroundColor: 'rgba(169, 68, 255, 0.12)',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
 
     borderWidth: 1.5,
 
-    borderColor: 'rgba(169, 68, 255, 0.4)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
 
     paddingVertical: 13,
 
@@ -2614,7 +2614,7 @@ const styles = StyleSheet.create({
 
   tagRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 },
 
-  tag: { backgroundColor: 'rgba(169, 68, 255, 0.1)', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  tag: { backgroundColor: 'rgba(255, 255, 255, 0.06)', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
 
   tagText: { color: NoxColors.aura, fontSize: 9, fontWeight: '900', textTransform: 'uppercase' },
 
@@ -2628,7 +2628,7 @@ const styles = StyleSheet.create({
 
   iconBtn: { width: 34, height: 34, borderRadius: 10, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center' },
 
-  iconBtnMov: { width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(169, 68, 255, 0.1)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)' },
+  iconBtnMov: { width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(255, 255, 255, 0.06)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' },
 
   iconBtnDanger: { width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(239, 68, 68, 0.1)', justifyContent: 'center', alignItems: 'center' },
 
@@ -2644,7 +2644,7 @@ const styles = StyleSheet.create({
 
   // --- MODAL BASE ---
 
-  modalBg: { flex: 1, backgroundColor: 'rgba(5, 5, 16, 0.95)', justifyContent: 'center', padding: 20 },
+  modalBg: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.88)', justifyContent: 'center', padding: 20 },
 
   glassCard: {
 
@@ -2656,7 +2656,7 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
 
-    borderColor: 'rgba(169, 68, 255, 0.2)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
 
     maxWidth: 580,
 
@@ -2794,7 +2794,7 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
 
-    borderColor: 'rgba(169, 68, 255, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
 
   },
 
@@ -2846,7 +2846,7 @@ const styles = StyleSheet.create({
 
     borderStyle: 'dashed',
 
-    borderColor: 'rgba(169, 68, 255, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
 
     borderRadius: 20,
 
@@ -2856,7 +2856,7 @@ const styles = StyleSheet.create({
 
     justifyContent: 'center',
 
-    backgroundColor: 'rgba(169, 68, 255, 0.03)',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
 
   },
 

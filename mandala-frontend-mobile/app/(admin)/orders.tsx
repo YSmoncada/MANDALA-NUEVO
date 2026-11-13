@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: 'center' 
   },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
-  brandingOS: { color: NoxColors.aura },
+  brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
   liveBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(16,185,129,0.05)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(16,185,129,0.2)' },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: NoxColors.emerald, marginRight: 6 },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: NoxColors.border 
   },
-  statActive: { borderColor: NoxColors.aura, backgroundColor: 'rgba(169, 68, 255, 0.05)' },
+  statActive: { borderColor: NoxColors.aura, backgroundColor: 'rgba(255, 255, 255, 0.04)' },
   statNum: { fontSize: 18, fontWeight: '900', color: NoxColors.text },
   statLbl: { fontSize: 8, color: NoxColors.muted, fontWeight: '900', letterSpacing: 1.5, marginTop: 4 },
 
@@ -306,12 +306,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 14,
-    backgroundColor: 'rgba(169, 68, 255, 0.08)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(169, 68, 255, 0.25)',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
   },
   orderTicketBtnText: {
-    color: NoxColors.aura,
+    color: '#FFFFFF',
     fontSize: 11,
     fontWeight: '900',
     letterSpacing: 1.5,

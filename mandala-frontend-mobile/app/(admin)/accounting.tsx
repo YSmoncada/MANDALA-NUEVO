@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(169, 68, 255, 0.3)'
+    borderColor: 'rgba(255, 255, 255, 0.15)'
   },
   closeBtnText: { color: NoxColors.aura, fontWeight: '900', marginLeft: 15, fontSize: 12, letterSpacing: 2 },
 

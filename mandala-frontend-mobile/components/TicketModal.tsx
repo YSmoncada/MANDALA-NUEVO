@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     maxWidth: 440,
     maxHeight: '94%',
     borderWidth: 1,
-    borderColor: 'rgba(169, 68, 255, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.06)',
   },
   propinaToggleActive: {
-    backgroundColor: 'rgba(169, 68, 255, 0.25)',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     borderColor: NoxColors.aura,
   },
   propinaText: {

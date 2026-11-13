@@ -282,10 +282,10 @@ const styles = StyleSheet.create({
   },
   headerTitleContainer: { gap: 4 },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
-  brandingOS: { color: NoxColors.aura },
+  brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
   
-  userBadge: { width: 45, height: 45, borderRadius: 15, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.3)' },
+  userBadge: { width: 45, height: 45, borderRadius: 15, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.15)' },
   userText: { color: NoxColors.aura, fontWeight: 'bold', fontSize: 18 },
 
   scrollContent: { paddingHorizontal: 20, paddingBottom: 100, maxWidth: 800, width: '100%', alignSelf: 'center' },

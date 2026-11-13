@@ -6,25 +6,30 @@
 import { Platform } from 'react-native';
 
 export const NoxColors = {
-  aura: '#A944FF',       // Morado Neon (Acciones principales)
-  background: '#050510', // Fondo Oscuro NoxOS
-  card: '#0E0D23',       // Fondo de Tarjetas/Modales
-  container: '#1A103C',  // Violeta Oscuro (Botones secundarios, inputs)
-  muted: '#8A7BAF',      // Gris Lavanda (Labels, textos de apoyo)
-  subtext: '#71717a',    // Gris Oscuro (Descripciones secundarias)
-  border: 'rgba(255,255,255,0.05)', // Bordes sutiles
-  emerald: '#10b981',    // Verde Dinero/Éxito (Stocks, confirmar)
-  amber: '#f59e0b',      // Naranja Alerta
-  rose: '#ff4444',       // Rojo Error/Peligro (Borrar, salir)
-  text: '#ffffff',       // Blanco Puro (Títulos principales)
-  deep: '#000000',       // Negro Absoluto
-  gray: '#444444',       // Gris Medio/Cercano a placeholders
+  aura: '#FFFFFF',          // Blanco Puro Luxury (Acento principal estilo Login)
+  auraSilver: '#E4E4E7',    // Platino plateado para acentos secundarios
+  background: '#000000',    // Negro Puro Absoluto (Fondo Rolls-Royce)
+  card: '#0E0E12',          // Obsidiana mate premium (Tarjeta idéntica al Login)
+  cardSecondary: '#141419', // Superficie secundaria / tarjetas anidadas
+  container: '#16161D',     // Superficie oscura para botones e inputs
+  inputBg: '#09090C',       // Fondo de inputs oscurecido estilo Login
+  muted: '#A1A1AA',         // Gris Zinc Claro (Labels, textos de apoyo)
+  subtext: '#71717A',       // Gris Zinc Medio (Descripciones secundarias, estilo Login)
+  border: 'rgba(255, 255, 255, 0.08)', // Bordes sutiles ultra refinados
+  borderStrong: 'rgba(255, 255, 255, 0.16)', // Bordes acentuados
+  emerald: '#10B981',       // Verde Éxito / Online / Ingresos
+  amber: '#F59E0B',         // Naranja Alerta
+  rose: '#EF4444',          // Rojo Peligro / Salir / Crítico
+  text: '#FFFFFF',          // Blanco Puro (Títulos principales)
+  deep: '#000000',          // Negro Absoluto
+  gray: '#52525B',          // Gris zinc medio / placeholders
+  silver: '#E4E4E7',        // Detalle platino
 };
 
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#fff',
+    background: '#FFFFFF',
     tint: NoxColors.aura,
     icon: '#687076',
     tabIconDefault: '#687076',
@@ -34,8 +39,8 @@ export const Colors = {
     text: NoxColors.text,
     background: NoxColors.deep,
     tint: NoxColors.aura,
-    icon: NoxColors.muted,
-    tabIconDefault: NoxColors.muted,
+    icon: NoxColors.subtext,
+    tabIconDefault: NoxColors.subtext,
     tabIconSelected: NoxColors.aura,
     card: NoxColors.card,
   },

@@ -325,13 +325,13 @@ const styles = StyleSheet.create({
   backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
   headerTitleContainer: { gap: 4 },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
-  brandingOS: { color: NoxColors.aura },
+  brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
   addBtn: { backgroundColor: NoxColors.aura, width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
 
   tabsContainer: { flexDirection: 'row', paddingHorizontal: 25, gap: 12, marginBottom: 20, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   tab: { flex: 1, paddingVertical: 14, borderRadius: 18, backgroundColor: NoxColors.card, alignItems: 'center', borderWidth: 1, borderColor: NoxColors.border },
-  tabActive: { backgroundColor: NoxColors.container, borderColor: 'rgba(169, 68, 255, 0.4)' },
+  tabActive: { backgroundColor: NoxColors.container, borderColor: 'rgba(255, 255, 255, 0.2)' },
   tabText: { color: NoxColors.muted, fontWeight: 'bold', fontSize: 10, letterSpacing: 2 },
   tabTextActive: { color: NoxColors.aura },
 
@@ -361,8 +361,8 @@ const styles = StyleSheet.create({
   iconBtn: { width: 40, height: 40, borderRadius: 14, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center' },
   iconBtnDanger: { width: 40, height: 40, borderRadius: 14, backgroundColor: 'rgba(255, 68, 68, 0.1)', justifyContent: 'center', alignItems: 'center' },
 
-  modalBg: { flex: 1, backgroundColor: 'rgba(5, 5, 16, 0.95)', justifyContent: 'center', padding: 25 },
-  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)', shadowColor: NoxColors.aura, shadowOpacity: 0.1, shadowRadius: 30, maxWidth: 500, width: '100%', alignSelf: 'center' },
+  modalBg: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.88)', justifyContent: 'center', padding: 25 },
+  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)', shadowColor: NoxColors.aura, shadowOpacity: 0.1, shadowRadius: 30, maxWidth: 500, width: '100%', alignSelf: 'center' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 },
   modalTitle: { color: NoxColors.text, fontSize: 22, fontWeight: '900', letterSpacing: 2 },
   
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 30 },
   chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, backgroundColor: NoxColors.container, borderWidth: 1, borderColor: NoxColors.border },
-  chipActive: { backgroundColor: NoxColors.aura, borderColor: 'rgba(169, 68, 255, 0.3)' },
+  chipActive: { backgroundColor: '#FFFFFF', borderColor: 'rgba(255, 255, 255, 0.15)' },
   chipText: { fontSize: 10, fontWeight: 'bold', color: NoxColors.muted },
 
   saveBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 25, alignItems: 'center', marginTop: 10, shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },

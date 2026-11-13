@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
   summaryReportBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, backgroundColor: 'rgba(16, 185, 129, 0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.25)' },
   summaryReportBtnText: { color: NoxColors.emerald, fontSize: 11, fontWeight: '800' },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
-  brandingOS: { color: NoxColors.aura },
+  brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
 
   filterSection: { paddingHorizontal: 20, marginBottom: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, maxWidth: 1100, width: '100%', alignSelf: 'center' },
@@ -502,19 +502,19 @@ const styles = StyleSheet.create({
   filterChipActive: { backgroundColor: NoxColors.container, borderColor: 'rgba(169,68,255,0.3)' },
   filterChipText: { color: NoxColors.muted, fontSize: 10, fontWeight: '900' },
   
-  userSelectBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: NoxColors.card, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)', maxWidth: 160 },
+  userSelectBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: NoxColors.card, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)', maxWidth: 160 },
   userSelectBtnActive: { backgroundColor: NoxColors.aura, borderColor: NoxColors.aura },
   userSelectText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', flexShrink: 1 },
 
   summaryContainer: { paddingHorizontal: 20, marginBottom: 25, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   summaryCard: { 
     backgroundColor: NoxColors.container, borderRadius: 28, padding: 22, flexDirection: 'row', 
-    justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.3)'
+    justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.15)'
   },
   summaryInfo: { gap: 4 },
   summaryLabel: { color: NoxColors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 2 },
   summaryAmount: { color: NoxColors.text, fontSize: 32, fontWeight: '900' },
-  summaryStats: { alignItems: 'center', backgroundColor: 'rgba(169, 68, 255, 0.1)', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 18 },
+  summaryStats: { alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.06)', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 18 },
   statCount: { color: NoxColors.text, fontSize: 20, fontWeight: '900' },
   statSub: { color: NoxColors.aura, fontSize: 8, fontWeight: '900' },
 
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
 
   card: { backgroundColor: NoxColors.card, borderRadius: 24, padding: 18, marginBottom: 15, borderWidth: 1, borderColor: NoxColors.border },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
-  mesaTag: { backgroundColor: 'rgba(169, 68, 255, 0.1)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
+  mesaTag: { backgroundColor: 'rgba(255, 255, 255, 0.06)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
   mesaText: { color: NoxColors.aura, fontWeight: '900', fontSize: 11 },
   statusBadge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
   statusText: { fontSize: 9, fontWeight: '900' },
@@ -549,8 +549,8 @@ const styles = StyleSheet.create({
   dateText: { color: NoxColors.gray, fontSize: 10, fontWeight: 'bold' },
   totalVal: { color: NoxColors.emerald, fontSize: 24, fontWeight: '900' },
 
-  modalBg: { flex: 1, backgroundColor: 'rgba(5, 5, 16, 0.95)', justifyContent: 'center', padding: 25 },
-  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(169, 68, 255, 0.2)', shadowColor: NoxColors.aura, shadowOpacity: 0.1, shadowRadius: 30, maxWidth: 500, width: '100%', alignSelf: 'center' },
+  modalBg: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.88)', justifyContent: 'center', padding: 25 },
+  glassCard: { backgroundColor: NoxColors.card, borderRadius: 40, padding: 30, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)', shadowColor: NoxColors.aura, shadowOpacity: 0.1, shadowRadius: 30, maxWidth: 500, width: '100%', alignSelf: 'center' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30, alignItems: 'center' },
   modalTitle: { color: NoxColors.text, fontSize: 18, fontWeight: '900', letterSpacing: 2 },
   modalSubLabel: { fontSize: 9, fontWeight: '900', color: NoxColors.muted, marginVertical: 20, letterSpacing: 2 },
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
   statusIconCircle: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
   statusItemText: { fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   
-  infoBox: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: 'rgba(169, 68, 255, 0.05)', padding: 16, borderRadius: 20, marginTop: 25 },
+  infoBox: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: 'rgba(255, 255, 255, 0.04)', padding: 16, borderRadius: 20, marginTop: 25 },
   qrInfo: { color: NoxColors.muted, fontSize: 10, flex: 1, lineHeight: 16 },
 
   emptyContainer: { alignItems: 'center', marginTop: 100, gap: 15, opacity: 0.2 },

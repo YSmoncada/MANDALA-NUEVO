@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     borderColor: NoxColors.border
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, alignItems: 'center' },
-  mesaBadge: { backgroundColor: 'rgba(169, 68, 255, 0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  mesaBadge: { backgroundColor: 'rgba(255, 255, 255, 0.06)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
   mesaText: { color: NoxColors.aura, fontWeight: '900', fontSize: 14 },
   timeText: { color: NoxColors.gray, fontSize: 10, fontWeight: 'bold' },
   
