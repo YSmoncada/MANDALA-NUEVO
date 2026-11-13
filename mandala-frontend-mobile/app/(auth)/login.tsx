@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,6 +30,22 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
+  // Cargar usuario recordado previamente al iniciar la pantalla
+  useEffect(() => {
+    const cargarUsuarioRecordado = async () => {
+      try {
+        const usuarioGuardado = await AsyncStorage.getItem('@noxos_remembered_username');
+        if (usuarioGuardado) {
+          setUsername(usuarioGuardado);
+          setRememberMe(true);
+        }
+      } catch (err) {
+        // Ignorar error de lectura local
+      }
+    };
+    cargarUsuarioRecordado();
+  }, []);
+
   const handleLogin = async () => {
     if (!username || !password) {
       showAlert('Acceso Requerido', 'Por favor ingresa tu usuario y clave de seguridad.', 'warning');
@@ -37,9 +54,17 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
+      // Si recordar sesión está marcado, guardamos el usuario localmente
+      if (rememberMe) {
+        await AsyncStorage.setItem('@noxos_remembered_username', username.trim());
+      } else {
+        await AsyncStorage.removeItem('@noxos_remembered_username');
+      }
+
       const response = await apiClient.post('/login/', {
         username: username.trim(),
         password: password,
+        remember_me: rememberMe,
       });
 
       const { token, refresh, role, username: responseUsername, user_id } = response.data;

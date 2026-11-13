@@ -35,8 +35,16 @@ def login(login_data: schemas.UserCreate, db: Session = Depends(deps.get_db)):
     if user_rol:
         role = user_rol.rol.nombre.lower()
 
-    # Generar JWT Tokens
-    access_token = security.create_access_token(subject=user.username)
+    # Generar JWT Tokens adaptados a la preferencia 'Recordar Sesión'
+    remember = bool(getattr(login_data, 'remember_me', False))
+    if remember:
+        # Sesión persistente extendida (30 días de acceso continuo)
+        access_delta = timedelta(days=30)
+    else:
+        # Sesión temporal estándar para turno o dispositivo compartido (8 horas)
+        access_delta = timedelta(hours=8)
+
+    access_token = security.create_access_token(subject=user.username, expires_delta=access_delta)
     refresh_token = security.create_refresh_token(subject=user.username)
     
     # Opcional: Guardar en DB para permitir revocación

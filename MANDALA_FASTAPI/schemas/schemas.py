@@ -13,6 +13,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     role: Optional[str] = "usuario"
+    remember_me: Optional[bool] = False
 
 class UserUpdate(BaseModel):
     nombre_completo: Optional[str] = None
