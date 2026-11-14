@@ -388,11 +388,6 @@ export default function NoxSidebarTabBar({
     <>
       <View style={styles.dockOuterContainer} pointerEvents="box-none">
         <View style={styles.singleCapsule}>
-          {/* Badge del rol */}
-          <View style={styles.singleCapsuleRolePill}>
-            <Text style={styles.singleCapsuleRoleText}>{roleTitle}</Text>
-          </View>
-
           {/* Pestañas de navegación */}
           {visibleRoutes.map((route: any) => {
             const isFocused = currentRouteName === route.name;
