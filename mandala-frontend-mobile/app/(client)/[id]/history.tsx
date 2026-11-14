@@ -11,9 +11,17 @@ import { NoxColors } from '../../../constants/theme';
 const { width } = Dimensions.get('window');
 
 const ESTADO_CONFIG: Record<string, { label: string, color: string, bg: string }> = {
+  '1':          { label: 'En preparación', color: NoxColors.amber, bg: 'rgba(245,158,11,0.1)' },
+  '2':          { label: 'En preparación', color: NoxColors.amber, bg: 'rgba(245,158,11,0.1)' },
+  '3':          { label: 'Entregado',      color: NoxColors.emerald, bg: 'rgba(16,185,129,0.1)' },
+  '4':          { label: 'Cuenta cerrada', color: NoxColors.subtext, bg: 'rgba(113,113,122,0.1)' },
+  '5':          { label: 'Cancelado',      color: NoxColors.rose, bg: 'rgba(239,68,68,0.1)' },
   pendiente:   { label: 'En preparación', color: NoxColors.amber, bg: 'rgba(245,158,11,0.1)' },
+  preparando:  { label: 'En preparación', color: NoxColors.amber, bg: 'rgba(245,158,11,0.1)' },
   despachado:  { label: 'Entregado',      color: NoxColors.emerald, bg: 'rgba(16,185,129,0.1)' },
+  entregado:   { label: 'Entregado',      color: NoxColors.emerald, bg: 'rgba(16,185,129,0.1)' },
   finalizada:  { label: 'Cuenta cerrada', color: NoxColors.subtext, bg: 'rgba(113,113,122,0.1)' },
+  pagado:      { label: 'Cuenta cerrada', color: NoxColors.subtext, bg: 'rgba(113,113,122,0.1)' },
   cancelado:   { label: 'Cancelado',      color: NoxColors.rose, bg: 'rgba(239,68,68,0.1)' },
 };
 
@@ -71,8 +79,8 @@ export default function ClientHistoryScreen() {
   const totalConsumido = pedidos.reduce((acc, p) => acc + (p.estado !== 'cancelado' ? parseFloat(p.total) : 0), 0);
 
   const renderPedido = ({ item }: { item: any }) => {
-    const estadoKey = (item.estado_nombre || item.estado || '').toLowerCase();
-    const estado = ESTADO_CONFIG[estadoKey] || ESTADO_CONFIG.pendiente;
+    const estadoKey = (item.estado_nombre || '').toLowerCase() || String(item.estado_id || item.estado || '');
+    const estado = ESTADO_CONFIG[estadoKey] || (Number(item.estado_id || item.estado) === 3 ? ESTADO_CONFIG.despachado : ESTADO_CONFIG.pendiente);
     const hora = item.fecha_hora ? new Date(item.fecha_hora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--';
     
     return (
@@ -118,11 +126,13 @@ export default function ClientHistoryScreen() {
           <Text style={styles.subtitle}>MI CONSUMO - MESA #{mesaInfo?.numero || '?'}</Text>
         </View>
         <TouchableOpacity 
-          style={styles.payBtn} 
+          style={[styles.payBtn, mesaInfo?.pidiendo_cuenta && { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 1, borderColor: NoxColors.emerald }]} 
+          disabled={Boolean(mesaInfo?.pidiendo_cuenta)}
           onPress={async () => {
             const hasPending = pedidos.some(p => {
-              const st = (p.estado_nombre || p.estado || '').toLowerCase();
-              return ['pendiente', 'preparando', 'aceptado'].includes(st);
+              const st = (p.estado_nombre || '').toLowerCase();
+              const estId = Number(p.estado_id || p.estado);
+              return ['pendiente', 'preparando', 'aceptado', '1', '2'].includes(st) || estId === 1 || estId === 2;
             });
 
             if (hasPending) {
@@ -135,15 +145,18 @@ export default function ClientHistoryScreen() {
 
             try {
               await axios.post(`${API_URL}/mesas/${mesaId}/pedir-cuenta/`);
-              Alert.alert("Solicitud Enviada", "Un mesero vendrá pronto con tu cuenta.");
+              setMesaInfo((prev: any) => ({ ...prev, pidiendo_cuenta: true }));
+              Alert.alert("¡Solicitud Enviada!", "Le hemos avisado a tu mesera. Ya viene en camino con tu cuenta.");
             } catch (e: any) {
               const detail = e.response?.data?.detail || "No se pudo solicitar la cuenta.";
               Alert.alert("No se pudo pedir la cuenta", detail);
             }
           }}
         >
-           <Ionicons name="cash-outline" size={20} color={NoxColors.text} />
-           <Text style={styles.payBtnText}>PEDIR CUENTA</Text>
+           <Ionicons name={mesaInfo?.pidiendo_cuenta ? "checkmark-circle" : "cash-outline"} size={18} color={mesaInfo?.pidiendo_cuenta ? NoxColors.emerald : "#000000"} />
+           <Text style={[styles.payBtnText, mesaInfo?.pidiendo_cuenta && { color: NoxColors.emerald }]}>
+             {mesaInfo?.pidiendo_cuenta ? 'CUENTA SOLICITADA' : 'PEDIR CUENTA'}
+           </Text>
         </TouchableOpacity>
       </View>
 
@@ -178,8 +191,8 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 25, paddingTop: 60, paddingBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   branding: { color: NoxColors.text, fontSize: 24, fontWeight: '900', letterSpacing: 2 },
   subtitle: { color: NoxColors.muted, fontWeight: '900', fontSize: 9, letterSpacing: 2, marginTop: 4, textTransform:'uppercase' },
-  payBtn: { backgroundColor: NoxColors.emerald, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 15, flexDirection:'row', alignItems:'center', gap: 8 },
-  payBtnText: { color:NoxColors.text, fontWeight:'900', fontSize: 10, letterSpacing: 1 },
+  payBtn: { backgroundColor: '#00E5FF', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, flexDirection:'row', alignItems:'center', gap: 6 },
+  payBtnText: { color: '#000000', fontWeight: '900', fontSize: 11, letterSpacing: 1 },
 
   summaryCard: { backgroundColor: NoxColors.card, marginHorizontal: 20, padding: 30, borderRadius: 30, alignItems: 'center', marginBottom: 20, borderWidth:1, borderColor: NoxColors.border },
   summaryLbl: { color:NoxColors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 2, marginBottom:10 },

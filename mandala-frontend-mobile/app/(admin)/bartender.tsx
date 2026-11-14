@@ -1,10 +1,11 @@
 import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
+import NoxAlert from '../../components/NoxAlert';
 
 export default function AdminBartenderScreen() {
   const router = useRouter();
@@ -14,6 +15,22 @@ export default function AdminBartenderScreen() {
   };
   const [pedidos, setPedidos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    type: 'success' | 'error' | 'info' | 'warning';
+    onConfirm: () => void;
+    onCancel?: () => void;
+    confirmText?: string;
+    cancelText?: string;
+  }>({
+    visible: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: () => {}
+  });
 
   useEffect(() => {
     fetchPending();
@@ -38,11 +55,25 @@ export default function AdminBartenderScreen() {
     try {
       const res = await apiClient.patch(`/pedidos/${pedidoId}/`, { estado: nuevoEstado });
       if (res.status === 200 || res.status === 201) {
-        Alert.alert('¡Excelente!', `Pedido #${pedidoId} marcado como ${nuevoEstado === 'despachado' ? 'LISTO' : 'RECHAZADO'}.`);
+        setAlertConfig({
+          visible: true,
+          title: '¡Operación Exitosa!',
+          message: `Pedido #${pedidoId} marcado como ${nuevoEstado === 'despachado' ? 'LISTO' : 'RECHAZADO'}.`,
+          type: 'success',
+          confirmText: 'ENTENDIDO',
+          onConfirm: () => setAlertConfig(prev => ({ ...prev, visible: false }))
+        });
         fetchPending();
       }
     } catch (e) {
-      Alert.alert('Error', 'No se pudo actualizar el pedido');
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: 'No se pudo actualizar el estado del pedido',
+        type: 'error',
+        confirmText: 'CERRAR',
+        onConfirm: () => setAlertConfig(prev => ({ ...prev, visible: false }))
+      });
     } finally {
       setLoading(false);
     }
@@ -50,18 +81,19 @@ export default function AdminBartenderScreen() {
 
   const confirmAction = (pedidoId: number, estado: string) => {
     const isDespacho = estado === 'despachado';
-    Alert.alert(
-      'Confirmación', 
-      isDespacho ? `¿Marcar pedido #${pedidoId} como listo?` : `¿RECHAZAR el pedido #${pedidoId}?`, 
-      [
-        { text: 'No', style: 'cancel' },
-        { 
-          text: 'Sí, Confirmar', 
-          style: isDespacho ? 'default' : 'destructive',
-          onPress: () => handleUpdateEstado(pedidoId, estado) 
-        },
-      ]
-    );
+    setAlertConfig({
+      visible: true,
+      title: isDespacho ? 'Despachar Pedido' : 'Rechazar Pedido',
+      message: isDespacho ? `¿Confirmas que el pedido #${pedidoId} está listo y preparado?` : `¿Estás seguro de RECHAZAR el pedido #${pedidoId}?`,
+      type: isDespacho ? 'info' : 'warning',
+      confirmText: isDespacho ? 'SÍ, DESPACHAR' : 'SÍ, RECHAZAR',
+      cancelText: 'CANCELAR',
+      onCancel: () => setAlertConfig(prev => ({ ...prev, visible: false })),
+      onConfirm: () => {
+        setAlertConfig(prev => ({ ...prev, visible: false }));
+        handleUpdateEstado(pedidoId, estado);
+      }
+    });
   };
 
   const renderPedido = ({ item }: { item: any }) => {
@@ -103,7 +135,7 @@ export default function AdminBartenderScreen() {
             style={[styles.readyBtn, { flex: 2 }]} 
             onPress={() => confirmAction(item.id, 'despachado')}
           >
-            <Ionicons name="checkmark-circle-outline" size={20} color={NoxColors.text} />
+            <Ionicons name="checkmark-circle-outline" size={20} color="#000000" />
             <Text style={styles.readyBtnText}>¡PREPARADO!</Text>
           </TouchableOpacity>
         </View>
@@ -147,6 +179,7 @@ export default function AdminBartenderScreen() {
           }
         />
       )}
+      <NoxAlert {...alertConfig} />
     </View>
   );
 }
@@ -172,24 +205,24 @@ const styles = StyleSheet.create({
     borderRadius: 24, 
     padding: 20, 
     marginBottom: 20, 
-    borderLeftWidth: 5, 
-    borderLeftColor: NoxColors.aura,
+    borderLeftWidth: 4, 
+    borderLeftColor: '#00E5FF',
     borderWidth: 1,
     borderColor: NoxColors.border
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, alignItems: 'center' },
-  mesaBadge: { backgroundColor: 'rgba(255, 255, 255, 0.06)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  mesaText: { color: NoxColors.aura, fontWeight: '900', fontSize: 14 },
+  mesaBadge: { backgroundColor: 'rgba(0, 229, 255, 0.08)', borderWidth: 1, borderColor: 'rgba(0, 229, 255, 0.25)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  mesaText: { color: '#00E5FF', fontWeight: '900', fontSize: 14 },
   timeText: { color: NoxColors.gray, fontSize: 10, fontWeight: 'bold' },
   
   itemsList: { marginBottom: 20 },
   itemRow: { flexDirection: 'row', marginBottom: 10, alignItems: 'center' },
   cantCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  cantNum: { fontWeight: 'bold', color: NoxColors.aura, fontSize: 12 },
+  cantNum: { fontWeight: 'bold', color: '#00E5FF', fontSize: 12 },
   itemName: { color: NoxColors.text, fontWeight: 'bold', fontSize: 15 },
   
-  readyBtn: { backgroundColor: NoxColors.emerald, padding: 18, borderRadius: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-  readyBtnText: { color: NoxColors.text, fontWeight: '900', marginLeft: 10, fontSize: 11, letterSpacing: 1 },
+  readyBtn: { backgroundColor: '#00E5FF', padding: 16, borderRadius: 16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  readyBtnText: { color: '#000000', fontWeight: '900', marginLeft: 8, fontSize: 11, letterSpacing: 1 },
   
   empty: { alignItems: 'center', marginTop: 120 }
 });

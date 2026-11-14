@@ -263,34 +263,33 @@ def update_pedido(
     if 'estado_name' in update_data or 'estado_nombre' in update_data:
         nombre_est = update_data.pop('estado_nombre', update_data.pop('estado_name', None))
         if nombre_est:
-            nombre_est = nombre_est.strip()
+            nombre_est = str(nombre_est).strip()
             est_obj = db.query(models.EstadoPedido).filter(models.EstadoPedido.nombre.ilike(nombre_est)).first()
             if not est_obj:
-                # CREACIÓN AUTOMÁTICA si no existe
                 est_obj = models.EstadoPedido(nombre=nombre_est)
                 db.add(est_obj)
                 db.commit()
                 db.refresh(est_obj)
             
             nuevo_estado_id = est_obj.id
-            db_pedido.estado = est_obj.id
+            db_pedido.estado_id = est_obj.id
 
-    # Si mandan el ID directamente
-    if 'estado' in update_data:
-        val = update_data.get('estado')
-        if isinstance(val, str):
-            val = val.strip()
-            est_obj = db.query(models.EstadoPedido).filter(models.EstadoPedido.nombre.ilike(val)).first()
+    # Si mandan estado o estado_id (puede ser ID int o nombre string)
+    val_estado = update_data.pop('estado', None) or update_data.pop('estado_id', None)
+    if val_estado is not None:
+        val_str = str(val_estado).strip()
+        if val_str.isdigit():
+            nuevo_estado_id = int(val_str)
+            db_pedido.estado_id = nuevo_estado_id
+        else:
+            est_obj = db.query(models.EstadoPedido).filter(models.EstadoPedido.nombre.ilike(val_str)).first()
             if not est_obj:
-                est_obj = models.EstadoPedido(nombre=val)
+                est_obj = models.EstadoPedido(nombre=val_str)
                 db.add(est_obj)
                 db.commit()
                 db.refresh(est_obj)
             nuevo_estado_id = est_obj.id
-            db_pedido.estado = est_obj.id
-        else:
-            nuevo_estado_id = val
-            db_pedido.estado = val
+            db_pedido.estado_id = est_obj.id
 
     # Lógica para LIBERAR MESA automáticamente
     if nuevo_estado_id:
@@ -352,7 +351,7 @@ def update_pedido(
 
 
     for key, value in update_data.items():
-        if key not in ['estado', 'estado_nombre', 'pidiendo_cuenta']:
+        if key not in ['estado', 'estado_id', 'estado_nombre', 'pidiendo_cuenta', 'mesa', 'mesa_id']:
             setattr(db_pedido, key, value)
             
     db.commit()
@@ -440,6 +439,20 @@ def despachar_producto(
         item.cantidad_despachada = item.cantidad
         db.commit()
         logger.info(f"Producto {item.producto_id} del pedido {pedido_id} despachado por {current_user.username}")
+
+        # Si todos los productos del pedido han sido despachados, marcar la orden automáticamente como DESPACHADA
+        todos_despachados = all(
+            (d.cantidad_despachada or 0) >= d.cantidad 
+            for d in db.query(models.PedidoProducto).filter(models.PedidoProducto.pedido_id == pedido_id).all()
+        )
+        if todos_despachados:
+            est_desp = db.query(models.EstadoPedido).filter(models.EstadoPedido.nombre.ilike("%despachad%")).first()
+            if est_desp:
+                ped_padre = db.query(models.Pedido).filter(models.Pedido.id == pedido_id).first()
+                if ped_padre and ped_padre.estado_id != est_desp.id:
+                    ped_padre.estado_id = est_desp.id
+                    db.commit()
+                    logger.info(f"Pedido #{pedido_id} marcado automáticamente como DESPACHADO (todos los items entregados)")
 
         # Notificar a mesera que un producto fue despachado
         ws_event = {

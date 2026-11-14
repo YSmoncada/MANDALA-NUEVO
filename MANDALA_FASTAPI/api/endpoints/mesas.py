@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from db import database, models
 from schemas import schemas
 from api import deps
@@ -90,15 +91,22 @@ def pedir_cuenta(mesa_id: int, db: Session = Depends(deps.get_db)):
     if not db_mesa:
         raise HTTPException(status_code=404, detail="Mesa no encontrada")
     
-    # Validar que no haya pedidos pendientes de preparación o entrega
-    pedidos_pendientes = db.query(models.Pedido).join(
-        models.EstadoPedido, models.Pedido.estado == models.EstadoPedido.id
+    # Validar que no haya pedidos pendientes de preparación o entrega en el turno actual
+    turno_actual = db.query(models.Turno).filter(models.Turno.estado == "abierto").first()
+    query_pendientes = db.query(models.Pedido).join(
+        models.EstadoPedido, models.Pedido.estado_id == models.EstadoPedido.id
     ).filter(
-        models.Pedido.mesa == mesa_id,
+        models.Pedido.mesa_id == mesa_id,
         (models.EstadoPedido.nombre.ilike("%pendiente%")) | 
         (models.EstadoPedido.nombre.ilike("%preparando%")) | 
         (models.EstadoPedido.nombre.ilike("%aceptado%"))
-    ).count()
+    )
+    if turno_actual:
+        query_pendientes = query_pendientes.filter(
+            or_(models.Pedido.turno_id == turno_actual.id, models.Pedido.turno_id.is_(None))
+        )
+    
+    pedidos_pendientes = query_pendientes.count()
     
     if pedidos_pendientes > 0:
         raise HTTPException(

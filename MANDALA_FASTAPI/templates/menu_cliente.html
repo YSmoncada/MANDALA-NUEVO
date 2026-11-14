@@ -9,16 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #080511;
-      --card: #130C26;
-      --card-inner: #1D133B;
-      --border: rgba(169, 68, 255, 0.2);
-      --aura: #A944FF;
+      --bg: #060609;
+      --card: #0E0E14;
+      --card-inner: #151520;
+      --border: rgba(255, 255, 255, 0.08);
+      --aura: #00E5FF;
       --emerald: #10B981;
       --amber: #F59E0B;
       --rose: #EF4444;
       --text: #FFFFFF;
-      --muted: #8A7BAF;
+      --muted: #A1A1AA;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
@@ -32,7 +32,7 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(8, 5, 17, 0.95);
+      background: rgba(6, 6, 9, 0.95);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       padding: 14px 18px;
@@ -54,8 +54,8 @@
     .brand { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
     .brand span { color: var(--aura); }
     .mesa-badge {
-      background: rgba(169, 68, 255, 0.15);
-      border: 1px solid var(--aura);
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.3);
       color: var(--text);
       padding: 6px 14px;
       border-radius: 12px;
@@ -159,8 +159,8 @@
     }
     .prod-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(169, 68, 255, 0.45);
-      box-shadow: 0 14px 30px rgba(169, 68, 255, 0.16);
+      border-color: rgba(0, 229, 255, 0.45);
+      box-shadow: 0 14px 30px rgba(0, 229, 255, 0.16);
     }
     .prod-img-box {
       width: 100%;
@@ -233,13 +233,13 @@
       left: 18px;
       right: 18px;
       background: var(--aura);
-      color: #fff;
+      color: #000000;
       padding: 14px 20px;
       border-radius: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 10px 25px rgba(169, 68, 255, 0.4);
+      box-shadow: 0 10px 25px rgba(0, 229, 255, 0.35);
       cursor: pointer;
       z-index: 60;
       max-width: 500px;
@@ -322,7 +322,7 @@
       transition: transform 0.2s, border-color 0.2s;
     }
     .order-card:hover {
-      border-color: rgba(169, 68, 255, 0.4);
+      border-color: rgba(0, 229, 255, 0.4);
     }
     .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .order-id { font-size: 14px; font-weight: 900; }
@@ -411,7 +411,7 @@
       .modal-sheet {
         border-radius: 28px;
         max-width: 500px;
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 35px rgba(169, 68, 255, 0.25);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 229, 255, 0.2);
       }
     }
 
@@ -509,9 +509,9 @@
         margin-top: 2px;
       }
       .desktop-cart-badge {
-        background: rgba(169, 68, 255, 0.15);
+        background: rgba(0, 229, 255, 0.12);
         border: 1px solid var(--aura);
-        color: #fff;
+        color: var(--aura);
         padding: 4px 10px;
         border-radius: 10px;
         font-size: 11px;
@@ -595,41 +595,41 @@
     }
     .nox-dialog-card {
       position: relative;
-      background: #120A24;
-      border: 1px solid rgba(169, 68, 255, 0.35);
-      border-radius: 26px;
-      padding: 28px 22px;
+      background: #0E0E12;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 28px 24px;
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       text-align: center;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(169, 68, 255, 0.2);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 229, 255, 0.1);
       animation: noxScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nox-dialog-icon {
-      width: 68px;
-      height: 68px;
-      border-radius: 22px;
-      background: rgba(169, 68, 255, 0.15);
-      border: 1px solid rgba(169, 68, 255, 0.4);
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.3);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      font-size: 26px;
       margin: 0 auto 16px;
-      box-shadow: 0 0 25px rgba(169, 68, 255, 0.25);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.15);
     }
     .nox-dialog-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       color: #FFFFFF;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       text-transform: uppercase;
     }
     .nox-dialog-message {
-      font-size: 13.5px;
+      font-size: 13px;
       line-height: 1.5;
-      color: #A396C8;
+      color: #A1A1AA;
       margin-bottom: 22px;
       font-weight: 500;
     }
@@ -639,31 +639,32 @@
       flex-direction: column;
     }
     .nox-dialog-btn-primary {
-      background: linear-gradient(135deg, #A944FF 0%, #7928CA 100%);
-      color: #FFFFFF;
+      background: var(--aura);
+      color: #000000;
       border: none;
       padding: 14px 20px;
       border-radius: 14px;
-      font-weight: 800;
-      font-size: 13px;
+      font-weight: 900;
+      font-size: 12px;
       letter-spacing: 0.8px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(169, 68, 255, 0.35);
+      box-shadow: 0 6px 18px rgba(0, 229, 255, 0.25);
       transition: transform 0.1s, opacity 0.2s;
     }
     .nox-dialog-btn-primary:active {
       transform: scale(0.97);
     }
     .nox-dialog-btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: #8A7BAF;
+      background: #16161E;
+      color: #A1A1AA;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 12px 20px;
+      padding: 13px 20px;
       border-radius: 14px;
-      font-weight: 700;
-      font-size: 12.5px;
-      letter-spacing: 0.5px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.8px;
       cursor: pointer;
+      transition: background 0.2s, color 0.2s;
     }
     .nox-dialog-btn-secondary:active {
       transform: scale(0.97);
@@ -1203,9 +1204,12 @@
         let pendingCount = 0;
         container.innerHTML = orders.map(ord => {
           const statusLower = (ord.estado_nombre || '').toLowerCase();
-          const isCancel = statusLower === 'cancelado';
+          const estId = Number(ord.estado_id || ord.estado);
+          const isCancel = statusLower === 'cancelado' || estId === 5;
           if (!isCancel) total += parseFloat(ord.total || 0);
-          const isDesp = statusLower === 'despachado';
+          
+          // Despachado, entregado o ya pagado
+          const isDesp = statusLower === 'despachado' || statusLower === 'entregado' || statusLower === 'finalizada' || statusLower === 'pagado' || estId === 3 || estId === 4;
           if (!isCancel && !isDesp) {
             pendingCount++;
           }
@@ -1215,8 +1219,8 @@
             <div class="order-card">
               <div class="order-header">
                 <span class="order-id">ORDEN #${ord.id}</span>
-                <span class="order-status ${isDesp ? 'status-desp' : 'status-pen'}">
-                  ${isDesp ? 'ENTREGADO' : (ord.estado_nombre || 'EN PREPARACIÓN')}
+                <span class="order-status ${isDesp ? 'status-desp' : (isCancel ? 'status-cancel' : 'status-pen')}">
+                  ${isDesp ? 'ENTREGADO' : (isCancel ? 'CANCELADO' : 'EN PREPARACIÓN')}
                 </span>
               </div>
               <div>
@@ -1240,15 +1244,24 @@
 
         currentPendingCount = pendingCount;
         const btnCuenta = document.getElementById('btn-pedir-cuenta');
-        if (pendingCount > 0) {
-          btnCuenta.style.background = 'rgba(245, 158, 11, 0.15)';
-          btnCuenta.style.border = '1px solid var(--amber)';
+        if (mesaRes && mesaRes.pidiendo_cuenta) {
+          btnCuenta.disabled = true;
+          btnCuenta.style.background = 'rgba(16, 185, 129, 0.15)';
+          btnCuenta.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+          btnCuenta.style.color = 'var(--emerald)';
+          btnCuenta.innerHTML = '✅ CUENTA YA SOLICITADA A TU MESERA';
+        } else if (pendingCount > 0) {
+          btnCuenta.disabled = false;
+          btnCuenta.style.background = 'rgba(245, 158, 11, 0.12)';
+          btnCuenta.style.border = '1px solid rgba(245, 158, 11, 0.3)';
           btnCuenta.style.color = 'var(--amber)';
           btnCuenta.innerHTML = '⏳ PEDIDOS EN PREPARACIÓN (NO DISPONIBLE)';
         } else {
+          btnCuenta.disabled = false;
           btnCuenta.style.background = 'var(--aura)';
           btnCuenta.style.border = 'none';
-          btnCuenta.style.color = '#fff';
+          btnCuenta.style.color = '#000000';
+          btnCuenta.style.fontWeight = '900';
           btnCuenta.innerHTML = '🛎️ PEDIR LA CUENTA A LA MESA';
         }
 
