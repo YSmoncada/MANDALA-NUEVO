@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -30,6 +30,9 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
+  const passwordInputRef = useRef<any>(null);
+  const isSubmittingRef = useRef(false);
+
   // Cargar usuario recordado previamente al iniciar la pantalla
   useEffect(() => {
     const cargarUsuarioRecordado = async () => {
@@ -47,11 +50,14 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (isSubmittingRef.current || loading) return;
+
+    if (!username.trim() || !password) {
       showAlert('Acceso Requerido', 'Por favor ingresa tu usuario y clave de seguridad.', 'warning');
       return;
     }
 
+    isSubmittingRef.current = true;
     setLoading(true);
     try {
       // Si recordar sesión está marcado, guardamos el usuario localmente
@@ -85,8 +91,26 @@ export default function LoginScreen() {
       // Manejado automáticamente por el interceptor de apiClient
     } finally {
       setLoading(false);
+      isSubmittingRef.current = false;
     }
   };
+
+  // Atajo de teclado en Desktop/Web para iniciar sesión con Enter
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          if (username.trim() && password) {
+            handleLogin();
+          }
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [username, password, loading, rememberMe]);
 
   return (
     <View style={styles.screen}>
@@ -134,6 +158,14 @@ export default function LoginScreen() {
                   onChangeText={setUsername}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  returnKeyType="next"
+                  onSubmitEditing={() => {
+                    if (password) {
+                      handleLogin();
+                    } else {
+                      passwordInputRef.current?.focus();
+                    }
+                  }}
                 />
               </View>
             </View>
@@ -149,12 +181,15 @@ export default function LoginScreen() {
                   style={styles.inputIcon}
                 />
                 <TextInput
+                  ref={passwordInputRef}
                   placeholder="••••••••••••"
                   placeholderTextColor="#3F3F46"
                   style={styles.input}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
+                  returnKeyType="go"
+                  onSubmitEditing={handleLogin}
                 />
                 <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
