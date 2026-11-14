@@ -161,10 +161,6 @@ export default function MonitorOrdenesScreen() {
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
           <Text style={styles.subtitle}>MONITOR DE ÓRDENES</Text>
         </View>
-        <View style={styles.liveBadge}>
-          <View style={styles.liveDot} />
-          <Text style={styles.liveText}>EN VIVO</Text>
-        </View>
       </View>
 
       <View style={styles.statsRow}>

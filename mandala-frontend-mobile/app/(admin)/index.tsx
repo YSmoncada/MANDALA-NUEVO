@@ -23,7 +23,7 @@ const MODULES = [
 
   { id: 'inventory', label: 'INVENTARIO', sub: 'Control de existencias y catálogo', icon: 'cube-outline', path: '/(admin)/inventory', color: '#FFFFFF', badge: 'Catálogo' },
 
-  { id: 'orders', label: 'PEDIDOS', sub: 'Monitor de comandas en vivo', icon: 'receipt-outline', path: '/(admin)/orders', color: '#10B981', badge: 'En Vivo' },
+  { id: 'orders', label: 'PEDIDOS', sub: 'Monitor de comandas y mesas', icon: 'receipt-outline', path: '/(admin)/orders', color: '#FFFFFF', badge: 'Comandas' },
 
   { id: 'mesas', label: 'MESAS', sub: 'Mapa y estado de salón', icon: 'grid-outline', path: '/(admin)/mesas', color: '#38BDF8', badge: 'Salón' },
 
