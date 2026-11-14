@@ -164,12 +164,18 @@ export default function ClientMenuScreen() {
             />
           </View>
           <ScrollView
-        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 20, paddingRight: 10 }}>
+            showsVerticalScrollIndicator={false} 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            style={{ flexGrow: 0, marginBottom: 4 }}
+            contentContainerStyle={{ paddingHorizontal: 20, alignItems: 'center', paddingVertical: 2 }}
+          >
               {categorias.map(cat => (
                   <TouchableOpacity 
                       key={cat.id} 
                       style={[styles.catBtn, filtro === cat.id && styles.catBtnActive]}
                       onPress={() => setFiltro(cat.id)}
+                      activeOpacity={0.7}
                   >
                       <Text style={[styles.catText, filtro === cat.id && styles.catTextActive]}>{cat.label}</Text>
                   </TouchableOpacity>
@@ -270,13 +276,13 @@ const styles = StyleSheet.create({
   badge: { position:'absolute', top: -5, right: -5, backgroundColor: NoxColors.emerald, width: 18, height: 18, borderRadius: 9, justifyContent:'center', alignItems:'center' },
   badgeTxt: { color: '#FFFFFF', fontSize: 10, fontWeight: 'bold' },
 
-  catBtn: { paddingHorizontal: 16, paddingVertical: 8, marginRight: 8, borderRadius: 12, backgroundColor: NoxColors.container, height: 34, justifyContent:'center' },
-  catBtnActive: { backgroundColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.4)' },
-  catText: { color: NoxColors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase' },
-  catTextActive: { color: NoxColors.text },
+  catBtn: { paddingHorizontal: 16, height: 38, marginRight: 8, borderRadius: 14, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.08)' },
+  catBtnActive: { backgroundColor: 'rgba(255, 255, 255, 0.16)', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.45)' },
+  catText: { color: NoxColors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase', textAlign: 'center' },
+  catTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
-  searchSection: { marginTop: 15, marginBottom: 5 },
-  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: NoxColors.card, marginHorizontal: 20, marginBottom: 15, paddingHorizontal: 15, height: 45, borderRadius: 15, borderWidth: 1, borderColor: NoxColors.border },
+  searchSection: { marginTop: 15, marginBottom: 4 },
+  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: NoxColors.card, marginHorizontal: 20, marginBottom: 10, paddingHorizontal: 15, height: 46, borderRadius: 16, borderWidth: 1, borderColor: NoxColors.border },
   searchInput: { flex: 1, marginLeft: 10, color: NoxColors.text, fontSize: 14 },
 
   prodCard: { flex: 1, backgroundColor: NoxColors.card, marginVertical: 7, padding: 15, borderRadius: 24, borderWidth: 1, borderColor: NoxColors.border, minHeight: 230, alignItems: 'center' },

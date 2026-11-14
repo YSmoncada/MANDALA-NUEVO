@@ -23,19 +23,13 @@ const getBaseApiUrl = (): string => {
     return 'https://mandala-backend-n3n6.onrender.com/api';
   }
 
-  // 2. Dispositivo Móvil en Expo Go (extraer IP de la máquina de desarrollo de Metro)
+  // 2. Dispositivo Móvil en Expo Go: usar Render en producción o IP local si está definida
   const hostUri = Constants.expoConfig?.hostUri || 
                   (Constants as any).manifest?.debuggerHost || 
                   (Constants as any).manifest2?.extra?.expoGo?.debuggerHost;
-  if (hostUri) {
-    const ip = hostUri.split(':')[0];
-    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
-      return `http://${ip}:8000/api`;
-    }
-  }
-
-  // 3. Fallback a la IP de red local del servidor de desarrollo
-  return 'http://192.168.18.11:8000/api';
+  
+  // Si no hay variable de entorno, preferir el backend de producción en Render
+  return 'https://mandala-backend-n3n6.onrender.com/api';
 };
 
 export const API_URL = getBaseApiUrl();

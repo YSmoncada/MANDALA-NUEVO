@@ -1,19 +1,31 @@
 import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, RefreshControl, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
+import { useAuthStore } from '../../store/authStore';
 import NoxAlert from '../../components/NoxAlert';
+import LogoutModal from '../../components/LogoutModal';
 import TicketModal from '../../components/TicketModal';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
 
 
 export default function BartenderPrepScreen() {
+  const router = useRouter();
   const { isDesktop, isLargeScreen } = useResponsive();
+  const user = useAuthStore(state => state.user);
+  const clearAuth = useAuthStore(state => state.clearAuth);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const numColumns = isLargeScreen ? 3 : (isDesktop ? 2 : 1);
   const [pedidos, setPedidos] = useState<any[]>([]);
+
+  const handleLogoutConfirm = () => {
+    clearAuth();
+    setShowLogoutModal(false);
+    router.replace('/(auth)/login');
+  };
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
@@ -268,9 +280,16 @@ export default function BartenderPrepScreen() {
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
           <Text style={styles.subtitle}>MONITOR DE PEDIDOS</Text>
         </View>
-        <TouchableOpacity style={styles.refreshBtn} onPress={() => fetchPending()} disabled={loading}>
-          <Ionicons name="reload" size={22} color={loading ? '#333' : NoxColors.aura} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          {!isDesktop && (
+            <TouchableOpacity onPress={() => setShowLogoutModal(true)} style={styles.logoutHeaderBtn} activeOpacity={0.7}>
+              <Ionicons name="log-out-outline" size={20} color={NoxColors.rose} />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.refreshBtn} onPress={() => fetchPending()} disabled={loading}>
+            <Ionicons name="reload" size={22} color={loading ? '#333' : NoxColors.aura} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Contador */}
@@ -325,6 +344,12 @@ export default function BartenderPrepScreen() {
         total={ticketData.total}
         tituloTicket="COMANDA DE BARRA"
       />
+      <LogoutModal
+        visible={showLogoutModal}
+        userName={user?.nombre || user?.username || 'Bartender'}
+        onConfirm={handleLogoutConfirm}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </View>
   );
 }
@@ -340,6 +365,16 @@ const styles = StyleSheet.create({
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, marginTop: 5 },
   refreshBtn: { backgroundColor: NoxColors.container, width: 50, height: 50, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  logoutHeaderBtn: {
+    width: 50,
+    height: 50,
+    borderRadius: 15,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
   countBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 8,

@@ -2351,17 +2351,17 @@ const styles = StyleSheet.create({
 
   searchInput: { flex: 1, marginLeft: 10, color: NoxColors.text, fontSize: 14 },
 
-  catScroll: { width: '100%', marginBottom: 6 },
+  catScroll: { width: '100%', marginBottom: 6, flexGrow: 0 },
 
-  catScrollContent: { paddingRight: 20 },
+  catScrollContent: { paddingRight: 20, alignItems: 'center', paddingVertical: 2 },
 
   catBtn: {
 
     paddingHorizontal: 18,
 
-    paddingVertical: 9,
+    height: 38,
 
-    borderRadius: 18,
+    borderRadius: 16,
 
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
 
@@ -2371,9 +2371,13 @@ const styles = StyleSheet.create({
 
     borderColor: 'rgba(255, 255, 255, 0.08)',
 
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
   },
 
-  catBtnActive: { backgroundColor: 'rgba(255, 255, 255, 0.14)', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.4)' },
+  catBtnActive: { backgroundColor: 'rgba(255, 255, 255, 0.16)', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.45)' },
 
   catText: { fontSize: 11, fontWeight: '700', color: '#71717A', textTransform: 'uppercase', letterSpacing: 1 },
 

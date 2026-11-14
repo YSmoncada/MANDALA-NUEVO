@@ -236,16 +236,22 @@ export default function PedidosScreen() {
           />
         </View>
         <ScrollView
-        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={{ paddingHorizontal: 20 }}>
-            {categorias.map(cat => (
+          showsVerticalScrollIndicator={false} 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.catScroll} 
+          contentContainerStyle={styles.catScrollContent}
+        >
+          {categorias.map(cat => (
             <TouchableOpacity 
-                key={cat.id} 
-                style={[styles.catBtn, filtro === cat.id && styles.catBtnActive]}
-                onPress={() => setFiltro(cat.id)}
+              key={cat.id} 
+              style={[styles.catBtn, filtro === cat.id && styles.catBtnActive]}
+              onPress={() => setFiltro(cat.id)}
+              activeOpacity={0.7}
             >
-                <Text style={[styles.catText, filtro === cat.id && styles.catTextActive]}>{cat.label}</Text>
+              <Text style={[styles.catText, filtro === cat.id && styles.catTextActive]}>{cat.label}</Text>
             </TouchableOpacity>
-            ))}
+          ))}
         </ScrollView>
       </View>
 
@@ -409,22 +415,25 @@ const styles = StyleSheet.create({
   cartBadge: { position: 'absolute', top: -5, right: -5, backgroundColor: NoxColors.emerald, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: NoxColors.deep },
   cartBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: 'bold' },
 
-  catScroll: { marginBottom: 15, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  catScroll: { flexGrow: 0, marginBottom: 4, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  catScrollContent: { paddingHorizontal: 20, alignItems: 'center', paddingVertical: 2 },
   catBtn: { 
     paddingHorizontal: 18, 
-    paddingVertical: 10, 
+    height: 38,
     borderRadius: 16, 
     backgroundColor: NoxColors.container, 
     marginRight: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)'
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   catBtnActive: { 
     backgroundColor: 'rgba(255, 255, 255, 0.16)', 
     borderWidth: 1.5, 
     borderColor: 'rgba(255, 255, 255, 0.45)' 
   },
-  catText: { fontSize: 11, fontWeight: '700', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  catText: { fontSize: 11, fontWeight: '700', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' },
   catTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
   listContent: { padding: 15, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
@@ -462,8 +471,8 @@ const styles = StyleSheet.create({
   prodPrice: { fontSize: 14, color: NoxColors.emerald, fontWeight: '900', marginTop: 5 },
   addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: '#181822', width: 32, height: 32, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)' },
 
-  searchSection: { marginBottom: 10, maxWidth: 1200, width: '100%', alignSelf: 'center' },
-  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: NoxColors.card, marginHorizontal: 20, marginBottom: 15, paddingHorizontal: 15, height: 48, borderRadius: 18, borderWidth: 1, borderColor: NoxColors.border },
+  searchSection: { marginBottom: 4, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: NoxColors.card, marginHorizontal: 20, marginBottom: 10, paddingHorizontal: 15, height: 46, borderRadius: 18, borderWidth: 1, borderColor: NoxColors.border },
   searchInput: { flex: 1, marginLeft: 10, color: NoxColors.text, fontSize: 14 },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', padding: 20 },

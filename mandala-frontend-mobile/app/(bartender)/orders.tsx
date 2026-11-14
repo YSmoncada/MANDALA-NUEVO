@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Activity
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../../utils/apiClient';
 import { formatImageUrl } from '../../utils/imageHelpers';
+import LogoutModal from '../../components/LogoutModal';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/authStore';
 import { NoxColors } from '../../constants/theme';
@@ -22,6 +23,15 @@ export default function PedidosScreen() {
   const [selectedMesa, setSelectedMesa] = useState<any>(null);
   const [filtro, setFiltro] = useState("");
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const user = useAuthStore(state => state.user);
+  const clearAuth = useAuthStore(state => state.clearAuth);
+
+  const handleLogoutConfirm = () => {
+    clearAuth();
+    setShowLogoutModal(false);
+    router.replace('/(auth)/login');
+  };
 
   useEffect(() => {
     fetchData();
@@ -71,7 +81,6 @@ export default function PedidosScreen() {
     }).filter(item => item.cantidad > 0));
   };
 
-  const user = useAuthStore(state => state.user);
   const total = order.reduce((sum, item) => sum + (parseFloat(item.precio) * item.cantidad), 0);
 
   const handleFinalizar = async () => {
@@ -123,23 +132,36 @@ export default function PedidosScreen() {
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
           <Text style={styles.subtitle}>CARTA DE PRODUCTOS</Text>
         </View>
-        <TouchableOpacity style={styles.cartBtn} onPress={() => setShowCheckout(true)}>
-          <Ionicons name="cart-outline" size={24} color={NoxColors.text} />
-          {order.length > 0 && (
-            <View style={styles.cartBadge}><Text style={styles.cartBadgeText}>{order.length}</Text></View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          {!isDesktop && (
+            <TouchableOpacity onPress={() => setShowLogoutModal(true)} style={styles.logoutHeaderBtn} activeOpacity={0.7}>
+              <Ionicons name="log-out-outline" size={20} color={NoxColors.rose} />
+            </TouchableOpacity>
           )}
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.cartBtn} onPress={() => setShowCheckout(true)}>
+            <Ionicons name="cart-outline" size={24} color={NoxColors.text} />
+            {order.length > 0 && (
+              <View style={styles.cartBadge}><Text style={styles.cartBadgeText}>{order.length}</Text></View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Categorías Flotantes */}
-      <View style={{height: 60}}>
+      <View style={styles.categoryContainer}>
         <ScrollView
-        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={{ paddingHorizontal: 20 }}>
+          showsVerticalScrollIndicator={false} 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.catScroll} 
+          contentContainerStyle={styles.catScrollContent}
+        >
             {categorias.map(cat => (
             <TouchableOpacity 
                 key={cat.id} 
                 style={[styles.catBtn, filtro === cat.id && styles.catBtnActive]}
                 onPress={() => setFiltro(cat.id)}
+                activeOpacity={0.7}
             >
                 <Text style={[styles.catText, filtro === cat.id && styles.catTextActive]}>{cat.label}</Text>
             </TouchableOpacity>
@@ -253,6 +275,13 @@ export default function PedidosScreen() {
             </View>
         </View>
       </Modal>
+
+      <LogoutModal
+        visible={showLogoutModal}
+        userName={user?.nombre || user?.username || 'Bartender'}
+        onConfirm={handleLogoutConfirm}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </View>
   );
 }
@@ -276,23 +305,37 @@ const styles = StyleSheet.create({
   cartBtn: { backgroundColor: NoxColors.container, width: 50, height: 50, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
   cartBadge: { position: 'absolute', top: -5, right: -5, backgroundColor: NoxColors.emerald, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: NoxColors.deep },
   cartBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: 'bold' },
+  logoutHeaderBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
-  catScroll: { marginBottom: 15, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  categoryContainer: { marginBottom: 8, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  catScroll: { flexGrow: 0, marginBottom: 4, maxWidth: 1200, width: '100%', alignSelf: 'center' },
+  catScrollContent: { paddingHorizontal: 20, alignItems: 'center', paddingVertical: 2 },
   catBtn: { 
     paddingHorizontal: 18, 
-    paddingVertical: 10, 
+    height: 38,
     borderRadius: 16, 
     backgroundColor: NoxColors.container, 
     marginRight: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)'
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   catBtnActive: { 
     backgroundColor: 'rgba(255, 255, 255, 0.16)', 
     borderWidth: 1.5, 
     borderColor: 'rgba(255, 255, 255, 0.45)' 
   },
-  catText: { fontSize: 11, fontWeight: '700', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  catText: { fontSize: 11, fontWeight: '700', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' },
   catTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
   listContent: { padding: 15, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
