@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric, Text, Index
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric, Text, Index, UniqueConstraint, CheckConstraint
+from sqlalchemy.orm import relationship, synonym
 from sqlalchemy.sql import func
 from .database import Base
 
@@ -22,6 +22,9 @@ class Rol(Base):
     
 class UsuarioRol(Base):
     __tablename__ = "usuario_roles"
+    __table_args__ = (
+        UniqueConstraint("usuario_id", "rol_id", name="uq_usuario_rol"),
+    )
     id = Column(Integer, primary_key=True, index=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
     rol_id = Column(Integer, ForeignKey("roles.id"))
@@ -44,7 +47,8 @@ class Producto(Base):
     precio = Column(Numeric(10, 2))
     stock_actual = Column(Integer, default=0)
     activo = Column(Boolean, default=True)
-    categoria = Column(Integer, ForeignKey("categorias.id"), nullable=True)
+    categoria_id = Column(Integer, ForeignKey("categorias.id"), nullable=True)
+    categoria = synonym("categoria_id")
     imagen = Column(Text, nullable=True)
 
     rel_categoria = relationship("Categoria", back_populates="productos")
@@ -59,7 +63,8 @@ class Mesa(Base):
     id = Column(Integer, primary_key=True, index=True)
     numero = Column(Integer, unique=True)
     capacidad = Column(Integer, default=1)
-    estado = Column(Integer, ForeignKey("estados_mesa.id"))
+    estado_id = Column(Integer, ForeignKey("estados_mesa.id"))
+    estado = synonym("estado_id")
 
     rel_estado = relationship("EstadoMesa")
     mesero_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
@@ -77,17 +82,19 @@ class Pedido(Base):
     __table_args__ = (
         # PILAR 2: INDEXACIÓN AVANZADA
         # 1. Índice compuesto respetando la Regla del Prefijo Izquierdo (Leftmost Prefix Rule)
-        Index("idx_pedidos_turno_estado", "turno_id", "estado"),
+        Index("idx_pedidos_turno_estado", "turno_id", "estado_id"),
         # 2. Índice Cubriente (Covering Index): resuelve SUM(total) de caja con Using index / Heap Fetches: 0
-        Index("idx_pedidos_cierre_cubriente", "turno_id", "estado", "total"),
+        Index("idx_pedidos_cierre_cubriente", "turno_id", "estado_id", "total"),
         # 3. Índice para filtrado temporal SARGable en analítica y reportes
-        Index("idx_pedidos_fecha_estado", "fecha_hora", "estado"),
+        Index("idx_pedidos_fecha_estado", "fecha_hora", "estado_id"),
     )
     id = Column(Integer, primary_key=True, index=True)
     fecha_hora = Column(DateTime(timezone=True), server_default=func.now())
-    estado = Column(Integer, ForeignKey("estados_pedido.id"))
+    estado_id = Column(Integer, ForeignKey("estados_pedido.id"))
+    estado = synonym("estado_id")
     total = Column(Numeric(12, 2), default=0)
-    mesa = Column(Integer, ForeignKey("mesas.id"))
+    mesa_id = Column(Integer, ForeignKey("mesas.id"))
+    mesa = synonym("mesa_id")
     creado_por = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     turno_id = Column(Integer, ForeignKey("turnos.id"), nullable=True)
     origen_cliente = Column(Boolean, default=False)
@@ -133,6 +140,9 @@ class MovimientoInventario(Base):
 
 class EmpresaConfig(Base):
     __tablename__ = "empresa_config"
+    __table_args__ = (
+        CheckConstraint("id = 1", name="chk_empresa_config_singleton"),
+    )
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(150))
     nit = Column(String(50), nullable=True)
@@ -168,6 +178,9 @@ class Turno(Base):
 
 class UserSession(Base):
     __tablename__ = "user_sessions"
+    __table_args__ = (
+        Index("idx_user_sessions_expires", "expires_at"),
+    )
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("usuarios.id"))
     token = Column(String(500), unique=True, index=True)

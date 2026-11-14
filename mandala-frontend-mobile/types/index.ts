@@ -19,7 +19,8 @@ export interface Producto {
   nombre: string;
   descripcion?: string;
   precio: string | number;
-  categoria: string | number;
+  categoria?: string | number;
+  categoria_id?: number | string;
   imagen?: string;
   stock?: number;
   activo: boolean;
@@ -29,7 +30,11 @@ export interface Mesa {
   id: number;
   numero: number;
   zona?: string;
+  estado?: number;
+  estado_id?: number;
   ocupada_por_id?: number | null;
+  mesero_id?: number | null;
+  pidiendo_cuenta?: boolean;
 }
 
 export interface DetallePedido {
@@ -42,12 +47,14 @@ export interface DetallePedido {
 
 export interface Pedido {
   id: number;
-  mesa: number;
+  mesa?: number;
+  mesa_id?: number;
   mesa_numero?: number;
   usuario?: number;
   usuario_nombre?: string;
   mesera_nombre?: string;
-  estado: 'pendiente' | 'despachado' | 'finalizada' | 'cancelado';
+  estado: 'pendiente' | 'despachado' | 'finalizada' | 'cancelado' | string;
+  estado_id?: number;
   total: string | number;
   fecha_hora: string;
   productos_detalle: DetallePedido[];

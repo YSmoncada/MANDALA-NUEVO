@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from typing import List, Optional, Union
 from datetime import datetime
 from decimal import Decimal
@@ -76,17 +76,39 @@ class ProductoBase(BaseModel):
     precio: Decimal
     stock_actual: int = 0
     activo: bool = True
+    categoria_id: Optional[int] = None
     categoria: Optional[int] = None
     imagen: Optional[str] = None
     categoria_nombre: Optional[str] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_categoria(cls, data):
+        if isinstance(data, dict):
+            if "categoria" in data and ("categoria_id" not in data or data.get("categoria_id") is None):
+                data["categoria_id"] = data["categoria"]
+            elif "categoria_id" in data and ("categoria" not in data or data.get("categoria") is None):
+                data["categoria"] = data["categoria_id"]
+        return data
 
 class ProductoUpdate(BaseModel):
     nombre: Optional[str] = None
     precio: Optional[Decimal] = None
     stock_actual: Optional[int] = None
     activo: Optional[bool] = None
+    categoria_id: Optional[int] = None
     categoria: Optional[int] = None
     imagen: Optional[str] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_categoria(cls, data):
+        if isinstance(data, dict):
+            if "categoria" in data and ("categoria_id" not in data or data.get("categoria_id") is None):
+                data["categoria_id"] = data["categoria"]
+            elif "categoria_id" in data and ("categoria" not in data or data.get("categoria") is None):
+                data["categoria"] = data["categoria_id"]
+        return data
 
 class Producto(ProductoBase):
     id: int
@@ -111,7 +133,9 @@ class PedidoProducto(PedidoProductoBase):
         from_attributes = True
 
 class PedidoBase(BaseModel):
-    mesa: int
+    mesa_id: Optional[int] = None
+    mesa: Optional[int] = None
+    estado_id: Optional[Union[int, str]] = None
     estado: Optional[Union[int, str]] = None
     total: Decimal = Decimal(0)
     estado_nombre: Optional[str] = None
@@ -119,6 +143,20 @@ class PedidoBase(BaseModel):
     creado_por: Optional[int] = None
     pidiendo_cuenta: Optional[bool] = False
     origen_cliente: Optional[bool] = False
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_pedido_fields(cls, data):
+        if isinstance(data, dict):
+            if "mesa" in data and ("mesa_id" not in data or data.get("mesa_id") is None):
+                data["mesa_id"] = data["mesa"]
+            elif "mesa_id" in data and ("mesa" not in data or data.get("mesa") is None):
+                data["mesa"] = data["mesa_id"]
+            if "estado" in data and ("estado_id" not in data or data.get("estado_id") is None):
+                data["estado_id"] = data["estado"]
+            elif "estado_id" in data and ("estado" not in data or data.get("estado") is None):
+                data["estado"] = data["estado_id"]
+        return data
 
 class PedidoCreate(PedidoBase):
     productos: Optional[List[PedidoProductoCreate]] = None
@@ -141,27 +179,65 @@ class PedidoSimplified(PedidoBase):
     pass
 
 class PedidoUpdate(BaseModel):
+    mesa_id: Optional[int] = None
     mesa: Optional[int] = None
+    estado_id: Optional[Union[int, str]] = None
     estado: Optional[Union[int, str]] = None
     estado_nombre: Optional[str] = None
     total: Optional[Decimal] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_pedido_fields(cls, data):
+        if isinstance(data, dict):
+            if "mesa" in data and ("mesa_id" not in data or data.get("mesa_id") is None):
+                data["mesa_id"] = data["mesa"]
+            elif "mesa_id" in data and ("mesa" not in data or data.get("mesa") is None):
+                data["mesa"] = data["mesa_id"]
+            if "estado" in data and ("estado_id" not in data or data.get("estado_id") is None):
+                data["estado_id"] = data["estado"]
+            elif "estado_id" in data and ("estado" not in data or data.get("estado") is None):
+                data["estado"] = data["estado_id"]
+        return data
 
 # Esquemas de mesa
 class MesaBase(BaseModel):
     numero: int
     capacidad: Optional[int] = 1
+    estado_id: Optional[int] = None
     estado: Optional[int] = None
     estado_nombre: Optional[str] = None
     mesero_id: Optional[int] = None
     mesero_nombre: Optional[str] = None
     pidiendo_cuenta: Optional[bool] = False
 
+    @model_validator(mode="before")
+    @classmethod
+    def sync_estado(cls, data):
+        if isinstance(data, dict):
+            if "estado" in data and ("estado_id" not in data or data.get("estado_id") is None):
+                data["estado_id"] = data["estado"]
+            elif "estado_id" in data and ("estado" not in data or data.get("estado") is None):
+                data["estado"] = data["estado_id"]
+        return data
+
 class MesaUpdate(BaseModel):
     numero: Optional[int] = None
     capacidad: Optional[int] = None
+    estado_id: Optional[int] = None
     estado: Optional[int] = None
     mesero_id: Optional[int] = None
     pidiendo_cuenta: Optional[bool] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_estado(cls, data):
+        if isinstance(data, dict):
+            if "estado" in data and ("estado_id" not in data or data.get("estado_id") is None):
+                data["estado_id"] = data["estado"]
+            elif "estado_id" in data and ("estado" not in data or data.get("estado") is None):
+                data["estado"] = data["estado_id"]
+        return data
 
 class Mesa(MesaBase):
     id: int

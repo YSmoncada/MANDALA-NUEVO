@@ -47,9 +47,11 @@ def login(login_data: schemas.UserCreate, db: Session = Depends(deps.get_db)):
     access_token = security.create_access_token(subject=user.username, expires_delta=access_delta)
     refresh_token = security.create_refresh_token(subject=user.username)
     
-    # Opcional: Guardar en DB para permitir revocación
+    # Guardar en DB y purgar sesiones expiradas automáticamente
     try:
         now = datetime.now(timezone.utc)
+        # Limpieza periódica de sesiones vencidas
+        db.query(models.UserSession).filter(models.UserSession.expires_at < now).delete(synchronize_session=False)
         new_session = models.UserSession(
             token=access_token,
             user_id=user.id,

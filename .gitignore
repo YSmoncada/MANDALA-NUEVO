@@ -9,7 +9,9 @@ DOCUMENTO_MAESTRO_BASES_DATOS.md
 
 # Bases de datos locales
 *.db
+*.db.*
 *.sqlite3
+*.bak
 
 # Copias de seguridad de repositorios internos
 .git_backup/
