@@ -228,123 +228,63 @@ export default function AdminDashboard() {
           </View>
 
           <View style={[styles.statsGrid, { flexDirection: isDesktop ? 'row' : 'column' }]}>
-
             {/* Ventas Totales */}
-
-            <View style={[styles.statCardPremium, { borderColor: 'rgba(16, 185, 129, 0.25)' }]}>
-
+            <View style={[styles.statCardPremium, { borderColor: 'rgba(255, 255, 255, 0.1)' }]}>
               <View style={styles.statCardTop}>
-
                 <View style={{ flex: 1 }}>
-
                   <Text style={styles.statCardCategory}>VENTAS DEL DÍA</Text>
-
                   <Text style={styles.statCardValue}>${stats.totalVentas.toLocaleString()}</Text>
-
                 </View>
-
-                <View style={[styles.statIconBadge, { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.3)' }]}>
-
-                  <Ionicons name="trending-up" size={20} color={NoxColors.emerald} />
-
+                <View style={[styles.statIconBadge, { backgroundColor: 'rgba(255, 255, 255, 0.06)', borderColor: 'rgba(255, 255, 255, 0.12)' }]}>
+                  <Ionicons name="trending-up" size={18} color="#FFFFFF" />
                 </View>
-
               </View>
-
               <View style={styles.statCardFooter}>
-
-                <Text style={[styles.statTrendText, { color: NoxColors.emerald }]}>↑ Turno activo</Text>
-
-                <Text style={styles.statSubText}>Facturado hoy</Text>
-
+                <Text style={styles.statSubText}>Facturado en turno actual</Text>
               </View>
-
             </View>
 
             {/* Pedidos Hoy */}
-
             <View style={[styles.statCardPremium, { borderColor: 'rgba(255, 255, 255, 0.1)' }]}>
-
               <View style={styles.statCardTop}>
-
                 <View style={{ flex: 1 }}>
-
                   <Text style={styles.statCardCategory}>PEDIDOS REGISTRADOS</Text>
-
                   <Text style={styles.statCardValue}>{stats.pedidosHoy} <Text style={{ fontSize: 13, color: NoxColors.muted, fontWeight: '600' }}>órdenes</Text></Text>
-
                 </View>
-
-                <View style={[styles.statIconBadge, { backgroundColor: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.16)' }]}>
-
-                  <Ionicons name="receipt" size={20} color={NoxColors.aura} />
-
+                <View style={[styles.statIconBadge, { backgroundColor: 'rgba(255, 255, 255, 0.06)', borderColor: 'rgba(255, 255, 255, 0.12)' }]}>
+                  <Ionicons name="receipt-outline" size={18} color="#FFFFFF" />
                 </View>
-
               </View>
-
               <View style={styles.statCardFooter}>
-
-                <Text style={[styles.statTrendText, { color: '#E4E4E7' }]}>⚡ En consumo</Text>
-
-                <Text style={styles.statSubText}>Despachados a pista</Text>
-
+                <Text style={styles.statSubText}>Comandas procesadas hoy</Text>
               </View>
-
             </View>
 
             {/* Stock Crítico */}
-
-            <View style={[styles.statCardPremium, { borderColor: stats.stockBajoCount > 0 ? 'rgba(255, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.25)' }]}>
-
+            <View style={[styles.statCardPremium, { borderColor: stats.stockBajoCount > 0 ? 'rgba(255, 68, 68, 0.3)' : 'rgba(255, 255, 255, 0.1)' }]}>
               <View style={styles.statCardTop}>
-
                 <View style={{ flex: 1 }}>
-
                   <Text style={styles.statCardCategory}>ALERTAS DE STOCK</Text>
-
-                  <Text style={[styles.statCardValue, stats.stockBajoCount > 0 ? { color: NoxColors.rose } : { color: NoxColors.emerald }]}>
-
+                  <Text style={[styles.statCardValue, stats.stockBajoCount > 0 ? { color: NoxColors.rose } : { color: '#FFFFFF' }]}>
                     {stats.stockBajoCount} <Text style={{ fontSize: 13, color: NoxColors.muted, fontWeight: '600' }}>críticos</Text>
-
                   </Text>
-
                 </View>
-
                 <View style={[
-
                   styles.statIconBadge, 
-
                   stats.stockBajoCount > 0 
-
                     ? { backgroundColor: 'rgba(255, 68, 68, 0.12)', borderColor: 'rgba(255, 68, 68, 0.3)' }
-
-                    : { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.3)' }
-
+                    : { backgroundColor: 'rgba(255, 255, 255, 0.06)', borderColor: 'rgba(255, 255, 255, 0.12)' }
                 ]}>
-
-                  <Ionicons name={stats.stockBajoCount > 0 ? "alert-circle" : "shield-checkmark"} size={20} color={stats.stockBajoCount > 0 ? NoxColors.rose : NoxColors.emerald} />
-
+                  <Ionicons name={stats.stockBajoCount > 0 ? "alert-circle" : "cube-outline"} size={18} color={stats.stockBajoCount > 0 ? NoxColors.rose : "#FFFFFF"} />
                 </View>
-
               </View>
-
               <View style={styles.statCardFooter}>
-
-                <Text style={[styles.statTrendText, { color: stats.stockBajoCount > 0 ? NoxColors.amber : NoxColors.emerald }]}>
-
-                  {stats.stockBajoCount > 0 ? "⚠️ Reponer pronto" : "✓ Existencias OK"}
-
+                <Text style={styles.statSubText}>
+                  {stats.stockBajoCount > 0 ? "⚠️ Reponer existencias críticas" : "Existencias en nivel óptimo"}
                 </Text>
-
-                <Text style={styles.statSubText}>≤ 5 uds. disponibles</Text>
-
               </View>
-
             </View>
-
           </View>
-
         </View>
 
         {/* Tablero EDA (Análisis Exploratorio de Datos) */}
@@ -662,59 +602,33 @@ export default function AdminDashboard() {
           <View style={styles.modulesGrid}>
 
             {MODULES.map((mod) => (
-
               <TouchableOpacity
-
                 key={mod.id}
-
-                style={[styles.moduleCardPremium, { width: cardWidth, borderColor: `${mod.color}30` }]}
-
+                style={[styles.moduleCardPremium, { width: cardWidth }]}
                 onPress={() => router.push(mod.path as any)}
-
-                activeOpacity={0.85}
-
+                activeOpacity={0.8}
               >
-
-                {/* Fila Superior: Icono y Badge de Estado */}
-
+                {/* Fila Superior: Icono y flecha de acceso rápido */}
                 <View style={styles.moduleTopRow}>
-
-                  <View style={[styles.moduleIconBadge, { backgroundColor: `${mod.color}18`, borderColor: `${mod.color}45` }]}>
-
-                    <Ionicons name={mod.icon as any} size={22} color={mod.color} />
-
+                  <View style={styles.moduleIconBadge}>
+                    <Ionicons name={mod.icon as any} size={20} color="#FFFFFF" />
                   </View>
-
-                  <View style={[styles.modulePillBadge, { backgroundColor: `${mod.color}15`, borderColor: `${mod.color}35` }]}>
-
-                    <Text style={[styles.modulePillText, { color: mod.color }]}>{mod.badge}</Text>
-
+                  <View style={styles.moduleArrowBox}>
+                    <Ionicons name="arrow-forward" size={13} color="#71717A" />
                   </View>
-
                 </View>
 
                 {/* Centro: Título y Descripción */}
-
                 <View style={styles.moduleBody}>
-
                   <Text style={styles.moduleTitleText}>{mod.label}</Text>
-
                   <Text style={styles.moduleDescText}>{mod.sub}</Text>
-
                 </View>
 
-                {/* Fila Inferior: Acción y flecha */}
-
+                {/* Fila Inferior: Micro-etiqueta de sistema */}
                 <View style={styles.moduleActionRow}>
-
-                  <Text style={[styles.moduleActionText, { color: mod.color }]}>Ingresar al panel</Text>
-
-                  <Ionicons name="arrow-forward" size={13} color={mod.color} />
-
+                  <Text style={styles.moduleSectionLabel}>MÓDULO DE GESTIÓN</Text>
                 </View>
-
               </TouchableOpacity>
-
             ))}
 
           </View>
@@ -1214,133 +1128,73 @@ const styles = StyleSheet.create({
   },
 
   moduleCardPremium: {
-
-    backgroundColor: NoxColors.card,
-
-    padding: 16,
-
+    backgroundColor: 'rgba(15, 15, 19, 0.94)',
+    padding: 18,
     borderRadius: 22,
-
     borderWidth: 1,
-
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     justifyContent: 'space-between',
-
-    minHeight: 135,
-
-    shadowColor: '#000',
-
-    shadowOffset: { width: 0, height: 4 },
-
-    shadowOpacity: 0.12,
-
-    shadowRadius: 10,
-
-    elevation: 3,
-
+    minHeight: 145,
+    marginBottom: 14,
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+    elevation: 4,
   },
-
   moduleTopRow: {
-
     flexDirection: 'row',
-
     justifyContent: 'space-between',
-
     alignItems: 'center',
-
-    marginBottom: 8,
-
+    marginBottom: 12,
   },
-
   moduleIconBadge: {
-
     width: 42,
-
     height: 42,
-
     borderRadius: 14,
-
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
-
     justifyContent: 'center',
-
   },
-
-  modulePillBadge: {
-
-    borderWidth: 1,
-
-    paddingHorizontal: 8,
-
-    paddingVertical: 3,
-
+  moduleArrowBox: {
+    width: 30,
+    height: 30,
     borderRadius: 10,
-
-  },
-
-  modulePillText: {
-
-    fontSize: 9,
-
-    fontWeight: '800',
-
-    letterSpacing: 0.5,
-
-    textTransform: 'uppercase',
-
-  },
-
-  moduleBody: {
-
-    gap: 3,
-
-    marginVertical: 4,
-
-  },
-
-  moduleTitleText: {
-
-    color: '#fff',
-
-    fontSize: 14,
-
-    fontWeight: '900',
-
-    letterSpacing: 0.6,
-
-  },
-
-  moduleDescText: {
-
-    color: NoxColors.muted,
-
-    fontSize: 11,
-
-    fontWeight: '500',
-
-    lineHeight: 15,
-
-  },
-
-  moduleActionRow: {
-
-    flexDirection: 'row',
-
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
     alignItems: 'center',
-
-    justifyContent: 'flex-end',
-
+    justifyContent: 'center',
+  },
+  moduleBody: {
     gap: 4,
-
-    paddingTop: 8,
-
+    marginVertical: 4,
+  },
+  moduleTitleText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  moduleDescText: {
+    color: NoxColors.subtext,
+    fontSize: 11,
+    fontWeight: '500',
+    lineHeight: 16,
+  },
+  moduleActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
     borderTopWidth: 1,
-
     borderTopColor: 'rgba(255, 255, 255, 0.04)',
-
     marginTop: 6,
-
+  },
+  moduleSectionLabel: {
+    color: '#71717A',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.5,
   },
 
   moduleActionText: {
