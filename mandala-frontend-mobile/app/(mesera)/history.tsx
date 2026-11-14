@@ -140,7 +140,7 @@ export default function MisPedidosScreen() {
       const interval = setInterval(() => {
         fetchPedidos();
         checkBillRequests();
-      }, 8000); // Refresco cada 8 segundos para ver cambios del bartender
+      }, 15000); // Refresco cada 15 segundos para no sobrecargar el servidor
       return () => clearInterval(interval);
     }, [user?.id, checkBillRequests])
   );

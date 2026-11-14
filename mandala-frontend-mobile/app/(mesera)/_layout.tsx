@@ -93,7 +93,7 @@ export default function MeseraLayout() {
     };
 
     checkAssignedActivity();
-    const interval = setInterval(checkAssignedActivity, 6000);
+    const interval = setInterval(checkAssignedActivity, 15000);
     return () => clearInterval(interval);
   }, [user?.id]);
 
@@ -125,12 +125,12 @@ export default function MeseraLayout() {
         }}
       />
 
-      {/* TAB 3: Perfil y Ajustes de mesero */}
+      {/* Ocultar Perfil en mesera */}
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Perfil",
-          tabBarIcon: ({ color }) => <Ionicons name="person-circle-outline" size={24} color={color} />,
+          tabBarItemStyle: { display: 'none' },
+          href: null,
         }}
       />
 

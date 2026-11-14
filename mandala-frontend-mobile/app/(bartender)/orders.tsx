@@ -274,14 +274,26 @@ const styles = StyleSheet.create({
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, marginTop: 5 },
   cartBtn: { backgroundColor: NoxColors.container, width: 50, height: 50, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
-  cartBadge: { position: 'absolute', top: -5, right: -5, backgroundColor: NoxColors.aura, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: NoxColors.deep },
-  cartBadgeText: { color: NoxColors.text, fontSize: 10, fontWeight: 'bold' },
+  cartBadge: { position: 'absolute', top: -5, right: -5, backgroundColor: NoxColors.emerald, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: NoxColors.deep },
+  cartBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: 'bold' },
 
   catScroll: { marginBottom: 15, maxWidth: 1200, width: '100%', alignSelf: 'center' },
-  catBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: NoxColors.container, marginRight: 10 },
-  catBtnActive: { backgroundColor: NoxColors.aura },
-  catText: { fontSize: 11, fontWeight: 'bold', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
-  catTextActive: { color: NoxColors.text },
+  catBtn: { 
+    paddingHorizontal: 18, 
+    paddingVertical: 10, 
+    borderRadius: 16, 
+    backgroundColor: NoxColors.container, 
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)'
+  },
+  catBtnActive: { 
+    backgroundColor: 'rgba(255, 255, 255, 0.16)', 
+    borderWidth: 1.5, 
+    borderColor: 'rgba(255, 255, 255, 0.45)' 
+  },
+  catText: { fontSize: 11, fontWeight: '700', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  catTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
   listContent: { padding: 15, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   prodCard: { 

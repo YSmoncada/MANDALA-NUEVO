@@ -46,12 +46,12 @@ export default function BartenderLayout() {
         }}
       />
 
-      {/* TAB 4: Perfil y Cierre de sesión */}
+      {/* Ocultar Perfil en bartender */}
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Perfil",
-          tabBarIcon: ({ color }) => <Ionicons name="person-circle-outline" size={24} color={color} />,
+          tabBarItemStyle: { display: 'none' },
+          href: null,
         }}
       />
 

@@ -6,6 +6,8 @@ import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
 import { formatImageUrl } from '../../utils/imageHelpers';
 import NoxAlert from '../../components/NoxAlert';
+import LogoutModal from '../../components/LogoutModal';
+import { useRouter } from 'expo-router';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
 
@@ -31,7 +33,10 @@ export default function PedidosScreen() {
   const [filtro, setFiltro] = useState<any>("");
   const [filtroNombre, setFiltroNombre] = useState("");
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const user = useAuthStore(state => state.user);
+  const clearAuth = useAuthStore(state => state.clearAuth);
+  const router = useRouter();
 
   // Estado de alerta personalizada
   const [alertConfig, setAlertConfig] = useState<{
@@ -84,6 +89,11 @@ export default function PedidosScreen() {
           setTurnoAbierto(true);
       } else {
           setTurnoAbierto(false);
+          showAlert(
+            'Turno No Iniciado',
+            'El Administrador aún no ha iniciado el turno en Contabilidad. Las ventas y pedidos están pausados temporalmente.',
+            'warning'
+          );
       }
 
     } catch (e) {
@@ -94,6 +104,14 @@ export default function PedidosScreen() {
   };
 
   const addToOrder = (producto: any) => {
+    if (!turnoAbierto) {
+      showAlert(
+        'Ventas Bloqueadas',
+        'No puedes agregar productos porque el Administrador no ha iniciado el turno todavía en Contabilidad.',
+        'warning'
+      );
+      return;
+    }
     setOrder(prev => {
       const existing = prev.find(item => item.id === producto.id);
       if (existing) {
@@ -118,6 +136,9 @@ export default function PedidosScreen() {
   const handleFinalizar = async () => {
     if (!selectedMesa) return showAlert('Error', 'Debes seleccionar una mesa', 'warning');
     if (order.length === 0) return showAlert('Error', 'El pedido está vacío', 'warning');
+    if (!turnoAbierto) {
+      return showAlert('Turno No Iniciado', 'No es posible enviar pedidos mientras el turno no esté abierto en Contabilidad.', 'error');
+    }
 
     // Construir payload incluyendo el usuario para cuentas de sistema
     const payload: any = {
@@ -166,19 +187,40 @@ export default function PedidosScreen() {
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
           <Text style={styles.subtitle}>CARTA DE PRODUCTOS</Text>
         </View>
-        <TouchableOpacity style={styles.cartBtn} onPress={() => setShowCheckout(true)}>
-          <Ionicons name="cart-outline" size={24} color={NoxColors.text} />
-          {order.length > 0 && (
-            <View style={styles.cartBadge}><Text style={styles.cartBadgeText}>{order.length}</Text></View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          {!isDesktop && (
+            <TouchableOpacity onPress={() => setShowLogoutModal(true)} style={styles.logoutHeaderBtn} activeOpacity={0.7}>
+              <Ionicons name="log-out-outline" size={20} color={NoxColors.rose} />
+            </TouchableOpacity>
           )}
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.cartBtn} onPress={() => setShowCheckout(true)}>
+            <Ionicons name="cart-outline" size={24} color={NoxColors.text} />
+            {order.length > 0 && (
+              <View style={styles.cartBadge}><Text style={styles.cartBadgeText}>{order.length}</Text></View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {!turnoAbierto && (
-        <View style={styles.lockBanner}>
-            <Ionicons name="lock-closed" size={20} color={NoxColors.text} />
+        <TouchableOpacity 
+          style={styles.lockBanner} 
+          activeOpacity={0.85}
+          onPress={() => showAlert('Turno No Iniciado', 'El Administrador aún no ha iniciado el turno en Contabilidad. Los meseros no pueden registrar pedidos hasta que el turno sea abierto.', 'warning')}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+            <Ionicons name="lock-closed" size={18} color="#FF6B6B" />
             <Text style={styles.lockText}>VENTAS BLOQUEADAS: EL ADMIN DEBE ABRIR TURNO</Text>
-        </View>
+          </View>
+          <TouchableOpacity 
+            style={styles.lockRefreshBtn} 
+            onPress={fetchData}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="reload" size={13} color="#FFFFFF" />
+            <Text style={styles.lockRefreshText}>VERIFICAR</Text>
+          </TouchableOpacity>
+        </TouchableOpacity>
       )}
 
       {/* Buscador y Categorías */}
@@ -333,6 +375,16 @@ export default function PedidosScreen() {
             if (alertConfig.onConfirm) alertConfig.onConfirm();
         }} 
       />
+
+      <LogoutModal 
+        visible={showLogoutModal} 
+        onCancel={() => setShowLogoutModal(false)} 
+        onConfirm={() => {
+          setShowLogoutModal(false);
+          clearAuth();
+          router.replace('/(auth)/login');
+        }} 
+      />
     </View>
   );
 }
@@ -354,14 +406,26 @@ const styles = StyleSheet.create({
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, marginTop: 5 },
   cartBtn: { backgroundColor: NoxColors.container, width: 50, height: 50, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
-  cartBadge: { position: 'absolute', top: -5, right: -5, backgroundColor: NoxColors.aura, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: NoxColors.deep },
-  cartBadgeText: { color: NoxColors.text, fontSize: 10, fontWeight: 'bold' },
+  cartBadge: { position: 'absolute', top: -5, right: -5, backgroundColor: NoxColors.emerald, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: NoxColors.deep },
+  cartBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: 'bold' },
 
   catScroll: { marginBottom: 15, maxWidth: 1200, width: '100%', alignSelf: 'center' },
-  catBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: NoxColors.container, marginRight: 10 },
-  catBtnActive: { backgroundColor: NoxColors.aura },
-  catText: { fontSize: 11, fontWeight: 'bold', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
-  catTextActive: { color: NoxColors.text },
+  catBtn: { 
+    paddingHorizontal: 18, 
+    paddingVertical: 10, 
+    borderRadius: 16, 
+    backgroundColor: NoxColors.container, 
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)'
+  },
+  catBtnActive: { 
+    backgroundColor: 'rgba(255, 255, 255, 0.16)', 
+    borderWidth: 1.5, 
+    borderColor: 'rgba(255, 255, 255, 0.45)' 
+  },
+  catText: { fontSize: 11, fontWeight: '700', color: NoxColors.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  catTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
   listContent: { padding: 15, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   prodCard: { 
@@ -461,6 +525,25 @@ const styles = StyleSheet.create({
   totalVal: { color: NoxColors.text, fontSize: 32, fontWeight: '900' },
   finishBtn: { backgroundColor: NoxColors.emerald, padding: 18, borderRadius: 20, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.4)' },
   finishBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 13 },
-  lockBanner: { backgroundColor: NoxColors.rose, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, gap: 10, marginBottom: 10 },
-  lockText: { color: NoxColors.text, fontWeight: '900', fontSize: 10, letterSpacing: 1 }
+  lockBanner: { 
+    backgroundColor: 'rgba(239, 68, 68, 0.15)', 
+    borderWidth: 1, 
+    borderColor: 'rgba(239, 68, 68, 0.35)',
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    paddingVertical: 12, 
+    paddingHorizontal: 18,
+    gap: 10, 
+    marginBottom: 12,
+    borderRadius: 16,
+    marginHorizontal: 20,
+    maxWidth: 1200,
+    alignSelf: 'center',
+    width: '90%'
+  },
+  lockText: { color: '#FFAAA6', fontWeight: '900', fontSize: 11, letterSpacing: 1, flexShrink: 1 },
+  lockRefreshBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255, 255, 255, 0.12)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.25)' },
+  lockRefreshText: { color: '#FFFFFF', fontWeight: '900', fontSize: 10, letterSpacing: 1 },
+  logoutHeaderBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: 'rgba(255, 68, 68, 0.1)', borderWidth: 1, borderColor: 'rgba(255, 68, 68, 0.2)', justifyContent: 'center', alignItems: 'center' },
 });

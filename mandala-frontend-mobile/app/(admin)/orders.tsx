@@ -85,7 +85,7 @@ export default function MonitorOrdenesScreen() {
 
   useEffect(() => {
     fetchPedidos();
-    intervalRef.current = setInterval(() => fetchPedidos(true), 5000); 
+    intervalRef.current = setInterval(() => fetchPedidos(true), 10000); 
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, []);
 

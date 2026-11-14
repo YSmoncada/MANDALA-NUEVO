@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import { View, StyleSheet, Animated, Dimensions, Easing } from 'react-native';
+import { View, StyleSheet, Animated, Dimensions, Easing, Platform } from 'react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -11,94 +11,105 @@ function pseudoRandom(seed: number) {
 
 interface StarData {
   id: number;
-  left: number; // porcentaje 0-100
-  top: number;  // porcentaje 0-100
-  size: number; // 1 a 3.5 px
-  phase: number; // 0, 1, 2, 3 o 4 (estática)
+  left: number;  // 0-100%
+  top: number;   // 0-100%
+  size: number;  // 1 a 2.5 px
+  phase: number; // 0, 1, 2 (fase de titilación)
   color: string;
-  hasGlow: boolean;
 }
 
-export default function RollsRoyceStars() {
-  // 4 fases de animación para centelleo asíncrono y orgánico (Starlight Headliner)
-  const animPhase0 = useRef(new Animated.Value(0.2)).current;
-  const animPhase1 = useRef(new Animated.Value(0.3)).current;
-  const animPhase2 = useRef(new Animated.Value(0.15)).current;
-  const animPhase3 = useRef(new Animated.Value(0.25)).current;
+// Inyección de keyframes CSS en Web para ejecución directa en GPU/compositor
+if (Platform.OS === 'web' && typeof document !== 'undefined') {
+  const styleId = 'noxos-rollsroyce-stars-css';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      @keyframes noxTwinkle0 {
+        0%, 100% { opacity: 0.2; transform: scale(0.9); }
+        50% { opacity: 0.95; transform: scale(1.15); }
+      }
+      @keyframes noxTwinkle1 {
+        0%, 100% { opacity: 0.85; transform: scale(1.1); }
+        50% { opacity: 0.15; transform: scale(0.85); }
+      }
+      @keyframes noxTwinkle2 {
+        0%, 100% { opacity: 0.3; transform: scale(0.95); }
+        50% { opacity: 1; transform: scale(1.2); }
+      }
+      @keyframes noxShooting {
+        0% { transform: translate3d(-100px, 30px, 0) rotate(22deg); opacity: 0; }
+        4% { opacity: 1; }
+        16% { transform: translate3d(105vw, 40vh, 0) rotate(22deg); opacity: 0; }
+        100% { transform: translate3d(105vw, 40vh, 0) rotate(22deg); opacity: 0; }
+      }
+      .nox-star-p0 { animation: noxTwinkle0 3.2s infinite ease-in-out; }
+      .nox-star-p1 { animation: noxTwinkle1 4.5s infinite ease-in-out; }
+      .nox-star-p2 { animation: noxTwinkle2 2.8s infinite ease-in-out; }
+      .nox-star-static { opacity: 0.35; }
+      .nox-shooting-star { animation: noxShooting 10s infinite cubic-bezier(0.25, 0.1, 0.25, 1); }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
-  // Estrella fugaz (Rolls-Royce Shooting Star feature)
-  const shootingAnim = useRef(new Animated.Value(0)).current;
+function RollsRoyceStarsComponent() {
+  const isWeb = Platform.OS === 'web';
+  const starCount = isWeb ? 55 : 32; // Equilibrado para máximo rendimiento
 
-  // Generar 110 estrellas distribuidas como el techo Starlight
+  // Generar lista fija de estrellas determinista
   const stars: StarData[] = useMemo(() => {
     const list: StarData[] = [];
-    const colors = [
-      '#FFFFFF',
-      '#FFFFFF',
-      '#F0F9FF', // sutil tono frío diamante
-      '#FEF9C3', // sutil tono cálido estelar
-      '#F8FAFC',
-    ];
+    const colors = ['#FFFFFF', '#FFFFFF', '#F0F9FF', '#FEF9C3', '#E2E8F0'];
 
-    for (let i = 0; i < 110; i++) {
+    for (let i = 0; i < starCount; i++) {
       const left = pseudoRandom(i * 7 + 1) * 100;
       const top = pseudoRandom(i * 13 + 3) * 100;
       const sizeSeed = pseudoRandom(i * 19 + 5);
 
-      // Mayoría diminutas (fibras ópticas reales de 0.5 a 1.5mm), pocas medianas
       let size = 1.2;
-      let hasGlow = false;
-      if (sizeSeed > 0.88) {
-        size = 2.8;
-        hasGlow = true;
-      } else if (sizeSeed > 0.65) {
-        size = 2.0;
-        hasGlow = true;
-      } else if (sizeSeed > 0.35) {
-        size = 1.5;
+      if (sizeSeed > 0.82) {
+        size = 2.4;
+      } else if (sizeSeed > 0.5) {
+        size = 1.8;
       }
 
-      const phase = i % 5; // 0, 1, 2, 3 centellean; 4 es fija tenue de fondo
+      const phase = i % 4; // 0, 1, 2 son animadas; 3 es fija tenue
       const color = colors[i % colors.length];
 
-      list.push({ id: i, left, top, size, phase, color, hasGlow });
+      list.push({ id: i, left, top, size, phase, color });
     }
     return list;
-  }, []);
+  }, [starCount]);
+
+  // Animaciones para plataformas Nativas (Expo Go iOS/Android) con useNativeDriver: true
+  const animPhase0 = useRef(new Animated.Value(0.25)).current;
+  const animPhase1 = useRef(new Animated.Value(0.8)).current;
+  const shootingAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Configuración de ciclos de respiración / titilación suave
-    const createTwinkleLoop = (anim: Animated.Value, duration: number, min: number, max: number) => {
-      return Animated.loop(
-        Animated.sequence([
-          Animated.timing(anim, {
-            toValue: max,
-            duration: duration,
-            easing: Easing.inOut(Easing.sin),
-            useNativeDriver: true,
-          }),
-          Animated.timing(anim, {
-            toValue: min,
-            duration: duration,
-            easing: Easing.inOut(Easing.sin),
-            useNativeDriver: true,
-          }),
-        ])
-      );
-    };
+    if (isWeb) return; // En Web usamos CSS puro, 0% CPU JS
 
-    const loop0 = createTwinkleLoop(animPhase0, 2400, 0.2, 1.0);
-    const loop1 = createTwinkleLoop(animPhase1, 3600, 0.15, 0.95);
-    const loop2 = createTwinkleLoop(animPhase2, 4200, 0.1, 0.85);
-    const loop3 = createTwinkleLoop(animPhase3, 2900, 0.25, 0.9);
+    const loop0 = Animated.loop(
+      Animated.sequence([
+        Animated.timing(animPhase0, { toValue: 0.95, duration: 2500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(animPhase0, { toValue: 0.2, duration: 2500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    );
+
+    const loop1 = Animated.loop(
+      Animated.sequence([
+        Animated.timing(animPhase1, { toValue: 0.2, duration: 3400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(animPhase1, { toValue: 0.9, duration: 3400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    );
 
     loop0.start();
     loop1.start();
-    loop2.start();
-    loop3.start();
 
-    // Ciclo de estrella fugaz cada 8 segundos
+    let isMounted = true;
     const triggerShootingStar = () => {
+      if (!isMounted) return;
       shootingAnim.setValue(0);
       Animated.sequence([
         Animated.delay(4000),
@@ -108,22 +119,66 @@ export default function RollsRoyceStars() {
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.delay(5000),
-      ]).start(() => triggerShootingStar());
+        Animated.delay(6000),
+      ]).start(() => {
+        if (isMounted) triggerShootingStar();
+      });
     };
 
     triggerShootingStar();
 
     return () => {
+      isMounted = false;
       loop0.stop();
       loop1.stop();
-      loop2.stop();
-      loop3.stop();
       shootingAnim.stopAnimation();
     };
-  }, [animPhase0, animPhase1, animPhase2, animPhase3, shootingAnim]);
+  }, [isWeb, animPhase0, animPhase1, shootingAnim]);
 
-  // Interpolación de estrella fugaz (diagonal rápida cruzando el cielo)
+  // En Web: renderizado puro con clases CSS aceleradas por GPU
+  if (isWeb) {
+    return (
+      <View style={styles.container} pointerEvents="none">
+        {stars.map((star) => {
+          let className = 'nox-star-static';
+          if (star.phase === 0) className = 'nox-star-p0';
+          else if (star.phase === 1) className = 'nox-star-p1';
+          else if (star.phase === 2) className = 'nox-star-p2';
+
+          return (
+            <View
+              key={star.id}
+              // @ts-ignore className en web
+              className={className}
+              style={[
+                styles.star,
+                {
+                  left: `${star.left}%`,
+                  top: `${star.top}%`,
+                  width: star.size,
+                  height: star.size,
+                  borderRadius: star.size / 2,
+                  backgroundColor: star.color,
+                },
+              ]}
+            />
+          );
+        })}
+
+        {/* Estrella Fugaz Web */}
+        <View
+          // @ts-ignore className en web
+          className="nox-shooting-star"
+          style={styles.shootingStarContainer}
+        >
+          <View style={styles.shootingStarHead} />
+          <View style={styles.shootingStarTail} />
+        </View>
+      </View>
+    );
+  }
+
+  // En Native (iOS/Android - Expo Go): 2 fases optimizadas con useNativeDriver
   const shootTranslateX = shootingAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [-80, SCREEN_WIDTH * 0.9],
@@ -139,15 +194,8 @@ export default function RollsRoyceStars() {
 
   return (
     <View style={styles.container} pointerEvents="none">
-      {/* Manto de Estrellas Tipo Rolls-Royce Starlight */}
       {stars.map((star) => {
-        let opacityAnim: Animated.Value | number = 0.35;
-        if (star.phase === 0) opacityAnim = animPhase0;
-        else if (star.phase === 1) opacityAnim = animPhase1;
-        else if (star.phase === 2) opacityAnim = animPhase2;
-        else if (star.phase === 3) opacityAnim = animPhase3;
-        else opacityAnim = 0.3; // estrella tenue estática
-
+        const opacity = star.phase === 0 ? animPhase0 : star.phase === 1 ? animPhase1 : 0.35;
         return (
           <Animated.View
             key={star.id}
@@ -160,21 +208,14 @@ export default function RollsRoyceStars() {
                 height: star.size,
                 borderRadius: star.size / 2,
                 backgroundColor: star.color,
-                opacity: opacityAnim,
-              },
-              star.hasGlow && {
-                shadowColor: '#FFFFFF',
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.9,
-                shadowRadius: star.size * 1.5,
-                elevation: 3,
+                opacity,
               },
             ]}
           />
         );
       })}
 
-      {/* Estrella Fugaz Rolls-Royce */}
+      {/* Estrella Fugaz Nativa */}
       <Animated.View
         style={[
           styles.shootingStarContainer,
@@ -194,6 +235,8 @@ export default function RollsRoyceStars() {
     </View>
   );
 }
+
+export default React.memo(RollsRoyceStarsComponent);
 
 const styles = StyleSheet.create({
   container: {
@@ -221,15 +264,11 @@ const styles = StyleSheet.create({
     height: 3.5,
     borderRadius: 2,
     backgroundColor: '#FFFFFF',
-    shadowColor: '#FFFFFF',
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    elevation: 5,
   },
   shootingStarTail: {
-    width: 80,
+    width: 70,
     height: 1.2,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    backgroundColor: 'rgba(255, 255, 255, 0.45)',
     borderRadius: 1,
   },
 });
