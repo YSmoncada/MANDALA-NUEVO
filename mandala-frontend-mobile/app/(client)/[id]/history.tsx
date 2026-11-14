@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 25, paddingTop: 60, paddingBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   branding: { color: NoxColors.text, fontSize: 24, fontWeight: '900', letterSpacing: 2 },
   subtitle: { color: NoxColors.muted, fontWeight: '900', fontSize: 9, letterSpacing: 2, marginTop: 4, textTransform:'uppercase' },
-  payBtn: { backgroundColor: '#00E5FF', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, flexDirection:'row', alignItems:'center', gap: 6 },
+  payBtn: { backgroundColor: NoxColors.aura, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, flexDirection:'row', alignItems:'center', gap: 6 },
   payBtnText: { color: '#000000', fontWeight: '900', fontSize: 11, letterSpacing: 1 },
 
   summaryCard: { backgroundColor: NoxColors.card, marginHorizontal: 20, padding: 30, borderRadius: 30, alignItems: 'center', marginBottom: 20, borderWidth:1, borderColor: NoxColors.border },

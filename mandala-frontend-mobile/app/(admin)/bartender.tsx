@@ -135,7 +135,7 @@ export default function AdminBartenderScreen() {
             style={[styles.readyBtn, { flex: 2 }]} 
             onPress={() => confirmAction(item.id, 'despachado')}
           >
-            <Ionicons name="checkmark-circle-outline" size={20} color="#000000" />
+            <Ionicons name="checkmark-circle-outline" size={20} color="#FFFFFF" />
             <Text style={styles.readyBtnText}>¡PREPARADO!</Text>
           </TouchableOpacity>
         </View>
@@ -206,23 +206,23 @@ const styles = StyleSheet.create({
     padding: 20, 
     marginBottom: 20, 
     borderLeftWidth: 4, 
-    borderLeftColor: '#00E5FF',
+    borderLeftColor: NoxColors.aura,
     borderWidth: 1,
     borderColor: NoxColors.border
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, alignItems: 'center' },
-  mesaBadge: { backgroundColor: 'rgba(0, 229, 255, 0.08)', borderWidth: 1, borderColor: 'rgba(0, 229, 255, 0.25)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  mesaText: { color: '#00E5FF', fontWeight: '900', fontSize: 14 },
+  mesaBadge: { backgroundColor: 'rgba(255, 255, 255, 0.06)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  mesaText: { color: NoxColors.aura, fontWeight: '900', fontSize: 14 },
   timeText: { color: NoxColors.gray, fontSize: 10, fontWeight: 'bold' },
   
   itemsList: { marginBottom: 20 },
   itemRow: { flexDirection: 'row', marginBottom: 10, alignItems: 'center' },
   cantCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  cantNum: { fontWeight: 'bold', color: '#00E5FF', fontSize: 12 },
+  cantNum: { fontWeight: 'bold', color: NoxColors.aura, fontSize: 12 },
   itemName: { color: NoxColors.text, fontWeight: 'bold', fontSize: 15 },
   
-  readyBtn: { backgroundColor: '#00E5FF', padding: 16, borderRadius: 16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-  readyBtnText: { color: '#000000', fontWeight: '900', marginLeft: 8, fontSize: 11, letterSpacing: 1 },
+  readyBtn: { backgroundColor: NoxColors.emerald, padding: 16, borderRadius: 16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  readyBtnText: { color: '#FFFFFF', fontWeight: '900', marginLeft: 8, fontSize: 11, letterSpacing: 1 },
   
   empty: { alignItems: 'center', marginTop: 120 }
 });

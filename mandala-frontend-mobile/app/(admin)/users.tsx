@@ -300,7 +300,7 @@ export default function AdmUsersScreen() {
                     />
                 </View>
 
-                <TouchableOpacity style={[styles.saveBtn, {backgroundColor: '#3b82f6'}]} onPress={handleUpdateCredentials}>
+                <TouchableOpacity style={styles.saveBtn} onPress={handleUpdateCredentials}>
                     <Text style={styles.saveBtnText}>CAMBIAR CREDENCIALES</Text>
                 </TouchableOpacity>
             </View>

@@ -380,13 +380,13 @@ const styles = StyleSheet.create({
   countBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     marginHorizontal: 20, marginBottom: 10,
-    backgroundColor: 'rgba(0, 229, 255, 0.08)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     paddingHorizontal: 16, paddingVertical: 10,
-    borderRadius: 12, borderWidth: 1, borderColor: 'rgba(0, 229, 255, 0.25)',
+    borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)',
     maxWidth: 1200, width: '100%', alignSelf: 'center',
   },
-  countDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#00E5FF' },
-  countText: { color: '#00E5FF', fontSize: 10, fontWeight: '900', letterSpacing: 2 },
+  countDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: NoxColors.aura },
+  countText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
 
   listContent: { padding: 20, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   columnWrapper: { gap: 16 },
@@ -394,17 +394,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: NoxColors.card,
     borderRadius: 24, padding: 20, marginBottom: 20,
-    borderLeftWidth: 4, borderLeftColor: '#00E5FF',
+    borderLeftWidth: 4, borderLeftColor: NoxColors.aura,
     borderWidth: 1, borderColor: NoxColors.border,
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
   leftInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   mesaBadge: {
-    backgroundColor: 'rgba(0, 229, 255, 0.08)', padding: 10, borderRadius: 14,
-    alignItems: 'center', minWidth: 55, borderWidth: 1, borderColor: 'rgba(0, 229, 255, 0.25)'
+    backgroundColor: 'rgba(255, 255, 255, 0.06)', padding: 10, borderRadius: 14,
+    alignItems: 'center', minWidth: 55, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.12)'
   },
   mesaLabel: { color: NoxColors.muted, fontSize: 8, fontWeight: '900', letterSpacing: 2 },
-  mesaNum: { color: '#00E5FF', fontSize: 20, fontWeight: '900' },
+  mesaNum: { color: NoxColors.aura, fontSize: 20, fontWeight: '900' },
   pedidoInfo: { gap: 3 },
   pedidoId: { color: NoxColors.text, fontWeight: 'bold', fontSize: 16 },
   responsable: { color: NoxColors.muted, fontSize: 11, fontWeight: '600', textTransform: 'uppercase' },
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
     width: 34, height: 34, borderRadius: 12,
     backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center',
   },
-  cantNum: { fontWeight: '900', color: '#00E5FF', fontSize: 13 },
+  cantNum: { fontWeight: '900', color: NoxColors.aura, fontSize: 13 },
   itemName: { flex: 1, color: NoxColors.text, fontWeight: 'bold', fontSize: 14 },
   checkBtn: {
     width: 32, height: 32, borderRadius: 10,
@@ -442,9 +442,9 @@ const styles = StyleSheet.create({
   listoBtn: {
     flex: 1.4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
     paddingVertical: 14, borderRadius: 16,
-    backgroundColor: '#00E5FF',
+    backgroundColor: NoxColors.emerald,
   },
-  listoBtnText: { color: '#000000', fontWeight: '900', fontSize: 11, letterSpacing: 1.5 },
+  listoBtnText: { color: '#FFFFFF', fontWeight: '900', fontSize: 11, letterSpacing: 1.5 },
 
   emptyContainer: { alignItems: 'center', marginTop: 100, gap: 15 },
   emptyTitle: { color: NoxColors.muted, fontWeight: '900', fontSize: 14, letterSpacing: 3 },

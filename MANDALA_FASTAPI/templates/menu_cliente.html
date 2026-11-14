@@ -9,16 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #060609;
-      --card: #0E0E14;
-      --card-inner: #151520;
+      --bg: #000000;
+      --card: #0E0E12;
+      --card-inner: #16161D;
       --border: rgba(255, 255, 255, 0.08);
-      --aura: #00E5FF;
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --aura: #FFFFFF;
       --emerald: #10B981;
       --amber: #F59E0B;
       --rose: #EF4444;
       --text: #FFFFFF;
       --muted: #A1A1AA;
+      --subtext: #71717A;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
@@ -27,12 +29,35 @@
       color: var(--text);
       min-height: 100vh;
       padding-bottom: 90px;
+      position: relative;
     }
+
+    /* Fondo Rolls-Royce Starlight */
+    @keyframes noxTwinkle0 { 0%, 100% { opacity: 0.2; transform: scale(0.9); } 50% { opacity: 0.95; transform: scale(1.15); } }
+    @keyframes noxTwinkle1 { 0%, 100% { opacity: 0.85; transform: scale(1.1); } 50% { opacity: 0.15; transform: scale(0.85); } }
+    @keyframes noxTwinkle2 { 0%, 100% { opacity: 0.3; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.2); } }
+    .nox-stars-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .nox-star {
+      position: absolute;
+      border-radius: 50%;
+      background: #FFFFFF;
+    }
+    .p0 { animation: noxTwinkle0 3.2s infinite ease-in-out; }
+    .p1 { animation: noxTwinkle1 4.5s infinite ease-in-out; }
+    .p2 { animation: noxTwinkle2 2.8s infinite ease-in-out; }
+    .p-static { opacity: 0.35; }
+
     .header {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(6, 6, 9, 0.95);
+      background: rgba(0, 0, 0, 0.92);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       padding: 14px 18px;
@@ -51,17 +76,17 @@
       align-items: center;
       gap: 12px;
     }
-    .brand { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
-    .brand span { color: var(--aura); }
+    .brand { font-size: 22px; font-weight: 900; letter-spacing: 2px; }
+    .brand span { color: var(--subtext); }
     .mesa-badge {
-      background: rgba(0, 229, 255, 0.08);
-      border: 1px solid rgba(0, 229, 255, 0.3);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: var(--text);
       padding: 6px 14px;
       border-radius: 12px;
       font-size: 11px;
       font-weight: 900;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       white-space: nowrap;
     }
     .tabs-nav {
@@ -86,7 +111,8 @@
       transition: all 0.2s;
     }
     .tab-btn.active {
-      background: var(--aura);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       color: #fff;
     }
     .waiter-banner {
@@ -116,7 +142,7 @@
       font-size: 14px;
       outline: none;
     }
-    .search-input:focus { border-color: var(--aura); }
+    .search-input:focus { border-color: rgba(255, 255, 255, 0.35); }
     .cat-scroll {
       display: flex;
       overflow-x: auto;
@@ -126,20 +152,24 @@
     }
     .cat-scroll::-webkit-scrollbar { display: none; }
     .cat-pill {
-      background: var(--card);
+      background: var(--card-inner);
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 7px 14px;
-      border-radius: 20px;
+      padding: 8px 16px;
+      border-radius: 14px;
       font-size: 11px;
       font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       white-space: nowrap;
       cursor: pointer;
+      transition: all 0.2s;
     }
     .cat-pill.active {
-      background: var(--aura);
-      color: #fff;
-      border-color: var(--aura);
+      background: rgba(255, 255, 255, 0.16);
+      color: #FFFFFF;
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      font-weight: 900;
     }
     .prods-grid {
       display: grid;
@@ -150,29 +180,30 @@
     .prod-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 12px;
+      border-radius: 24px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       position: relative;
       transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s, border-color 0.22s;
     }
     .prod-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(0, 229, 255, 0.45);
-      box-shadow: 0 14px 30px rgba(0, 229, 255, 0.16);
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.7);
     }
     .prod-img-box {
       width: 100%;
       aspect-ratio: 1;
-      border-radius: 14px;
-      background: #FFFFFF;
+      border-radius: 18px;
+      background: #16161E;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       overflow: hidden;
       margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 6px;
+      padding: 8px;
     }
     .prod-img {
       width: 100%;
@@ -183,26 +214,27 @@
     .prod-card:hover .prod-img {
       transform: scale(1.06);
     }
-    .prod-title { font-size: 13px; font-weight: 800; line-height: 17px; margin-bottom: 4px; height: 34px; overflow: hidden; }
-    .prod-cat { font-size: 9px; font-weight: 900; color: var(--aura); text-transform: uppercase; margin-bottom: 6px; }
+    .prod-title { font-size: 13px; font-weight: 700; line-height: 17px; margin-bottom: 4px; height: 34px; overflow: hidden; color: #FFFFFF; }
+    .prod-cat { font-size: 9px; font-weight: 800; color: var(--subtext); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
     .prod-price { font-size: 15px; font-weight: 900; color: var(--emerald); margin-top: auto; }
     .add-btn {
       margin-top: 8px;
-      background: var(--card-inner);
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 8px;
+      background: #181822;
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+      padding: 9px;
       border-radius: 12px;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
+      letter-spacing: 0.5px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       transition: all 0.15s;
     }
-    .add-btn:hover { background: var(--aura); border-color: var(--aura); color: #fff; }
+    .add-btn:hover { background: #222230; border-color: rgba(255, 255, 255, 0.4); }
     .add-btn:active { transform: scale(0.97); }
     .qty-ctrls {
       display: flex;
@@ -211,7 +243,7 @@
       margin-top: 8px;
       background: var(--card-inner);
       border-radius: 12px;
-      border: 1px solid var(--aura);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 4px;
     }
     .qty-btn {
@@ -229,17 +261,18 @@
     /* Barra flotante de carrito */
     .cart-bar {
       position: fixed;
-      bottom: 16px;
+      bottom: 18px;
       left: 18px;
       right: 18px;
-      background: var(--aura);
-      color: #000000;
-      padding: 14px 20px;
-      border-radius: 20px;
+      background: #181822;
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+      padding: 16px 22px;
+      border-radius: 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 10px 25px rgba(0, 229, 255, 0.35);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9);
       cursor: pointer;
       z-index: 60;
       max-width: 500px;
@@ -247,9 +280,9 @@
       display: none;
     }
     .cart-bar.visible { display: flex; }
-    .cart-bar-total { font-size: 16px; font-weight: 900; }
-    .cart-bar-sub { font-size: 10px; opacity: 0.9; font-weight: 700; }
-    .cart-bar-btn { font-size: 12px; font-weight: 900; letter-spacing: 1px; background: rgba(0,0,0,0.25); padding: 8px 14px; border-radius: 12px; }
+    .cart-bar-total { font-size: 17px; font-weight: 900; color: #FFFFFF; }
+    .cart-bar-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+    .cart-bar-btn { font-size: 12px; font-weight: 900; letter-spacing: 1.5px; color: var(--emerald); background: transparent; padding: 0; }
 
     /* Modal Carrito */
     .modal-overlay {
@@ -322,7 +355,7 @@
       transition: transform 0.2s, border-color 0.2s;
     }
     .order-card:hover {
-      border-color: rgba(0, 229, 255, 0.4);
+      border-color: rgba(255, 255, 255, 0.2);
     }
     .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .order-id { font-size: 14px; font-weight: 900; }
@@ -356,16 +389,18 @@
     }
     .mesa-info-pill strong { color: var(--aura); }
     .cuenta-btn {
-      background: var(--amber);
-      color: #000;
+      background: var(--aura);
+      color: #000000;
       border: none;
-      padding: 14px;
-      border-radius: 16px;
+      padding: 16px;
+      border-radius: 18px;
       font-size: 13px;
       font-weight: 900;
+      letter-spacing: 1.5px;
       cursor: pointer;
       width: 100%;
       margin-top: 14px;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
       transition: transform 0.1s, opacity 0.2s;
     }
     .cuenta-btn:active { transform: scale(0.98); }
@@ -509,9 +544,9 @@
         margin-top: 2px;
       }
       .desktop-cart-badge {
-        background: rgba(0, 229, 255, 0.12);
-        border: 1px solid var(--aura);
-        color: var(--aura);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #FFFFFF;
         padding: 4px 10px;
         border-radius: 10px;
         font-size: 11px;
@@ -602,26 +637,25 @@
       width: 100%;
       max-width: 380px;
       text-align: center;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 229, 255, 0.1);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
       animation: noxScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nox-dialog-icon {
       width: 56px;
       height: 56px;
       border-radius: 18px;
-      background: rgba(0, 229, 255, 0.1);
-      border: 1px solid rgba(0, 229, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 26px;
       margin: 0 auto 16px;
-      box-shadow: 0 0 25px rgba(0, 229, 255, 0.15);
     }
     .nox-dialog-title {
       font-size: 16px;
       font-weight: 900;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       color: #FFFFFF;
       margin-bottom: 8px;
       text-transform: uppercase;
@@ -639,16 +673,16 @@
       flex-direction: column;
     }
     .nox-dialog-btn-primary {
-      background: var(--aura);
+      background: #FFFFFF;
       color: #000000;
       border: none;
       padding: 14px 20px;
       border-radius: 14px;
       font-weight: 900;
       font-size: 12px;
-      letter-spacing: 0.8px;
+      letter-spacing: 1.5px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(0, 229, 255, 0.25);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
       transition: transform 0.1s, opacity 0.2s;
     }
     .nox-dialog-btn-primary:active {
@@ -680,6 +714,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Fondo Rolls-Royce Starlight Sky -->
+  <div class="nox-stars-bg" id="stars-bg"></div>
 
   <!-- Header -->
   <div class="header">
@@ -853,7 +890,29 @@
     let cart = {}; // { prodId: { id, nombre, precio, qty } }
     let currentPendingCount = 0;
 
+    function initStars() {
+      const container = document.getElementById('stars-bg');
+      if (!container) return;
+      const count = 42;
+      const colors = ['#FFFFFF', '#FFFFFF', '#F0F9FF', '#FEF9C3', '#E2E8F0'];
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        const size = (i % 5 === 0) ? 2.4 : ((i % 2 === 0) ? 1.8 : 1.2);
+        const left = ((i * 17 + 5) % 98);
+        const top = ((i * 23 + 7) % 98);
+        const phase = i % 4;
+        star.className = `nox-star ${phase === 0 ? 'p0' : (phase === 1 ? 'p1' : (phase === 2 ? 'p2' : 'p-static'))}`;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${left}%`;
+        star.style.top = `${top}%`;
+        star.style.backgroundColor = colors[i % colors.length];
+        container.appendChild(star);
+      }
+    }
+
     async function init() {
+      initStars();
       await Promise.all([loadCategories(), loadProducts()]);
       loadTableOrders();
     }

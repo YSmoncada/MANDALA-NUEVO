@@ -30,33 +30,33 @@ export default function NoxAlert({
       case 'success':
         return {
           name: 'checkmark-circle-outline' as const,
-          color: '#10B981',
+          color: NoxColors.emerald,
           bg: 'rgba(16, 185, 129, 0.12)',
-          btnBg: '#10B981',
-          textColor: '#000000'
+          btnBg: NoxColors.emerald,
+          textColor: '#FFFFFF'
         };
       case 'error':
         return {
           name: 'close-circle-outline' as const,
-          color: '#EF4444',
+          color: NoxColors.rose,
           bg: 'rgba(239, 68, 68, 0.12)',
-          btnBg: '#EF4444',
+          btnBg: NoxColors.rose,
           textColor: '#FFFFFF'
         };
       case 'warning':
         return {
           name: 'warning-outline' as const,
-          color: '#F59E0B',
+          color: NoxColors.amber,
           bg: 'rgba(245, 158, 11, 0.12)',
-          btnBg: '#F59E0B',
+          btnBg: NoxColors.amber,
           textColor: '#000000'
         };
       default:
         return {
           name: 'information-circle-outline' as const,
-          color: '#00E5FF',
-          bg: 'rgba(0, 229, 255, 0.12)',
-          btnBg: '#00E5FF',
+          color: NoxColors.aura,
+          bg: 'rgba(255, 255, 255, 0.08)',
+          btnBg: NoxColors.aura,
           textColor: '#000000'
         };
     }
