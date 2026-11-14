@@ -84,8 +84,9 @@ function BrandConfigScreen({ onBack }: { onBack: () => void }) {
   );
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 80 }}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#000000' }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <RollsRoyceStars />
+      <ScrollView showsVerticalScrollIndicator={false} style={[styles.container, { backgroundColor: 'transparent' }]} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 80 }}>
         {/* Header con texto AJUSTES para volver */}
         <TouchableOpacity style={[styles.header, { paddingHorizontal: 0 }]} onPress={onBack} activeOpacity={0.6}>
           <View style={styles.headerTitleContainer}>

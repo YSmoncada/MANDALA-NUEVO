@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,7 +28,7 @@ export default function BartenderSettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[NoxColors.container, NoxColors.deep]} style={StyleSheet.absoluteFill} />
+      <RollsRoyceStars />
       
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
@@ -66,7 +67,7 @@ export default function BartenderSettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   safe: { flex: 1 },
   header: { paddingHorizontal: 30, paddingTop: 60, marginBottom: 40 },
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: 3 },

@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -195,6 +196,7 @@ export default function BartenderHistoryScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <View style={styles.header}>
         <View>
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
@@ -213,6 +215,7 @@ export default function BartenderHistoryScreen() {
         </View>
       ) : (
         <FlatList
+        showsVerticalScrollIndicator={false}
           data={pedidos}
           keyExtractor={item => String(item.id)}
           renderItem={renderPedido}
@@ -238,7 +241,7 @@ export default function BartenderHistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingHorizontal: 25, paddingTop: 60, paddingBottom: 25,

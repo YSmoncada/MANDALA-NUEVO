@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator, Alert, Modal, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -56,6 +57,7 @@ export default function MesasScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       {/* Header Premium - NoxOS Style */}
       <View style={styles.header}>
         <View>
@@ -70,7 +72,8 @@ export default function MesasScreen() {
       {loading ? (
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 50 }} />
       ) : (
-        <FlatList 
+        <FlatList
+        showsVerticalScrollIndicator={false} 
           data={mesas} 
           keyExtractor={it => String(it.id)} 
           contentContainerStyle={styles.listContent} 
@@ -151,7 +154,7 @@ export default function MesasScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -163,7 +166,16 @@ const styles = StyleSheet.create({
   brandingNox: { fontSize: 28, fontWeight: '900', color: NoxColors.text, letterSpacing: 2 },
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 3, marginTop: 5 },
-  addBtn: { backgroundColor: NoxColors.aura, width: 50, height: 50, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  addBtn: { 
+    backgroundColor: '#181822', 
+    width: 44, 
+    height: 44, 
+    borderRadius: 14, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.25)'
+  },
   
   listContent: { padding: 15, paddingBottom: 100 },
   mesaCardContainer: { flex: 0.5, padding: 8 },
@@ -183,7 +195,7 @@ const styles = StyleSheet.create({
   cardOcupada: { borderColor: 'rgba(169, 68, 255, 0.3)' },
   mesaIcon: { width: 50, height: 50, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
   iconLibre: { backgroundColor: NoxColors.emerald },
-  iconOcupada: { backgroundColor: NoxColors.aura },
+  iconOcupada: { backgroundColor: 'rgba(255, 255, 255, 0.12)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.25)' },
   
   mesaNum: { color: NoxColors.text, fontWeight: '900', fontSize: 16, letterSpacing: 1 },
   mesaCap: { color: NoxColors.muted, fontSize: 9, fontWeight: 'bold', marginTop: 4, letterSpacing: 1, textTransform: 'uppercase' },
@@ -220,7 +232,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: NoxColors.border
   },
-  saveBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 20, alignItems: 'center', marginTop: 10, shadowColor: NoxColors.aura, shadowOpacity: 0.3, shadowRadius: 15 },
-  saveBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 13 }
+  saveBtn: { 
+    backgroundColor: NoxColors.emerald, 
+    padding: 18, 
+    borderRadius: 20, 
+    alignItems: 'center', 
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.4)'
+  },
+  saveBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 13 }
 });
 

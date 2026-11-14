@@ -304,6 +304,7 @@ export default function AdminHistoryScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 40 }} />
       ) : (
         <SectionList
+          showsVerticalScrollIndicator={false}
           sections={groupedData}
           keyExtractor={item => String(item.id)}
           renderItem={renderPedido}

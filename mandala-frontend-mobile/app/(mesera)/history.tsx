@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, RefreshControl, Modal, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -329,6 +330,7 @@ export default function MisPedidosScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <View style={styles.header}>
         <View>
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
@@ -349,6 +351,7 @@ export default function MisPedidosScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 60 }} />
       ) : (
         <FlatList
+        showsVerticalScrollIndicator={false}
           data={tab === 'activas' ? activeGroups : historicalPedidos}
           keyExtractor={item => String(item.id || item.mesa_id)}
           renderItem={tab === 'activas' ? renderMesaGroup : renderPedidoIndividual}
@@ -405,7 +408,7 @@ export default function MisPedidosScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 60, paddingBottom: 20 },
   brandingNox: { fontSize: 28, fontWeight: '900', color: NoxColors.text, letterSpacing: 2 },
   brandingOS: { color: NoxColors.subtext },
@@ -414,7 +417,7 @@ const styles = StyleSheet.create({
 
   tabBar: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 15, gap: 10 },
   tab: { flex: 1, paddingVertical: 12, alignItems: 'center', borderRadius: 15, backgroundColor: NoxColors.card },
-  tabActive: { backgroundColor: NoxColors.container, borderWidth: 1, borderColor: NoxColors.aura },
+  tabActive: { backgroundColor: 'rgba(255, 255, 255, 0.12)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.35)' },
   tabText: { color: NoxColors.subtext, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   tabTextActive: { color: NoxColors.text },
 
@@ -448,8 +451,8 @@ const styles = StyleSheet.create({
   alertIcon: { width: 70, height: 70, borderRadius: 35, backgroundColor: NoxColors.aura, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
   alertTitle: { color: NoxColors.text, fontSize: 18, fontWeight: '900', letterSpacing: 2, marginBottom: 15 },
   alertMsg: { color: NoxColors.muted, textAlign: 'center', fontSize: 15, marginBottom: 30 },
-  alertBtn: { backgroundColor: NoxColors.aura, paddingVertical: 18, width: '100%', borderRadius: 20, alignItems: 'center' },
-  alertBtnText: { color: NoxColors.text, fontWeight: '900', fontSize: 12 },
+  alertBtn: { backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', paddingVertical: 18, width: '100%', borderRadius: 20, alignItems: 'center' },
+  alertBtnText: { color: '#FFFFFF', fontWeight: '900', fontSize: 12 },
 
   billAlertInline: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(169,68,255,0.1)', padding: 10, borderRadius: 12, marginTop: 10, marginBottom: 5, gap: 8 },
   billAlertText: { color: NoxColors.aura, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
@@ -458,15 +461,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: NoxColors.aura,
+    backgroundColor: '#181822',
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
     paddingVertical: 12,
     borderRadius: 14,
     marginTop: 14,
-    shadowColor: NoxColors.aura,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 3,
   },
   printTicketBtnText: {
     color: '#fff',

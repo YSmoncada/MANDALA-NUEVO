@@ -115,6 +115,7 @@ export default function AdminMesasScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 50 }} />
       ) : (
         <FlatList 
+          showsVerticalScrollIndicator={false}
           key={numColumns}
           numColumns={numColumns}
           columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}

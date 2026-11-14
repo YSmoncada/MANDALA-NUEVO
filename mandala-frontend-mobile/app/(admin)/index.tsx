@@ -213,19 +213,8 @@ export default function AdminDashboard() {
           <View>
 
             <Text style={styles.brandingNox}>NOX<Text style={styles.brandingOS}>OS</Text></Text>
-
             <Text style={styles.subtitleNox}>SISTEMA DE GESTIÓN PREMIUM</Text>
-
           </View>
-
-          <View style={styles.liveIndicatorPill}>
-
-            <View style={styles.pulseDot} />
-
-            <Text style={styles.liveIndicatorText}>ONLINE • ADMIN</Text>
-
-          </View>
-
         </View>
 
         {/* Sección de Métricas del Día Rediseñada */}

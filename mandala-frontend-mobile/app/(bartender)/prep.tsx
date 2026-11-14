@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, RefreshControl, Platform } from 'react-native';
@@ -261,6 +262,7 @@ export default function BartenderPrepScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <View style={styles.header}>
         <View>
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
@@ -286,6 +288,7 @@ export default function BartenderPrepScreen() {
         </View>
       ) : (
         <FlatList
+        showsVerticalScrollIndicator={false}
           key={numColumns}
           numColumns={numColumns}
           columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
@@ -327,7 +330,7 @@ export default function BartenderPrepScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingHorizontal: 25, paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingBottom: 20,

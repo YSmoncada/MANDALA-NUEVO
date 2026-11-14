@@ -1,8 +1,38 @@
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+
+// Inyección de estilos de scrollbar oscura y discreta para Web (elimina scrollbars blancas de raíz)
+if (Platform.OS === 'web' && typeof document !== 'undefined') {
+  const styleId = 'noxos-custom-scrollbar';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #27272A #000000;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000000 !important;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #27272A !important;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #3F3F46 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
 import { useAuthStore, getDashboardRoute } from '../store/authStore';
 import { useAlertStore } from '../store/alertStore';

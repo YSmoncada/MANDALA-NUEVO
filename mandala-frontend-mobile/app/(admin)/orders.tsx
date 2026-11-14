@@ -190,6 +190,7 @@ export default function MonitorOrdenesScreen() {
         </View>
       ) : (
         <FlatList
+          showsVerticalScrollIndicator={false}
           style={{ flex: 1, backgroundColor: 'transparent', zIndex: 1 }}
           key={numColumns}
           numColumns={numColumns}

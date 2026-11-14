@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../../components/RollsRoyceStars';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, RefreshControl, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -110,6 +111,7 @@ export default function ClientHistoryScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <View style={styles.header}>
         <View>
           <Text style={styles.branding}>Nox<Text style={{color:NoxColors.subtext}}>OS</Text></Text>
@@ -152,6 +154,7 @@ export default function ClientHistoryScreen() {
       </View>
 
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={pedidos}
         keyExtractor={item => String(item.id)}
         renderItem={renderPedido}
@@ -170,7 +173,7 @@ export default function ClientHistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   loader: { flex: 1, backgroundColor: NoxColors.deep, justifyContent: 'center' },
   header: { paddingHorizontal: 25, paddingTop: 60, paddingBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   branding: { color: NoxColors.text, fontSize: 24, fontWeight: '900', letterSpacing: 2 },

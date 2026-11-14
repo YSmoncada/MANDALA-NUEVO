@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator, Alert, Modal, ScrollView, Dimensions, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -158,6 +159,7 @@ export default function PedidosScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       {/* Encabezado Premium */}
       <View style={styles.header}>
         <View>
@@ -191,7 +193,8 @@ export default function PedidosScreen() {
             onChangeText={setFiltroNombre}
           />
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={{ paddingHorizontal: 20 }}>
+        <ScrollView
+        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={{ paddingHorizontal: 20 }}>
             {categorias.map(cat => (
             <TouchableOpacity 
                 key={cat.id} 
@@ -208,6 +211,7 @@ export default function PedidosScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 50 }} />
       ) : (
         <FlatList
+        showsVerticalScrollIndicator={false}
           key={numColumns}
           data={filtered}
           numColumns={numColumns}
@@ -249,7 +253,8 @@ export default function PedidosScreen() {
                 </View>
                 
                 <Text style={styles.label}>SELECCIONA LA MESA</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 60, flexGrow: 0, marginBottom: 25 }}>
+                <ScrollView
+        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} style={{ height: 60, flexGrow: 0, marginBottom: 25 }}>
                     {mesas.map(m => {
                         const isOcupada = m.estado_nombre === 'Ocupada';
                         const esMia = isOcupada && m.mesero_id === parseInt(user?.id || '0');
@@ -281,6 +286,7 @@ export default function PedidosScreen() {
                 <View style={{ flex: 1 }}>
                     <Text style={styles.label}>PRODUCTOS SELECCIONADOS</Text>
                     <FlatList
+        showsVerticalScrollIndicator={false}
                     data={order}
                     keyExtractor={item => String(item.id)}
                     renderItem={({ item }) => (
@@ -332,7 +338,7 @@ export default function PedidosScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   header: { 
     paddingHorizontal: 25, 
     paddingTop: 40, 
@@ -390,7 +396,7 @@ const styles = StyleSheet.create({
   prodInfo: { alignItems: 'center', width: '100%' },
   prodName: { fontSize: 13, fontWeight: 'bold', color: NoxColors.text, textAlign: 'center', height: 36, lineHeight: 18 },
   prodPrice: { fontSize: 14, color: NoxColors.emerald, fontWeight: '900', marginTop: 5 },
-  addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: NoxColors.aura, width: 32, height: 32, borderRadius: 10, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.4, shadowRadius: 8 },
+  addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: '#181822', width: 32, height: 32, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)' },
 
   searchSection: { marginBottom: 10, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: NoxColors.card, marginHorizontal: 20, marginBottom: 15, paddingHorizontal: 15, height: 48, borderRadius: 18, borderWidth: 1, borderColor: NoxColors.border },
@@ -423,13 +429,13 @@ const styles = StyleSheet.create({
     borderColor: NoxColors.border
   },
   mesaMiniActive: { 
-    backgroundColor: NoxColors.aura, 
-    borderColor: NoxColors.text, 
-    borderWidth: 2,
-    shadowColor: NoxColors.aura,
-    shadowOpacity: 0.8,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)', 
+    borderColor: 'rgba(255, 255, 255, 0.45)', 
+    borderWidth: 1.5,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
     shadowRadius: 10,
-    elevation: 10
+    elevation: 6
   },
   mesaMiniOcupada: { backgroundColor: 'rgba(169, 68, 255, 0.1)', borderColor: 'rgba(169, 68, 255, 0.3)' },
   mesaMiniOtro: { backgroundColor: NoxColors.container, opacity: 0.3, borderColor: 'transparent' },
@@ -453,8 +459,8 @@ const styles = StyleSheet.create({
   totalContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 25 },
   totalLbl: { color: NoxColors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
   totalVal: { color: NoxColors.text, fontSize: 32, fontWeight: '900' },
-  finishBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 25, alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.3, shadowRadius: 15 },
-  finishBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 13 },
+  finishBtn: { backgroundColor: NoxColors.emerald, padding: 18, borderRadius: 20, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.4)' },
+  finishBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 13 },
   lockBanner: { backgroundColor: NoxColors.rose, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, gap: 10, marginBottom: 10 },
   lockText: { color: NoxColors.text, fontWeight: '900', fontSize: 10, letterSpacing: 1 }
 });

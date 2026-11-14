@@ -100,9 +100,11 @@ export default function MeseraLayout() {
   return (
     <Tabs
       tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="SERVICIO" roleSubtitle="Meseros & Atención" />}
+      sceneContainerStyle={{ backgroundColor: '#000000' }}
       screenOptions={{
         tabBarPosition: isDesktop ? 'right' : 'bottom',
         headerShown: false,
+        sceneStyle: { backgroundColor: '#000000' },
       }}
     >
       {/* TAB 1: Realizar pedidos — aparece primero */}

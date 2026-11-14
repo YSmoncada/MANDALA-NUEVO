@@ -133,6 +133,7 @@ export default function AdminBartenderScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 50 }} />
       ) : (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={pedidos}
           keyExtractor={item => String(item.id)}
           renderItem={renderPedido}

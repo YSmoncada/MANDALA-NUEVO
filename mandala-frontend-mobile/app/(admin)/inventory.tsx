@@ -959,9 +959,8 @@ export default function AdmInventarioScreen() {
       <RollsRoyceStars />
 
       <FlatList 
-
         key={numColumns}
-
+        showsVerticalScrollIndicator={false}
         style={styles.flatListFull}
 
         numColumns={numColumns}
@@ -1927,7 +1926,7 @@ export default function AdmInventarioScreen() {
             ) : (
 
               <FlatList 
-
+                showsVerticalScrollIndicator={false}
                 data={filteredHistory}
 
                 keyExtractor={item => String(item.id)}

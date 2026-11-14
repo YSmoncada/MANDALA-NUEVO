@@ -12,9 +12,11 @@ export default function BartenderLayout() {
   return (
     <Tabs
       tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="BARTENDER" roleSubtitle="Barra & Cocina" />}
+      sceneContainerStyle={{ backgroundColor: '#000000' }}
       screenOptions={{
         tabBarPosition: isDesktop ? 'right' : 'bottom',
         headerShown: false,
+        sceneStyle: { backgroundColor: '#000000' },
       }}
     >
       {/* TAB 1: Monitor de pedidos pendientes */}

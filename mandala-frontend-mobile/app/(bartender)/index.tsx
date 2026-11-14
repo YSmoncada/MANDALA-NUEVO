@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { useAuthStore } from '../../store/authStore';
@@ -27,6 +28,7 @@ export default function BartenderMenu() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <View style={styles.header}>
         <View>
           <Text style={styles.brandingNox}>Nox<Text style={styles.brandingOS}>OS</Text></Text>
@@ -47,7 +49,7 @@ export default function BartenderMenu() {
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.menuCard, {marginTop: 20}]} onPress={() => router.push("/(bartender)/orders" as any)}>
-            <View style={[styles.iconContainer, {backgroundColor: '#1E1B4B'}]}>
+            <View style={styles.iconContainer}>
                 <Ionicons name="receipt-outline" size={42} color={NoxColors.text} />
             </View>
             <Text style={styles.menuLabel}>NUEVO PEDIDO</Text>
@@ -65,7 +67,7 @@ export default function BartenderMenu() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -93,7 +95,9 @@ const styles = StyleSheet.create({
     width: 90, 
     height: 90, 
     borderRadius: 30, 
-    backgroundColor: NoxColors.aura, 
+    backgroundColor: '#181822', 
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
     justifyContent: 'center', 
     alignItems: 'center',
     marginBottom: 20

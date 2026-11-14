@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator, Alert, Modal, ScrollView, Dimensions, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -115,6 +116,7 @@ export default function PedidosScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       {/* Encabezado Premium */}
       <View style={styles.header}>
         <View>
@@ -131,7 +133,8 @@ export default function PedidosScreen() {
 
       {/* Categorías Flotantes */}
       <View style={{height: 60}}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={{ paddingHorizontal: 20 }}>
+        <ScrollView
+        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={{ paddingHorizontal: 20 }}>
             {categorias.map(cat => (
             <TouchableOpacity 
                 key={cat.id} 
@@ -148,6 +151,7 @@ export default function PedidosScreen() {
         <ActivityIndicator size="large" color={NoxColors.aura} style={{ marginTop: 50 }} />
       ) : (
         <FlatList
+        showsVerticalScrollIndicator={false}
           key={numColumns}
           data={filtered}
           numColumns={numColumns}
@@ -189,7 +193,8 @@ export default function PedidosScreen() {
                 </View>
                 
                 <Text style={styles.label}>SELECCIONA LA MESA</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 60, flexGrow: 0, marginBottom: 25 }}>
+                <ScrollView
+        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} style={{ height: 60, flexGrow: 0, marginBottom: 25 }}>
                     {mesas.map(m => (
                     <TouchableOpacity 
                         key={m.id} 
@@ -213,6 +218,7 @@ export default function PedidosScreen() {
                 <View style={{ flex: 1 }}>
                     <Text style={styles.label}>PRODUCTOS SELECCIONADOS</Text>
                     <FlatList
+        showsVerticalScrollIndicator={false}
                     data={order}
                     keyExtractor={item => String(item.id)}
                     renderItem={({ item }) => (
@@ -252,7 +258,7 @@ export default function PedidosScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   header: { 
     paddingHorizontal: 25, 
     paddingTop: 40, 
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
   prodInfo: { alignItems: 'center', width: '100%' },
   prodName: { fontSize: 13, fontWeight: 'bold', color: NoxColors.text, textAlign: 'center', height: 36, lineHeight: 18 },
   prodPrice: { fontSize: 14, color: NoxColors.emerald, fontWeight: '900', marginTop: 5 },
-  addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: NoxColors.aura, width: 32, height: 32, borderRadius: 10, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.4, shadowRadius: 8 },
+  addIcon: { position: 'absolute', bottom: 12, right: 12, backgroundColor: '#181822', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.25)', width: 32, height: 32, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', padding: 20 },
   chkCard: { 
@@ -338,7 +344,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: NoxColors.border
   },
-  mesaMiniActive: { backgroundColor: NoxColors.aura, borderColor: NoxColors.text },
+  mesaMiniActive: { backgroundColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.4)' },
   mesaMiniText: { color: NoxColors.muted, fontWeight: 'bold' },
   
   orderItem: { 
@@ -358,6 +364,6 @@ const styles = StyleSheet.create({
   totalContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 25 },
   totalLbl: { color: NoxColors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
   totalVal: { color: NoxColors.text, fontSize: 32, fontWeight: '900' },
-  finishBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 25, alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.3, shadowRadius: 15 },
-  finishBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 13 }
+  finishBtn: { backgroundColor: NoxColors.emerald, padding: 20, borderRadius: 25, alignItems: 'center' },
+  finishBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 13 }
 });

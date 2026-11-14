@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator, Alert, ScrollView, TextInput, Dimensions, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -133,6 +134,7 @@ export default function ClientMenuScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <View style={[styles.innerWrapper, { maxWidth: contentMaxWidth }]}>
         {/* Header */}
         <View style={[styles.header, isDesktop && { paddingTop: 30 }]}>
@@ -161,7 +163,8 @@ export default function ClientMenuScreen() {
               onChangeText={setFiltroNombre}
             />
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 20, paddingRight: 10 }}>
+          <ScrollView
+        showsVerticalScrollIndicator={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 20, paddingRight: 10 }}>
               {categorias.map(cat => (
                   <TouchableOpacity 
                       key={cat.id} 
@@ -176,6 +179,7 @@ export default function ClientMenuScreen() {
 
         {/* Productos */}
         <FlatList
+        showsVerticalScrollIndicator={false}
           key={`client-grid-${numColumns}`}
           data={filteredProds}
           numColumns={numColumns}
@@ -220,7 +224,8 @@ export default function ClientMenuScreen() {
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.cartList} contentContainerStyle={{ paddingBottom: 10 }}>
+            <ScrollView
+        showsVerticalScrollIndicator={false} style={styles.cartList} contentContainerStyle={{ paddingBottom: 10 }}>
               {order.map(i => (
                 <View key={i.id} style={styles.cartItem}>
                   <View style={{flex:1}}>
@@ -253,7 +258,7 @@ export default function ClientMenuScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000'},
   innerWrapper: { flex: 1, width: '100%', alignSelf: 'center' },
   loader: { flex: 1, backgroundColor: NoxColors.deep, justifyContent: 'center', alignItems: 'center' },
   loaderText: { color: NoxColors.muted, fontWeight: '900', marginTop: 15, fontSize: 10, letterSpacing: 2 },
@@ -262,11 +267,11 @@ const styles = StyleSheet.create({
   mesaTitle: { color: NoxColors.aura, fontWeight: '900', fontSize: 10, letterSpacing: 2, marginTop: 4 },
   meseroAsignado: { color: NoxColors.muted, fontSize: 9, fontWeight: '700', marginTop: 2, textTransform: 'uppercase' },
   cartBtnHeader: { backgroundColor: NoxColors.container, width: 45, height: 45, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
-  badge: { position:'absolute', top: -5, right: -5, backgroundColor: NoxColors.aura, width: 18, height: 18, borderRadius: 9, justifyContent:'center', alignItems:'center' },
-  badgeTxt: { color: NoxColors.text, fontSize: 10, fontWeight: 'bold' },
+  badge: { position:'absolute', top: -5, right: -5, backgroundColor: NoxColors.emerald, width: 18, height: 18, borderRadius: 9, justifyContent:'center', alignItems:'center' },
+  badgeTxt: { color: '#FFFFFF', fontSize: 10, fontWeight: 'bold' },
 
   catBtn: { paddingHorizontal: 16, paddingVertical: 8, marginRight: 8, borderRadius: 12, backgroundColor: NoxColors.container, height: 34, justifyContent:'center' },
-  catBtnActive: { backgroundColor: NoxColors.aura },
+  catBtnActive: { backgroundColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.4)' },
   catText: { color: NoxColors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase' },
   catTextActive: { color: NoxColors.text },
 
@@ -280,12 +285,12 @@ const styles = StyleSheet.create({
   infoContainer: { alignItems: 'center', width: '100%' },
   prodName: { color: NoxColors.text, fontWeight: 'bold', fontSize: 13, textAlign: 'center', height: 36, lineHeight: 18 },
   prodPrice: { color: NoxColors.emerald, fontSize: 14, fontWeight: '900', marginTop: 5 },
-  addBtn: { position: 'absolute', bottom: 12, right: 12, backgroundColor: NoxColors.aura, width: 34, height: 34, borderRadius: 12, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.4, shadowRadius: 10 },
+  addBtn: { position: 'absolute', bottom: 12, right: 12, backgroundColor: '#181822', width: 34, height: 34, borderRadius: 12, justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)' },
 
   floatingWrapper: { position: 'absolute', bottom: 30, left: 0, right: 0, alignItems: 'center', zIndex: 99, elevation: 15, paddingHorizontal: 20 },
-  floatingCart: { width: '100%', backgroundColor: NoxColors.aura, padding: 20, borderRadius: 25, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 20, elevation: 15 },
-  cartTotal: { color:NoxColors.text, fontSize: 20, fontWeight:'900' },
-  cartConfirm: { color:NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 12 },
+  floatingCart: { width: '100%', backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', padding: 18, borderRadius: 22, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.6, shadowRadius: 20, elevation: 15 },
+  cartTotal: { color: '#FFFFFF', fontSize: 18, fontWeight: '900' },
+  cartConfirm: { color: NoxColors.emerald, fontWeight: '900', letterSpacing: 2, fontSize: 12 },
 
   cartOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' },
   cartContent: { backgroundColor: NoxColors.card, borderTopLeftRadius: 35, borderTopRightRadius: 35, maxHeight: '85%', padding: 30, paddingBottom: 40 },
@@ -302,6 +307,6 @@ const styles = StyleSheet.create({
   totalRow: { flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', marginBottom: 15 },
   totalLbl: { color: NoxColors.muted, fontSize: 12, fontWeight: '900', letterSpacing: 2 },
   totalVal: { color: NoxColors.text, fontSize: 28, fontWeight: '900' },
-  sendBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 20, alignItems: 'center' },
-  sendBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 14 },
+  sendBtn: { backgroundColor: NoxColors.emerald, padding: 18, borderRadius: 20, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.4)' },
+  sendBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 14 },
 });

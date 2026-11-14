@@ -7,9 +7,12 @@ import { NoxColors } from '../../../constants/theme';
 
 export default function ClientLayout() {
   return (
-    <Tabs screenOptions={{
-      headerShown: false,
-      tabBarStyle: styles.tabBar,
+    <Tabs 
+      sceneContainerStyle={{ backgroundColor: '#000000' }}
+      screenOptions={{
+        headerShown: false,
+        sceneStyle: { backgroundColor: '#000000' },
+        tabBarStyle: styles.tabBar,
       tabBarActiveTintColor: NoxColors.aura,
       tabBarInactiveTintColor: NoxColors.subtext,
       tabBarLabelStyle: styles.tabBarLabel,

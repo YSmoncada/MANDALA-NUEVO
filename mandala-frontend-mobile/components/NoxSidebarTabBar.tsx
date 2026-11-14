@@ -305,17 +305,7 @@ export default function NoxSidebarTabBar({
       <View style={styles.desktopHeader}>
 
         <View style={styles.brandRow}>
-
           <Text style={styles.brandText}>NOX<Text style={{ color: NoxColors.subtext }}>OS</Text></Text>
-
-          <View style={styles.liveIndicator}>
-
-            <View style={styles.liveDot} />
-
-            <Text style={styles.liveText}>ONLINE</Text>
-
-          </View>
-
         </View>
 
 
