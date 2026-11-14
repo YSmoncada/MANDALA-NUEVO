@@ -37,6 +37,7 @@ class Categoria(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), unique=True)
     descripcion = Column(Text, nullable=True)
+    is_deleted = Column(Boolean, default=False)
     
     productos = relationship("Producto", back_populates="rel_categoria")
 
@@ -50,6 +51,9 @@ class Producto(Base):
     categoria_id = Column(Integer, ForeignKey("categorias.id"), nullable=True)
     categoria = synonym("categoria_id")
     imagen = Column(Text, nullable=True)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    is_deleted = Column(Boolean, default=False)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     rel_categoria = relationship("Categoria", back_populates="productos")
 
@@ -69,6 +73,8 @@ class Mesa(Base):
     rel_estado = relationship("EstadoMesa")
     mesero_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     pidiendo_cuenta = Column(Boolean, default=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    is_deleted = Column(Boolean, default=False)
 
     rel_mesero = relationship("Usuario")
 
@@ -98,11 +104,13 @@ class Pedido(Base):
     creado_por = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     turno_id = Column(Integer, ForeignKey("turnos.id"), nullable=True)
     origen_cliente = Column(Boolean, default=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     rel_estado = relationship("EstadoPedido")
     rel_mesa = relationship("Mesa")
     detalles = relationship("PedidoProducto", back_populates="pedido")
     turno = relationship("Turno")
+    pagos = relationship("Pago", back_populates="pedido")
 
 class PedidoProducto(Base):
     __tablename__ = "pedido_productos"
@@ -162,11 +170,17 @@ class Turno(Base):
     base_inicial = Column(Numeric(12, 2), default=0)
     total_ventas = Column(Numeric(12, 2), default=0)
     efectivo_real = Column(Numeric(12, 2), nullable=True)
+    total_efectivo = Column(Numeric(12, 2), default=0)
+    total_tarjeta = Column(Numeric(12, 2), default=0)
+    total_transferencia = Column(Numeric(12, 2), default=0)
+    total_propinas = Column(Numeric(12, 2), default=0)
+    diferencia = Column(Numeric(12, 2), default=0)
     estado = Column(String(20), default="abierto") # abierto, cerrado
     observaciones = Column(Text, nullable=True)
 
     usuario_apertura = relationship("Usuario", foreign_keys=[abierto_por])
     usuario_cierre = relationship("Usuario", foreign_keys=[cerrado_por])
+    movimientos_caja = relationship("MovimientoCaja", back_populates="turno")
 
     @property
     def usuario_apertura_nombre(self):
@@ -186,4 +200,90 @@ class UserSession(Base):
     token = Column(String(500), unique=True, index=True)
     expires_at = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+# ==============================================================================
+# PILAR AVANZADO: MÉTODOS DE PAGO, AUDITORÍA, INSUMOS & CAJA CHICA
+# ==============================================================================
+
+class Pago(Base):
+    __tablename__ = "pagos"
+    __table_args__ = (
+        Index("idx_pagos_pedido", "pedido_id"),
+        Index("idx_pagos_fecha", "fecha_hora"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    pedido_id = Column(Integer, ForeignKey("pedidos.id"))
+    metodo_pago = Column(String(50), nullable=False) # Efectivo, Tarjeta, Nequi, Daviplata, Transferencia
+    monto = Column(Numeric(12, 2), nullable=False)
+    propina = Column(Numeric(12, 2), default=0)
+    referencia = Column(String(100), nullable=True)
+    creado_por = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
+    fecha_hora = Column(DateTime(timezone=True), server_default=func.now())
+
+    pedido = relationship("Pedido", back_populates="pagos")
+    usuario = relationship("Usuario")
+
+class AuditoriaEvento(Base):
+    __tablename__ = "auditoria_eventos"
+    __table_args__ = (
+        Index("idx_audit_accion_fecha", "accion", "fecha_hora"),
+        Index("idx_audit_usuario", "usuario_id"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
+    accion = Column(String(100), nullable=False) # ANULACION_PEDIDO, CAMBIO_PRECIO, REAPERTURA_MESA, AJUSTE_STOCK, CIERRE_CAJA
+    tabla_afectada = Column(String(50), nullable=False)
+    registro_id = Column(Integer, nullable=True)
+    valor_anterior = Column(Text, nullable=True)
+    valor_nuevo = Column(Text, nullable=True)
+    motivo = Column(Text, nullable=True)
+    ip_address = Column(String(50), nullable=True)
+    fecha_hora = Column(DateTime(timezone=True), server_default=func.now())
+
+    usuario = relationship("Usuario")
+
+class Insumo(Base):
+    __tablename__ = "insumos"
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(150), unique=True, nullable=False)
+    unidad_medida = Column(String(20), nullable=False) # ml, oz, gr, unidad
+    stock_actual = Column(Numeric(12, 2), default=0)
+    stock_minimo = Column(Numeric(12, 2), default=0)
+    costo_unitario = Column(Numeric(12, 2), default=0)
+    activo = Column(Boolean, default=True)
+    is_deleted = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    recetas = relationship("RecetaProducto", back_populates="insumo")
+
+class RecetaProducto(Base):
+    __tablename__ = "recetas_producto"
+    __table_args__ = (
+        UniqueConstraint("producto_id", "insumo_id", name="uq_receta_prod_insumo"),
+        Index("idx_recetas_lookup", "producto_id", "insumo_id"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    producto_id = Column(Integer, ForeignKey("productos.id"))
+    insumo_id = Column(Integer, ForeignKey("insumos.id"))
+    cantidad_requerida = Column(Numeric(10, 2), nullable=False) # ej: 50 ml
+
+    producto = relationship("Producto")
+    insumo = relationship("Insumo", back_populates="recetas")
+
+class MovimientoCaja(Base):
+    __tablename__ = "movimientos_caja"
+    __table_args__ = (
+        Index("idx_mov_caja_turno", "turno_id"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    turno_id = Column(Integer, ForeignKey("turnos.id"))
+    tipo = Column(String(20), nullable=False) # 'entrada' o 'salida'
+    concepto = Column(String(255), nullable=False) # 'Compra hielo', 'Pago taxi', 'Cambio monedas'
+    monto = Column(Numeric(12, 2), nullable=False)
+    autorizado_por = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
+    fecha_hora = Column(DateTime(timezone=True), server_default=func.now())
+
+    turno = relationship("Turno", back_populates="movimientos_caja")
+    usuario = relationship("Usuario")
 

@@ -16,13 +16,20 @@ export default function AdminAccountingScreen() {
   };
   const { isDesktop, width } = useResponsive();
   const [turno, setTurno] = useState<any>(null);
+  const [movimientos, setMovimientos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showAbrir, setShowAbrir] = useState(false);
   const [showCerrar, setShowCerrar] = useState(false);
+  const [showMovimiento, setShowMovimiento] = useState(false);
   
   const [baseInicial, setBaseInicial] = useState("0");
   const [efectivoReal, setEfectivoReal] = useState("0");
   const [observaciones, setObservaciones] = useState("");
+
+  // Estado para nuevo movimiento de caja
+  const [tipoMov, setTipoMov] = useState<'salida' | 'entrada'>('salida');
+  const [conceptoMov, setConceptoMov] = useState("");
+  const [montoMov, setMontoMov] = useState("");
 
   const { showAlert } = useAlertStore();
 
@@ -35,10 +42,22 @@ export default function AdminAccountingScreen() {
     try {
       const res = await apiClient.get('/contabilidad/turno/actual/');
       setTurno(res.data);
+      if (res.data) {
+        fetchMovimientos();
+      }
     } catch (e: any) {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMovimientos = async () => {
+    try {
+      const res = await apiClient.get('/contabilidad/turno/movimientos/');
+      setMovimientos(res.data || []);
+    } catch (e: any) {
+      console.error("Error al obtener movimientos de caja", e);
     }
   };
 
@@ -55,6 +74,33 @@ export default function AdminAccountingScreen() {
         fetchTurnoActual();
     } catch (e: any) {
         showAlert("Error", e.response?.data?.detail || "No se pudo abrir el turno", "error");
+    }
+  };
+
+  const handleRegistrarMovimiento = async () => {
+    const monto = parseFloat(montoMov);
+    if (!monto || monto <= 0) {
+      showAlert("Atención", "Ingresa un monto válido mayor a 0", "error");
+      return;
+    }
+    if (!conceptoMov.trim()) {
+      showAlert("Atención", "Ingresa el concepto del movimiento", "error");
+      return;
+    }
+
+    try {
+      await apiClient.post('/contabilidad/turno/movimiento-caja/', {
+        tipo: tipoMov,
+        concepto: conceptoMov.trim(),
+        monto: monto
+      });
+      setShowMovimiento(false);
+      setConceptoMov("");
+      setMontoMov("");
+      showAlert("¡Registrado!", `${tipoMov === 'salida' ? 'Egreso' : 'Ingreso'} de caja guardado exitosamente.`, "success");
+      fetchTurnoActual();
+    } catch (e: any) {
+      showAlert("Error", e.response?.data?.detail || "No se pudo registrar el movimiento", "error");
     }
   };
 
@@ -112,16 +158,65 @@ export default function AdminAccountingScreen() {
                     <Text style={styles.metaText}>Iniciado por: {turno.usuario_apertura_nombre}</Text>
                 </View>
 
-                {/* Rejilla de Totales */}
+                {/* Rejilla de Desglose Financiero */}
                 <View style={styles.grid}>
                     <View style={styles.statBox}>
                         <Text style={styles.statLbl}>Base Inicial</Text>
-                        <Text style={styles.statVal}>${parseFloat(turno.base_inicial).toLocaleString()}</Text>
+                        <Text style={styles.statVal}>${parseFloat(turno.base_inicial || 0).toLocaleString()}</Text>
                     </View>
                     <View style={styles.statBox}>
-                        <Text style={styles.statLbl}>Efectivo Esperado</Text>
-                        <Text style={styles.statVal}>${(parseFloat(turno.base_inicial) + parseFloat(turno.total_ventas)).toLocaleString()}</Text>
+                        <Text style={styles.statLbl}>Ventas Efectivo</Text>
+                        <Text style={[styles.statVal, {color: NoxColors.emerald}]}>${parseFloat(turno.ventas_efectivo || turno.total_ventas || 0).toLocaleString()}</Text>
                     </View>
+                    <View style={styles.statBox}>
+                        <Text style={styles.statLbl}>Tarjetas / Nequi</Text>
+                        <Text style={[styles.statVal, {color: NoxColors.aura}]}>${(parseFloat(turno.ventas_tarjeta || 0) + parseFloat(turno.ventas_transferencia || 0)).toLocaleString()}</Text>
+                    </View>
+                    <View style={[styles.statBox, {borderColor: NoxColors.aura, backgroundColor: 'rgba(0, 229, 255, 0.05)'}]}>
+                        <Text style={[styles.statLbl, {color: NoxColors.aura}]}>Efectivo Esperado</Text>
+                        <Text style={[styles.statVal, {color: '#FFFFFF', fontSize: 18}]}>${parseFloat(turno.efectivo_esperado || 0).toLocaleString()}</Text>
+                    </View>
+                </View>
+
+                {/* Sección de Movimientos de Caja Menor */}
+                <View style={styles.cajaMenorCard}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15}}>
+                        <View>
+                            <Text style={styles.cajaMenorTitle}>CAJA MENOR Y GASTOS DE TURNO</Text>
+                            <Text style={styles.cajaMenorSubtitle}>
+                                Entradas: +${parseFloat(turno.entradas_caja || 0).toLocaleString()} | Salidas: -${parseFloat(turno.salidas_caja || 0).toLocaleString()}
+                            </Text>
+                        </View>
+                        <TouchableOpacity style={styles.addMovBtn} onPress={() => setShowMovimiento(true)} activeOpacity={0.8}>
+                            <Ionicons name="add" size={16} color="#000" />
+                            <Text style={styles.addMovBtnText}>REGISTRAR</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {movimientos && movimientos.length > 0 ? (
+                        <View style={{gap: 8}}>
+                            {movimientos.slice(0, 5).map((m: any) => (
+                                <View key={m.id} style={styles.movRow}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
+                                        <View style={[styles.movBadge, {backgroundColor: m.tipo === 'entrada' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}]}>
+                                            <Ionicons name={m.tipo === 'entrada' ? "arrow-down" : "arrow-up"} size={14} color={m.tipo === 'entrada' ? NoxColors.emerald : NoxColors.rose} />
+                                        </View>
+                                        <View style={{flex: 1}}>
+                                            <Text style={styles.movConcepto} numberOfLines={1}>{m.concepto}</Text>
+                                            <Text style={styles.movHora}>{new Date(m.fecha_hora).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
+                                        </View>
+                                    </View>
+                                    <Text style={[styles.movMonto, {color: m.tipo === 'entrada' ? NoxColors.emerald : NoxColors.rose}]}>
+                                        {m.tipo === 'entrada' ? '+' : '-'}${parseFloat(m.monto || 0).toLocaleString()}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                    ) : (
+                        <Text style={{color: NoxColors.muted, fontSize: 11, fontStyle: 'italic', textAlign: 'center', paddingVertical: 10}}>
+                            Sin movimientos de caja chica en este turno.
+                        </Text>
+                    )}
                 </View>
 
                 {/* Acciones de Cierre */}
@@ -199,8 +294,14 @@ export default function AdminAccountingScreen() {
                     style={{ width: '100%' }}
                 >
                     <View style={styles.modalCard}>
-                        <Text style={[styles.modalTitle, {color: NoxColors.rose}]}>CIERRE DE CAJA</Text>
-                        <Text style={styles.modalLabel}>EFECTIVO REAL EN CAJA</Text>
+                        <Text style={[styles.modalTitle, {color: NoxColors.rose}]}>CIERRE Y ARQUEO DE CAJA</Text>
+                        
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between', padding: 12, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 12, marginBottom: 15}}>
+                            <Text style={{color: NoxColors.muted, fontSize: 11, fontWeight: '700'}}>EFECTIVO ESPERADO:</Text>
+                            <Text style={{color: '#FFFFFF', fontSize: 13, fontWeight: '900'}}>${parseFloat(turno?.efectivo_esperado || 0).toLocaleString()}</Text>
+                        </View>
+
+                        <Text style={styles.modalLabel}>EFECTIVO REAL CONTADO EN CAJÓN</Text>
                         <TextInput 
                             style={styles.modalInput} 
                             keyboardType="numeric" 
@@ -210,9 +311,18 @@ export default function AdminAccountingScreen() {
                             placeholderTextColor={NoxColors.gray}
                             returnKeyType="done"
                         />
+
+                        {efectivoReal !== "0" && efectivoReal !== "" && (
+                            <View style={{padding: 10, borderRadius: 10, marginBottom: 15, alignItems: 'center', backgroundColor: (parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)) === 0 ? 'rgba(16, 185, 129, 0.15)' : (parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)) > 0 ? 'rgba(0, 229, 255, 0.15)' : 'rgba(239, 68, 68, 0.15)'}}>
+                                <Text style={{fontSize: 11, fontWeight: '900', color: (parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)) === 0 ? NoxColors.emerald : (parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)) > 0 ? NoxColors.aura : NoxColors.rose}}>
+                                    {(parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)) === 0 ? "✅ CUADRE EXACTO ($0)" : (parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)) > 0 ? `🟢 SOBRANTE EN CAJA: +$${(parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)).toLocaleString()}` : `🔴 FALTANTE EN CAJA: -$${Math.abs(parseFloat(efectivoReal) - parseFloat(turno?.efectivo_esperado || 0)).toLocaleString()}`}
+                                </Text>
+                            </View>
+                        )}
+
                         <Text style={styles.modalLabel}>NOTAS DE CIERRE</Text>
                         <TextInput 
-                            style={[styles.modalInput, {height: 80}]} 
+                            style={[styles.modalInput, {height: 70}]} 
                             multiline 
                             value={observaciones} 
                             onChangeText={setObservaciones}
@@ -225,7 +335,70 @@ export default function AdminAccountingScreen() {
                                 <Text style={{color: NoxColors.text, fontWeight: 'bold'}}>VOLVER</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.modalConfirm, {backgroundColor: NoxColors.rose}]} onPress={handleCerrarTurno}>
-                                <Text style={{color: NoxColors.text, fontWeight: '900'}}>CERRAR TURNO</Text>
+                                <Text style={{color: '#FFFFFF', fontWeight: '900'}}>CERRAR TURNO</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
+            </View>
+          </TouchableWithoutFeedback>
+      </Modal>
+
+      {/* Modal Registrar Movimiento de Caja */}
+      <Modal visible={showMovimiento} transparent animationType="slide">
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.modalBg}>
+                <KeyboardAvoidingView 
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={{ width: '100%' }}
+                >
+                    <View style={styles.modalCard}>
+                        <Text style={styles.modalTitle}>MOVIMIENTO DE CAJA</Text>
+                        
+                        <View style={{flexDirection: 'row', gap: 10, marginBottom: 20}}>
+                          <TouchableOpacity 
+                            onPress={() => setTipoMov('salida')}
+                            style={[styles.tipoBtn, tipoMov === 'salida' && {borderColor: NoxColors.rose, backgroundColor: 'rgba(239,68,68,0.1)'}]}
+                          >
+                            <Ionicons name="arrow-up" size={16} color={tipoMov === 'salida' ? NoxColors.rose : NoxColors.gray} />
+                            <Text style={[styles.tipoBtnText, tipoMov === 'salida' && {color: NoxColors.rose}]}>EGRESO / GASTO</Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity 
+                            onPress={() => setTipoMov('entrada')}
+                            style={[styles.tipoBtn, tipoMov === 'entrada' && {borderColor: NoxColors.emerald, backgroundColor: 'rgba(16,185,129,0.1)'}]}
+                          >
+                            <Ionicons name="arrow-down" size={16} color={tipoMov === 'entrada' ? NoxColors.emerald : NoxColors.gray} />
+                            <Text style={[styles.tipoBtnText, tipoMov === 'entrada' && {color: NoxColors.emerald}]}>INGRESO / BASE</Text>
+                          </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.modalLabel}>CONCEPTO / MOTIVO</Text>
+                        <TextInput 
+                            style={styles.modalInput} 
+                            value={conceptoMov} 
+                            onChangeText={setConceptoMov}
+                            placeholder="Ej: Compra de 2 bolsas de hielo"
+                            placeholderTextColor={NoxColors.gray}
+                        />
+
+                        <Text style={styles.modalLabel}>MONTO ($)</Text>
+                        <TextInput 
+                            style={styles.modalInput} 
+                            keyboardType="numeric" 
+                            value={montoMov} 
+                            onChangeText={setMontoMov}
+                            placeholder="0"
+                            placeholderTextColor={NoxColors.gray}
+                            returnKeyType="done"
+                        />
+                        
+                        <View style={styles.modalActions}>
+                            <TouchableOpacity style={styles.modalCancel} onPress={() => setShowMovimiento(false)}>
+                                <Text style={{color: NoxColors.text, fontWeight: 'bold'}}>CANCELAR</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.modalConfirm, {backgroundColor: tipoMov === 'salida' ? NoxColors.rose : NoxColors.emerald}]} onPress={handleRegistrarMovimiento}>
+                                <Text style={{color: '#FFFFFF', fontWeight: '900'}}>GUARDAR</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -321,5 +494,57 @@ const styles = StyleSheet.create({
   modalInput: { backgroundColor: NoxColors.deep, borderRadius: 15, padding: 18, color: NoxColors.text, fontSize: 16, marginBottom: 20, borderWidth: 1, borderColor: NoxColors.border },
   modalActions: { flexDirection: 'row', gap: 15, marginTop: 10 },
   modalCancel: { flex: 1, padding: 20, borderRadius: 20, alignItems: 'center', backgroundColor: NoxColors.border },
-  modalConfirm: { flex: 1.5, padding: 20, borderRadius: 20, alignItems: 'center', backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)' }
+  modalConfirm: { flex: 1.5, padding: 20, borderRadius: 20, alignItems: 'center', backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)' },
+
+  cajaMenorCard: {
+    backgroundColor: NoxColors.card,
+    borderRadius: 24,
+    padding: 20,
+    marginBottom: 25,
+    borderWidth: 1,
+    borderColor: NoxColors.border
+  },
+  cajaMenorTitle: { color: NoxColors.text, fontSize: 11, fontWeight: '900', letterSpacing: 1.5 },
+  cajaMenorSubtitle: { color: NoxColors.gray, fontSize: 10, marginTop: 4, fontWeight: '600' },
+  addMovBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: NoxColors.aura,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10
+  },
+  addMovBtnText: { color: '#000000', fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
+  movRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.05)'
+  },
+  movBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  movConcepto: { color: NoxColors.text, fontSize: 12, fontWeight: '600' },
+  movHora: { color: NoxColors.muted, fontSize: 9, marginTop: 2 },
+  movMonto: { fontSize: 12, fontWeight: 'bold' },
+  tipoBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: NoxColors.border,
+    backgroundColor: NoxColors.deep
+  },
+  tipoBtnText: { color: NoxColors.gray, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 }
 });

@@ -325,8 +325,107 @@ class Turno(TurnoBase):
     fecha_cierre: Optional[datetime] = None
     total_ventas: Optional[Decimal] = Decimal(0)
     efectivo_real: Optional[Decimal] = None
+    total_efectivo: Optional[Decimal] = Decimal(0)
+    total_tarjeta: Optional[Decimal] = Decimal(0)
+    total_transferencia: Optional[Decimal] = Decimal(0)
+    total_propinas: Optional[Decimal] = Decimal(0)
+    diferencia: Optional[Decimal] = Decimal(0)
     estado: str
     usuario_apertura_nombre: Optional[str] = None
     usuario_cierre_nombre: Optional[str] = None
+    class Config:
+        from_attributes = True
+
+# ==============================================================================
+# ESQUEMAS AVANZADOS: PAGOS, AUDITORÍA, INSUMOS & CAJA
+# ==============================================================================
+
+class PagoBase(BaseModel):
+    pedido_id: int
+    metodo_pago: str # Efectivo, Tarjeta, Nequi, Daviplata, Transferencia
+    monto: Decimal
+    propina: Optional[Decimal] = Decimal(0)
+    referencia: Optional[str] = None
+
+class PagoCreate(PagoBase):
+    pass
+
+class Pago(PagoBase):
+    id: int
+    creado_por: Optional[int] = None
+    fecha_hora: datetime
+    class Config:
+        from_attributes = True
+
+class AuditoriaEventoCreate(BaseModel):
+    accion: str
+    tabla_afectada: str
+    registro_id: Optional[int] = None
+    valor_anterior: Optional[str] = None
+    valor_nuevo: Optional[str] = None
+    motivo: Optional[str] = None
+
+class AuditoriaEvento(AuditoriaEventoCreate):
+    id: int
+    usuario_id: Optional[int] = None
+    ip_address: Optional[str] = None
+    fecha_hora: datetime
+    class Config:
+        from_attributes = True
+
+class InsumoBase(BaseModel):
+    nombre: str
+    unidad_medida: str
+    stock_actual: Decimal = Decimal(0)
+    stock_minimo: Decimal = Decimal(0)
+    costo_unitario: Decimal = Decimal(0)
+    activo: bool = True
+
+class InsumoCreate(InsumoBase):
+    pass
+
+class InsumoUpdate(BaseModel):
+    nombre: Optional[str] = None
+    unidad_medida: Optional[str] = None
+    stock_actual: Optional[Decimal] = None
+    stock_minimo: Optional[Decimal] = None
+    costo_unitario: Optional[Decimal] = None
+    activo: Optional[bool] = None
+
+class Insumo(InsumoBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    class Config:
+        from_attributes = True
+
+class RecetaProductoBase(BaseModel):
+    producto_id: int
+    insumo_id: int
+    cantidad_requerida: Decimal
+
+class RecetaProductoCreate(RecetaProductoBase):
+    pass
+
+class RecetaProducto(RecetaProductoBase):
+    id: int
+    insumo_nombre: Optional[str] = None
+    insumo_unidad: Optional[str] = None
+    class Config:
+        from_attributes = True
+
+class MovimientoCajaBase(BaseModel):
+    tipo: str # 'entrada' o 'salida'
+    concepto: str
+    monto: Decimal
+
+class MovimientoCajaCreate(MovimientoCajaBase):
+    turno_id: Optional[int] = None
+
+class MovimientoCaja(MovimientoCajaBase):
+    id: int
+    turno_id: int
+    autorizado_por: Optional[int] = None
+    fecha_hora: datetime
     class Config:
         from_attributes = True
