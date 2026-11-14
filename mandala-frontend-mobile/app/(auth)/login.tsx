@@ -134,8 +134,6 @@ export default function LoginScreen() {
               <Text style={styles.logoNox}>NOX</Text>
               <Text style={styles.logoOs}>OS</Text>
             </View>
-            <View style={styles.glowLine} />
-            <Text style={styles.subtitle}>SISTEMA DE GESTIÓN PREMIUM</Text>
           </View>
 
           {/* Tarjeta Central Oscura */}
@@ -234,11 +232,6 @@ export default function LoginScreen() {
               )}
             </TouchableOpacity>
           </View>
-
-          {/* Pie de Página de Seguridad */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>ACCESO RESTRINGIDO — PERSONAL AUTORIZADO</Text>
-          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -263,7 +256,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 28,
+    marginBottom: 32,
   },
   logoRow: {
     flexDirection: 'row',
@@ -281,21 +274,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#71717A',
     letterSpacing: 6,
-  },
-  glowLine: {
-    width: 70,
-    height: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    borderRadius: 1,
-    marginTop: 2,
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 10,
-    color: '#71717A',
-    fontWeight: '700',
-    letterSpacing: 4,
-    textTransform: 'uppercase',
   },
   card: {
     backgroundColor: '#0E0E11',
@@ -400,16 +378,5 @@ const styles = StyleSheet.create({
     letterSpacing: 2.5,
     fontSize: 12,
     textTransform: 'uppercase',
-  },
-  footer: {
-    marginTop: 28,
-    alignItems: 'center',
-  },
-  footerText: {
-    color: '#3F3F46',
-    fontSize: 9.5,
-    fontWeight: '700',
-    letterSpacing: 2.5,
-    textAlign: 'center',
   },
 });

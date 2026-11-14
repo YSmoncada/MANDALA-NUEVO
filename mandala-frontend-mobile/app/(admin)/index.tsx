@@ -209,11 +209,8 @@ export default function AdminDashboard() {
         {/* Header Superior Premium */}
 
         <View style={styles.header}>
-
           <View>
-
             <Text style={styles.brandingNox}>NOX<Text style={styles.brandingOS}>OS</Text></Text>
-            <Text style={styles.subtitleNox}>SISTEMA DE GESTIÓN PREMIUM</Text>
           </View>
         </View>
 
@@ -622,11 +619,6 @@ export default function AdminDashboard() {
                 <View style={styles.moduleBody}>
                   <Text style={styles.moduleTitleText}>{mod.label}</Text>
                   <Text style={styles.moduleDescText}>{mod.sub}</Text>
-                </View>
-
-                {/* Fila Inferior: Micro-etiqueta de sistema */}
-                <View style={styles.moduleActionRow}>
-                  <Text style={styles.moduleSectionLabel}>MÓDULO DE GESTIÓN</Text>
                 </View>
               </TouchableOpacity>
             ))}

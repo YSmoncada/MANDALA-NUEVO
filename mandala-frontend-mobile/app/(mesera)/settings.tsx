@@ -49,11 +49,6 @@ export default function MeseraSettingsScreen() {
                 <Ionicons name="log-out-outline" size={24} color={NoxColors.text} style={{marginRight: 15}} />
                 <Text style={styles.logoutText}>CERRAR SESIÓN</Text>
             </TouchableOpacity>
-
-            <View style={styles.footer}>
-                <Text style={styles.footerText}>Mandala Bartender v2.5</Text>
-                <Text style={styles.footerText}>Sistema de Gestión Operativa</Text>
-            </View>
         </View>
       </SafeAreaView>
 
