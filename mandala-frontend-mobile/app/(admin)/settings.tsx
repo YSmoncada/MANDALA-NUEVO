@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
@@ -9,7 +10,6 @@ import { useAuthStore } from '../../store/authStore';
 import apiClient from '../../utils/apiClient';
 import LogoutModal from '../../components/LogoutModal';
 import { NoxColors } from '../../constants/theme';
-
 
 // ─── Sub-pantalla: Config de Marca ───────────────────────────────────────────
 function BrandConfigScreen({ onBack }: { onBack: () => void }) {
@@ -78,6 +78,7 @@ function BrandConfigScreen({ onBack }: { onBack: () => void }) {
 
   if (loading) return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <ActivityIndicator size="large" color={NoxColors.aura} style={{ flex: 1 }} />
     </View>
   );
@@ -268,7 +269,7 @@ return (
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
+  container: { flex: 1, backgroundColor: '#000000', position: 'relative' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -315,8 +316,8 @@ const styles = StyleSheet.create({
   input: { backgroundColor: NoxColors.card, borderRadius: 22, padding: 18, color: NoxColors.text, fontSize: 15, borderWidth: 1, borderColor: NoxColors.border, marginBottom: 28 },
   formRow: { flexDirection: 'row', gap: 10 },
 
-  saveBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 25, alignItems: 'center', marginTop: 10, marginHorizontal: 5, shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
-  saveBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 14 },
+  saveBtn: { backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', padding: 18, borderRadius: 20, alignItems: 'center', marginTop: 10, marginHorizontal: 5 },
+  saveBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 14 },
 
   cancelLink: { marginTop: 25, alignItems: 'center', padding: 10 },
   cancelLinkText: { color: NoxColors.muted, fontWeight: '900', fontSize: 10, letterSpacing: 2, textDecorationLine: 'underline' },

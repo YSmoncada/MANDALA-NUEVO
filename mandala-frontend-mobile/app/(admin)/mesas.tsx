@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator, Alert, Modal, ScrollView, Image, Share, RefreshControl, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,7 +7,6 @@ import apiClient, { API_URL } from '../../utils/apiClient';
 import * as Linking from 'expo-linking';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
-
 
 export default function AdminMesasScreen() {
   const router = useRouter();
@@ -94,6 +94,7 @@ export default function AdminMesasScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       {/* Encabezado Premium */}
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -234,7 +235,7 @@ export default function AdminMesasScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
+  container: { flex: 1, backgroundColor: '#000000', position: 'relative' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
   backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
-  addBtn: { backgroundColor: NoxColors.aura, width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
+  addBtn: { backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
 
   listContent: { padding: 20, paddingBottom: 100, maxWidth: 1200, width: '100%', alignSelf: 'center' },
   columnWrapper: { gap: 16 },
@@ -265,10 +266,10 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: NoxColors.border
   },
-  cardAccent: { position: 'absolute', left: 0, top: 25, bottom: 25, width: 4, backgroundColor: NoxColors.aura, borderTopRightRadius: 10, borderBottomRightRadius: 10 },
+  cardAccent: { position: 'absolute', left: 0, top: 25, bottom: 25, width: 4, backgroundColor: 'rgba(255, 255, 255, 0.3)', borderTopRightRadius: 10, borderBottomRightRadius: 10 },
   mesaIcon: { width: 60, height: 60, borderRadius: 20, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.deep, shadowOpacity: 0.2, shadowRadius: 5 },
   mesaLibre: { backgroundColor: NoxColors.emerald },
-  mesaOcupada: { backgroundColor: NoxColors.aura },
+  mesaOcupada: { backgroundColor: 'rgba(255, 255, 255, 0.15)' },
   
   mesaMain: { flex: 1, marginLeft: 16, gap: 2 },
   mesaTitle: { fontSize: 17, fontWeight: 'bold', color: NoxColors.text },
@@ -289,15 +290,15 @@ const styles = StyleSheet.create({
   qrFrame: { backgroundColor: NoxColors.text, padding: 20, borderRadius: 30, marginBottom: 25, width: '100%', maxWidth: 320, height: 280, alignSelf: 'center', justifyContent: 'center', alignItems: 'center' },
   qrImage: { width: '100%', height: '100%' },
   qrInfo: { color: NoxColors.muted, fontSize: 12, textAlign: 'center', marginBottom: 30, lineHeight: 22 },
-  shareBtn: { backgroundColor: NoxColors.aura, flexDirection: 'row', padding: 22, borderRadius: 25, alignItems: 'center', width: '100%', justifyContent: 'center' },
+  shareBtn: { backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', flexDirection: 'row', padding: 18, borderRadius: 20, alignItems: 'center', width: '100%', justifyContent: 'center' },
 
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 30, width: '100%' },
   modalTitle: { color: NoxColors.text, fontSize: 22, fontWeight: '900', letterSpacing: 2 },
   selectedProdName: { color: NoxColors.aura, fontSize: 12, fontWeight: 'bold', marginTop: 4, textTransform: 'uppercase' },
   label: { fontSize: 9, fontWeight: '900', color: NoxColors.muted, marginBottom: 12, letterSpacing: 2, textTransform: 'uppercase' },
   input: { backgroundColor: NoxColors.container, color: NoxColors.text, borderRadius: 20, padding: 20, fontSize: 16, marginBottom: 25, borderWidth:1, borderColor:NoxColors.border },
-  saveBtn: { backgroundColor: NoxColors.aura, padding: 22, borderRadius: 25, alignItems: 'center', width: '100%' },
-  saveBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 14 },
+  saveBtn: { backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', padding: 18, borderRadius: 20, alignItems: 'center', width: '100%' },
+  saveBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 14 },
 
   emptyContainer: { alignItems: 'center', marginTop: 100, gap: 15, opacity: 0.5 },
   emptyText: { color: NoxColors.muted, fontWeight: '900', fontSize: 12, letterSpacing: 3 }

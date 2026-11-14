@@ -1,6 +1,5 @@
-import RollsRoyceStars from '../components/RollsRoyceStars';
-import { View } from 'react-native';
 import React, { useEffect } from 'react';
+import { View } from 'react-native';
 import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
@@ -61,8 +60,7 @@ export default function RootLayout() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000000' }}>
-      <RollsRoyceStars />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#000000' } }} />
       <StatusBar style="light" />
 
       {/* Sistema de Alerta Global */}

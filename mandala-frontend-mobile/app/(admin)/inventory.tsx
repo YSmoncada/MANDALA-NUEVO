@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { 
@@ -48,8 +49,6 @@ import { NoxColors } from '../../constants/theme';
 
 import { useResponsive } from '../../utils/responsive';
 
-
-
 const INITIAL_FORM = { 
 
   nombre: "", 
@@ -64,8 +63,6 @@ const INITIAL_FORM = {
 
 };
 
-
-
 export default function AdmInventarioScreen() {
 
   const router = useRouter();
@@ -75,8 +72,6 @@ export default function AdmInventarioScreen() {
   const { isDesktop } = useResponsive();
 
   const numColumns = isDesktop ? 2 : 1;
-
-
 
   // --- ESTADOS DE PRODUCTOS & CATEGORÍAS ---
 
@@ -96,8 +91,6 @@ export default function AdmInventarioScreen() {
 
   const [brokenImages, setBrokenImages] = useState<Record<number, boolean>>({});
 
-
-
   // --- ESTADOS DE FORMULARIO (CREAR / EDITAR PRODUCTO) ---
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -114,15 +107,11 @@ export default function AdmInventarioScreen() {
 
   const [isCreatingCat, setIsCreatingCat] = useState(false);
 
-
-
   // --- ESTADOS PARA ELIMINACIÓN SEGURA (COMPATIBLE CON WEB) ---
 
   const [itemToDelete, setItemToDelete] = useState<any>(null);
 
   const [isDeleting, setIsDeleting] = useState(false);
-
-
 
   // --- ESTADOS PARA MOVIMIENTOS (SOLO ENTRADA Y SALIDA) ---
 
@@ -136,8 +125,6 @@ export default function AdmInventarioScreen() {
 
   const [isSavingMov, setIsSavingMov] = useState(false);
 
-
-
   // --- ESTADOS PARA HISTORIAL DE MOVIMIENTOS ---
 
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
@@ -149,8 +136,6 @@ export default function AdmInventarioScreen() {
   const [historyFilterType, setHistoryFilterType] = useState<'todos' | 'entrada' | 'salida'>('todos');
 
   const [historySearch, setHistorySearch] = useState("");
-
-
 
   // --- CARGA DE DATOS ---
 
@@ -169,8 +154,6 @@ export default function AdmInventarioScreen() {
     }, [])
 
   );
-
-
 
   const fetchTipos = async () => {
 
@@ -196,15 +179,11 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   const fetchData = async (isRef = false) => {
 
     if (isRef) setRefreshing(true);
 
     else if (productos.length === 0) setIsLoading(true);
-
-    
 
     try {
 
@@ -216,21 +195,15 @@ export default function AdmInventarioScreen() {
 
       ]);
 
-
-
       const prods = Array.isArray(prodRes.data) ? prodRes.data : [];
 
       setProductos(prods);
 
       setBrokenImages({});
 
-
-
       const rawCats = Array.isArray(catRes.data) ? catRes.data : (catRes.data?.results || []);
 
       setDbCategorias(rawCats);
-
-
 
       const filterList = [
 
@@ -248,8 +221,6 @@ export default function AdmInventarioScreen() {
 
       setCategoriasFiltro(filterList);
 
-
-
     } catch (err) {
 
       console.error("Error al cargar inventario:", err);
@@ -263,8 +234,6 @@ export default function AdmInventarioScreen() {
     }
 
   };
-
-
 
   // --- SUBIDA DE IMAGEN (CLOUDINARY NATIVO + FASTAPI LOCAL) ---
 
@@ -290,8 +259,6 @@ export default function AdmInventarioScreen() {
 
       }
 
-
-
       const result = await ImagePicker.launchImageLibraryAsync({
 
         mediaTypes: ['images'],
@@ -305,8 +272,6 @@ export default function AdmInventarioScreen() {
         base64: true,
 
       });
-
-
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
 
@@ -330,8 +295,6 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   const uploadImage = async (asset: ImagePicker.ImagePickerAsset) => {
 
     setIsUploadingImage(true);
@@ -339,8 +302,6 @@ export default function AdmInventarioScreen() {
     try {
 
       const base64Data = asset.base64 ? `data:image/jpeg;base64,${asset.base64}` : null;
-
-
 
       // 1. Intento primario: Cloudinary vía JSON POST (100% compatible con Expo Go en móvil)
 
@@ -386,8 +347,6 @@ export default function AdmInventarioScreen() {
 
       }
 
-
-
       // 2. Intento secundario: FastAPI local con endpoint base64
 
       if (base64Data) {
@@ -415,8 +374,6 @@ export default function AdmInventarioScreen() {
         }
 
       }
-
-
 
       // 3. Intento terciario: Subida multipart al backend
 
@@ -470,8 +427,6 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   // --- CREAR CATEGORÍA INLINE ---
 
   const handleCreateCategory = async () => {
@@ -514,8 +469,6 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   // --- GUARDAR / EDITAR PRODUCTO ---
 
   const handleOpenNew = () => {
@@ -529,8 +482,6 @@ export default function AdmInventarioScreen() {
     setModalOpen(true);
 
   };
-
-
 
   const handleEdit = (producto: any) => {
 
@@ -556,8 +507,6 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   const handleSave = async () => {
 
     if (isUploadingImage) {
@@ -578,8 +527,6 @@ export default function AdmInventarioScreen() {
 
     }
 
-
-
     try {
 
       const payload = { 
@@ -598,8 +545,6 @@ export default function AdmInventarioScreen() {
 
       };
 
-
-
       if (editId) {
 
         await apiClient.patch(`/productos/${editId}/`, payload);
@@ -609,8 +554,6 @@ export default function AdmInventarioScreen() {
         await apiClient.post('/productos/', payload);
 
       }
-
-
 
       setModalOpen(false);
 
@@ -625,8 +568,6 @@ export default function AdmInventarioScreen() {
     }
 
   };
-
-
 
   // --- ELIMINAR PRODUCTO (MODAL CONFIRMACIÓN COMPATIBLE WEB/MÓVIL) ---
 
@@ -658,8 +599,6 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   // --- MOVIMIENTOS DE STOCK (SOLO ENTRADA Y SALIDA) ---
 
   const handleOpenMov = (prod: any) => {
@@ -684,8 +623,6 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   const handleSaveMov = async () => {
 
     if (!movForm.tipo_id) {
@@ -702,8 +639,6 @@ export default function AdmInventarioScreen() {
 
     }
 
-
-
     setIsSavingMov(true);
 
     try {
@@ -719,8 +654,6 @@ export default function AdmInventarioScreen() {
         motivo: movForm.motivo.trim() || undefined
 
       });
-
-
 
       setMovModalOpen(false);
 
@@ -739,8 +672,6 @@ export default function AdmInventarioScreen() {
     }
 
   };
-
-
 
   // --- HISTORIAL DE MOVIMIENTOS ---
 
@@ -776,8 +707,6 @@ export default function AdmInventarioScreen() {
 
   };
 
-
-
   const filteredHistory = historialMovimientos.filter(m => {
 
     const tipo = (m.tipo_nombre || '').toLowerCase();
@@ -786,13 +715,9 @@ export default function AdmInventarioScreen() {
 
     const isSalida = tipo.includes('salida') || tipo.includes('merma') || tipo.includes('venta');
 
-
-
     if (historyFilterType === 'entrada' && !isEntrada) return false;
 
     if (historyFilterType === 'salida' && !isSalida) return false;
-
-
 
     if (historySearch && historySearch.trim()) {
 
@@ -808,13 +733,9 @@ export default function AdmInventarioScreen() {
 
     }
 
-
-
     return true;
 
   });
-
-
 
   // --- FILTRO DE PRODUCTOS PRINCIPAL ---
 
@@ -832,21 +753,15 @@ export default function AdmInventarioScreen() {
 
       String(p.categoria_id) === String(filtro);
 
-
-
     const matchName =
 
       !filtroNombre ||
 
       p.nombre?.toLowerCase().includes(filtroNombre.toLowerCase());
 
-
-
     return matchCat && matchName;
 
   });
-
-
 
   const getTipoNombre = (tipoId: string) => {
 
@@ -855,8 +770,6 @@ export default function AdmInventarioScreen() {
     return t ? t.nombre : '';
 
   };
-
-
 
   const renderHeader = () => (
 
@@ -877,8 +790,6 @@ export default function AdmInventarioScreen() {
           </Text>
 
         </View>
-
-
 
         {/* Acciones en Desktop: alineados a la derecha */}
 
@@ -902,8 +813,6 @@ export default function AdmInventarioScreen() {
 
             </TouchableOpacity>
 
-
-
             <TouchableOpacity 
 
               style={styles.addBtnDesktop} 
@@ -925,8 +834,6 @@ export default function AdmInventarioScreen() {
         )}
 
       </View>
-
-
 
       {/* En Móvil: Barra de Acciones Dedicada 100% visible, amplia y accesible */}
 
@@ -950,8 +857,6 @@ export default function AdmInventarioScreen() {
 
           </TouchableOpacity>
 
-
-
           <TouchableOpacity 
 
             style={styles.mobileAddBtn} 
@@ -971,8 +876,6 @@ export default function AdmInventarioScreen() {
         </View>
 
       )}
-
-
 
       {/* 2. Buscador y Filtro Horizontal de Categorías */}
 
@@ -1007,8 +910,6 @@ export default function AdmInventarioScreen() {
           )}
 
         </View>
-
-
 
         <ScrollView 
 
@@ -1052,11 +953,10 @@ export default function AdmInventarioScreen() {
 
   );
 
-
-
   return (
 
     <View style={styles.container}>
+      <RollsRoyceStars />
 
       <FlatList 
 
@@ -1124,8 +1024,6 @@ export default function AdmInventarioScreen() {
 
               <View style={styles.cardAccent} />
 
-              
-
               {/* Imagen del Producto con Fallback seguro */}
 
               <View style={styles.cardIcon}>
@@ -1149,8 +1047,6 @@ export default function AdmInventarioScreen() {
                 )}
 
               </View>
-
-
 
               {/* Información del Producto */}
 
@@ -1182,8 +1078,6 @@ export default function AdmInventarioScreen() {
 
               </View>
 
-
-
               {/* Acciones: Entrada/Salida, Editar, Eliminar */}
 
               <View style={styles.actions}>
@@ -1200,8 +1094,6 @@ export default function AdmInventarioScreen() {
 
                 </TouchableOpacity>
 
-
-
                 <TouchableOpacity 
 
                   onPress={() => handleEdit(item)} 
@@ -1213,8 +1105,6 @@ export default function AdmInventarioScreen() {
                   <Ionicons name="pencil-outline" size={18} color={NoxColors.text} />
 
                 </TouchableOpacity>
-
-
 
                 <TouchableOpacity 
 
@@ -1235,8 +1125,6 @@ export default function AdmInventarioScreen() {
           )} 
 
         />
-
-
 
       {/* ============================================================ */}
 
@@ -1275,8 +1163,6 @@ export default function AdmInventarioScreen() {
                 </TouchableOpacity>
 
               </View>
-
-
 
               {/* Selector Estricto: Entrada vs Salida */}
 
@@ -1334,8 +1220,6 @@ export default function AdmInventarioScreen() {
 
               </View>
 
-
-
               <View style={styles.inputGroup}>
 
                 <Text style={styles.label}>CANTIDAD (UNIDADES)</Text>
@@ -1358,8 +1242,6 @@ export default function AdmInventarioScreen() {
 
               </View>
 
-
-
               <View style={styles.inputGroup}>
 
                 <Text style={styles.label}>MOTIVO / OBSERVACIONES</Text>
@@ -1381,8 +1263,6 @@ export default function AdmInventarioScreen() {
                 />
 
               </View>
-
-
 
               <TouchableOpacity 
 
@@ -1416,8 +1296,6 @@ export default function AdmInventarioScreen() {
 
               </TouchableOpacity>
 
-
-
               {/* Enlace rápido para ver el historial de este producto */}
 
               <TouchableOpacity 
@@ -1448,8 +1326,6 @@ export default function AdmInventarioScreen() {
 
       </Modal>
 
-
-
       {/* ============================================================ */}
 
       {/* 5. MODAL FORMULARIO PRODUCTO (CREAR / EDITAR)                 */}
@@ -1476,8 +1352,6 @@ export default function AdmInventarioScreen() {
 
               </View>
 
-              
-
               <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
 
                 {/* Nombre */}
@@ -1497,8 +1371,6 @@ export default function AdmInventarioScreen() {
                   onChangeText={t => setForm({ ...form, nombre: t })} 
 
                 />
-
-
 
                 {/* Selección de Categoría (Visual & Robusto) */}
 
@@ -1525,8 +1397,6 @@ export default function AdmInventarioScreen() {
                   </TouchableOpacity>
 
                 </View>
-
-
 
                 {/* Input rápido para crear nueva categoría inline */}
 
@@ -1573,8 +1443,6 @@ export default function AdmInventarioScreen() {
                   </View>
 
                 )}
-
-
 
                 {/* Chips de categorías reales de la base de datos */}
 
@@ -1630,13 +1498,9 @@ export default function AdmInventarioScreen() {
 
                 </View>
 
-
-
                 {/* Subida & Vista Previa de Imagen */}
 
                 <Text style={[styles.label, { marginTop: 15 }]}>IMAGEN DEL PRODUCTO</Text>
-
-                
 
                 {form.imagen ? (
 
@@ -1748,8 +1612,6 @@ export default function AdmInventarioScreen() {
 
                 )}
 
-
-
                 {/* Opción adicional: Pegar URL directa */}
 
                 <View style={{ marginTop: 10, marginBottom: 15 }}>
@@ -1771,8 +1633,6 @@ export default function AdmInventarioScreen() {
                   />
 
                 </View>
-
-
 
                 {/* Precio y Stock Inicial */}
 
@@ -1824,8 +1684,6 @@ export default function AdmInventarioScreen() {
 
                 </View>
 
-
-
                 {/* Botón Guardar */}
 
                 <TouchableOpacity 
@@ -1870,8 +1728,6 @@ export default function AdmInventarioScreen() {
 
       </Modal>
 
-
-
       {/* ============================================================ */}
 
       {/* 6. MODAL CONFIRMACIÓN DE ELIMINACIÓN (WEB & MÓVIL)            */}
@@ -1890,8 +1746,6 @@ export default function AdmInventarioScreen() {
 
             </View>
 
-
-
             <Text style={styles.deleteTitle}>¿ELIMINAR PRODUCTO?</Text>
 
             <Text style={styles.deleteMessage}>
@@ -1903,8 +1757,6 @@ export default function AdmInventarioScreen() {
               Si el producto tiene ventas registradas, será retirado del catálogo activo preservando el historial contable.
 
             </Text>
-
-
 
             <View style={styles.deleteActions}>
 
@@ -1921,8 +1773,6 @@ export default function AdmInventarioScreen() {
                 <Text style={styles.cancelBtnText}>CANCELAR</Text>
 
               </TouchableOpacity>
-
-
 
               <TouchableOpacity 
 
@@ -1953,8 +1803,6 @@ export default function AdmInventarioScreen() {
         </View>
 
       </Modal>
-
-
 
       {/* ============================================================ */}
 
@@ -1988,8 +1836,6 @@ export default function AdmInventarioScreen() {
 
             </View>
 
-
-
             {/* Filtros de Historial: Tabs + Buscador */}
 
             <View style={styles.historyFiltersRow}>
@@ -2008,8 +1854,6 @@ export default function AdmInventarioScreen() {
 
                 </TouchableOpacity>
 
-
-
                 <TouchableOpacity 
 
                   style={[styles.historyTab, historyFilterType === 'entrada' && styles.historyTabActiveEntrada]}
@@ -2021,8 +1865,6 @@ export default function AdmInventarioScreen() {
                   <Text style={[styles.historyTabText, historyFilterType === 'entrada' && { color: NoxColors.emerald }]}>ENTRADAS (+)</Text>
 
                 </TouchableOpacity>
-
-
 
                 <TouchableOpacity 
 
@@ -2037,8 +1879,6 @@ export default function AdmInventarioScreen() {
                 </TouchableOpacity>
 
               </View>
-
-
 
               <View style={styles.historySearchBar}>
 
@@ -2071,8 +1911,6 @@ export default function AdmInventarioScreen() {
               </View>
 
             </View>
-
-
 
             {/* Lista de Registros */}
 
@@ -2116,8 +1954,6 @@ export default function AdmInventarioScreen() {
 
                   const fechaStr = item.fecha ? new Date(item.fecha).toLocaleString() : 'Fecha no registrada';
 
-
-
                   return (
 
                     <View style={styles.historyCard}>
@@ -2144,17 +1980,11 @@ export default function AdmInventarioScreen() {
 
                         </View>
 
-
-
                         <Text style={styles.historyDate}>{fechaStr}</Text>
 
                       </View>
 
-
-
                       <Text style={styles.historyProdTitle}>{item.producto_nombre || `Producto #${item.producto_id}`}</Text>
-
-
 
                       <View style={styles.historyMetaRow}>
 
@@ -2190,8 +2020,6 @@ export default function AdmInventarioScreen() {
 
       </Modal>
 
-
-
       {/* Floating Action Button (FAB) en Móvil para agregar productos de forma rápida */}
 
       {!isDesktop && (
@@ -2218,15 +2046,14 @@ export default function AdmInventarioScreen() {
 
 }
 
-
-
 const styles = StyleSheet.create({
 
   container: { 
 
     flex: 1, 
 
-    backgroundColor: 'transparent',
+    backgroundColor: '#000000',
+    position: 'relative',
 
     width: '100%',
 
@@ -2235,13 +2062,11 @@ const styles = StyleSheet.create({
   },
 
   flatListFull: {
-
     flex: 1,
-
     width: '100%',
-
     height: '100%',
-
+    backgroundColor: 'transparent',
+    zIndex: 1,
   },
 
   listContent: { 
@@ -2298,8 +2123,6 @@ const styles = StyleSheet.create({
 
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
 
-  
-
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 12 },
 
   historyBtn: {
@@ -2325,8 +2148,6 @@ const styles = StyleSheet.create({
   },
 
   historyBtnText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
-
-
 
   addBtnDesktop: {
 
@@ -2360,33 +2181,16 @@ const styles = StyleSheet.create({
 
   addBtnDesktopText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
 
-
-
   addBtn: {
-
-    backgroundColor: NoxColors.aura,
-
+    backgroundColor: '#181822',
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.22)',
     width: 48,
-
     height: 48,
-
     borderRadius: 18,
-
     justifyContent: 'center',
-
     alignItems: 'center',
-
-    shadowColor: NoxColors.aura,
-
-    shadowOpacity: 0.5,
-
-    shadowRadius: 15,
-
-    shadowOffset: { width: 0, height: 4 },
-
   },
-
-
 
   mobileActionBar: {
 
@@ -2482,8 +2286,6 @@ const styles = StyleSheet.create({
 
   },
 
-
-
   mobileFab: {
 
     position: 'absolute',
@@ -2521,8 +2323,6 @@ const styles = StyleSheet.create({
     zIndex: 999,
 
   },
-
-
 
   searchSection: { width: '100%', marginBottom: 10 },
 
@@ -2580,13 +2380,9 @@ const styles = StyleSheet.create({
 
   catTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
-
-
   loadingWrapper: { paddingVertical: 60, alignItems: 'center', gap: 12, width: '100%' },
 
   loadingText: { color: NoxColors.muted, fontSize: 13, letterSpacing: 1 },
-
-
 
   columnWrapper: { gap: 16 },
 
@@ -2618,8 +2414,6 @@ const styles = StyleSheet.create({
 
   cardImage: { width: '100%', height: '100%', resizeMode: 'contain' },
 
-  
-
   cardMain: { flex: 1, marginHorizontal: 10 },
 
   cardTitle: { fontSize: 15, fontWeight: 'bold', color: NoxColors.text, marginBottom: 4 },
@@ -2634,8 +2428,6 @@ const styles = StyleSheet.create({
 
   cardPrice: { color: NoxColors.text, fontWeight: '900', fontSize: 16, marginTop: 4 },
 
-
-
   actions: { flexDirection: 'row', gap: 6, alignItems: 'center' },
 
   iconBtn: { width: 34, height: 34, borderRadius: 10, backgroundColor: NoxColors.container, justifyContent: 'center', alignItems: 'center' },
@@ -2644,15 +2436,11 @@ const styles = StyleSheet.create({
 
   iconBtnDanger: { width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(239, 68, 68, 0.1)', justifyContent: 'center', alignItems: 'center' },
 
-
-
   emptyContainer: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: 8 },
 
   emptyTitle: { color: NoxColors.text, fontSize: 16, fontWeight: 'bold' },
 
   emptySub: { color: NoxColors.muted, fontSize: 12, textAlign: 'center', maxWidth: 300 },
-
-
 
   // --- MODAL BASE ---
 
@@ -2686,8 +2474,6 @@ const styles = StyleSheet.create({
 
   stockInfoPill: { color: NoxColors.muted, fontSize: 12, marginTop: 4 },
 
-
-
   label: { fontSize: 10, fontWeight: '900', color: NoxColors.muted, marginBottom: 8, letterSpacing: 1.5, textTransform: 'uppercase' },
 
   inputGroup: { marginBottom: 16 },
@@ -2711,8 +2497,6 @@ const styles = StyleSheet.create({
     borderColor: NoxColors.border,
 
   },
-
-
 
   // --- MOVIMIENTOS STYLES ---
 
@@ -2780,8 +2564,6 @@ const styles = StyleSheet.create({
 
   viewProductHistoryText: { color: NoxColors.aura, fontSize: 12, fontWeight: 'bold' },
 
-
-
   // --- CATEGORÍAS FORMULARIO ---
 
   categoryHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 15, marginBottom: 8 },
@@ -2812,11 +2594,8 @@ const styles = StyleSheet.create({
 
   newCatInput: { flex: 1, color: NoxColors.text, paddingHorizontal: 10, fontSize: 13 },
 
-  newCatSaveBtn: { backgroundColor: NoxColors.aura, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, justifyContent: 'center' },
-
-  newCatSaveBtnText: { color: NoxColors.text, fontWeight: '900', fontSize: 11 },
-
-
+  newCatSaveBtn: { backgroundColor: '#181822', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.25)', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, justifyContent: 'center' },
+  newCatSaveBtnText: { color: '#FFFFFF', fontWeight: '900', fontSize: 11 },
 
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 15 },
 
@@ -2847,8 +2626,6 @@ const styles = StyleSheet.create({
   categoryChipTextActive: { color: '#FFFFFF', fontWeight: '900' },
 
   noCategoriesHint: { color: NoxColors.muted, fontSize: 12, fontStyle: 'italic', paddingVertical: 8 },
-
-
 
   // --- IMAGEN FORMULARIO ---
 
@@ -2933,38 +2710,26 @@ const styles = StyleSheet.create({
   previewSuccessText: { color: NoxColors.emerald, fontSize: 12, fontWeight: 'bold' },
 
   changeImageBtn: {
-
     flexDirection: 'row',
-
     alignItems: 'center',
-
     gap: 6,
-
-    backgroundColor: NoxColors.aura,
-
+    backgroundColor: '#181822',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
     paddingHorizontal: 12,
-
     paddingVertical: 8,
-
     borderRadius: 10,
-
     alignSelf: 'flex-start',
-
   },
-
-  changeImageBtnText: { color: NoxColors.text, fontSize: 11, fontWeight: 'bold' },
+  changeImageBtnText: { color: '#FFFFFF', fontSize: 11, fontWeight: 'bold' },
 
   removeImageBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start' },
 
   removeImageBtnText: { color: NoxColors.rose, fontSize: 11, fontWeight: 'bold' },
 
-
-
   formRow: { flexDirection: 'row', marginBottom: 20 },
 
   saveBtn: { backgroundColor: NoxColors.emerald, paddingVertical: 18, borderRadius: 20, alignItems: 'center', marginTop: 10 },
-
-
 
   // --- MODAL ELIMINACIÓN ---
 
@@ -3006,8 +2771,6 @@ const styles = StyleSheet.create({
 
   confirmDeleteBtnText: { color: NoxColors.text, fontSize: 12, fontWeight: 'bold', letterSpacing: 1 },
 
-
-
   // --- MODAL HISTORIAL ---
 
   historyFiltersRow: { flexDirection: 'row', gap: 10, marginBottom: 16, flexWrap: 'wrap' },
@@ -3047,8 +2810,6 @@ const styles = StyleSheet.create({
   },
 
   historySearchInput: { flex: 1, color: NoxColors.text, fontSize: 12, marginLeft: 8 },
-
-
 
   historyCard: {
 

@@ -1,10 +1,10 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
-
 
 export default function AdminBartenderScreen() {
   const router = useRouter();
@@ -113,6 +113,7 @@ export default function AdminBartenderScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
@@ -150,7 +151,7 @@ export default function AdminBartenderScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
+  container: { flex: 1, backgroundColor: '#000000', position: 'relative' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 

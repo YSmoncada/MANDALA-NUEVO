@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Dimensions, TouchableOpacity, Alert, TextInput, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,7 +7,6 @@ import apiClient from '../../utils/apiClient';
 import { useAlertStore } from '../../store/alertStore';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
-
 
 export default function AdminAccountingScreen() {
   const router = useRouter();
@@ -76,6 +76,7 @@ export default function AdminAccountingScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -237,7 +238,7 @@ export default function AdminAccountingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NoxColors.deep },
+  container: { flex: 1, backgroundColor: '#000000', position: 'relative' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -310,8 +311,8 @@ const styles = StyleSheet.create({
   closedTitle: { color: NoxColors.text, fontSize: 18, fontWeight: '900', letterSpacing: 2, marginTop: 25, marginBottom: 15 },
   closedMsg: { color: NoxColors.muted, textAlign: 'center', fontSize: 13, lineHeight: 20, marginBottom: 40 },
   
-  openBtn: { backgroundColor: NoxColors.aura, paddingVertical: 20, paddingHorizontal: 40, borderRadius: 25, shadowColor: NoxColors.aura, shadowOpacity: 0.3, shadowRadius: 15 },
-  openBtnText: { color: NoxColors.text, fontWeight: '900', letterSpacing: 2, fontSize: 13 },
+  openBtn: { backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', paddingVertical: 18, paddingHorizontal: 36, borderRadius: 20 },
+  openBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 2, fontSize: 13 },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center', padding: 25 },
   modalCard: { backgroundColor: NoxColors.card, borderRadius: 35, padding: 30, width: '100%', maxWidth: 480, alignSelf: 'center', borderWidth: 1, borderColor: NoxColors.border },
@@ -320,5 +321,5 @@ const styles = StyleSheet.create({
   modalInput: { backgroundColor: NoxColors.deep, borderRadius: 15, padding: 18, color: NoxColors.text, fontSize: 16, marginBottom: 20, borderWidth: 1, borderColor: NoxColors.border },
   modalActions: { flexDirection: 'row', gap: 15, marginTop: 10 },
   modalCancel: { flex: 1, padding: 20, borderRadius: 20, alignItems: 'center', backgroundColor: NoxColors.border },
-  modalConfirm: { flex: 1.5, padding: 20, borderRadius: 20, alignItems: 'center', backgroundColor: NoxColors.aura }
+  modalConfirm: { flex: 1.5, padding: 20, borderRadius: 20, alignItems: 'center', backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)' }
 });

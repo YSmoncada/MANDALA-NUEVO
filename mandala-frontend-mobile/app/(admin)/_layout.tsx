@@ -12,11 +12,11 @@ export default function AdminLayout() {
   return (
     <Tabs 
       tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="ADMINISTRADOR" roleSubtitle="Control General" />}
-      sceneContainerStyle={{ backgroundColor: 'transparent' }}
+      sceneContainerStyle={{ backgroundColor: '#000000' }}
       screenOptions={{ 
         tabBarPosition: isDesktop ? 'right' : 'bottom',
         headerShown: false,
-        sceneStyle: { backgroundColor: 'transparent' },
+        sceneStyle: { backgroundColor: '#000000' },
       }}
     >
       <Tabs.Screen 

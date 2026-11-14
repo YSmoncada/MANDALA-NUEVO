@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -6,7 +7,6 @@ import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
 import TicketModal from '../../components/TicketModal';
-
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: keyof typeof Ionicons.glyphMap }> = {
   Pendiente:  { label: 'PENDIENTE',   color: NoxColors.amber, bg: 'rgba(245,158,11,0.1)',  icon: 'time-outline' },
@@ -182,6 +182,7 @@ export default function MonitorOrdenesScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       {loading ? (
         <View style={{ flex: 1, paddingHorizontal: 20 }}>
           {renderHeader()}
@@ -189,6 +190,7 @@ export default function MonitorOrdenesScreen() {
         </View>
       ) : (
         <FlatList
+          style={{ flex: 1, backgroundColor: 'transparent', zIndex: 1 }}
           key={numColumns}
           numColumns={numColumns}
           columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
@@ -221,7 +223,7 @@ export default function MonitorOrdenesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
+  container: { flex: 1, backgroundColor: '#000000', position: 'relative' },
   headerWrapper: {
     width: '100%',
     marginBottom: 5,

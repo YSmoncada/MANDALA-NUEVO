@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, SectionList, TouchableOpacity, ActivityIndicator, Alert, ScrollView, Dimensions, RefreshControl, Platform, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,7 +6,6 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import apiClient from '../../utils/apiClient';
 import { NoxColors } from '../../constants/theme';
-
 
 const { width, height } = Dimensions.get('window');
 
@@ -233,6 +233,7 @@ export default function AdminHistoryScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <RollsRoyceStars />
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
@@ -272,7 +273,6 @@ export default function AdminHistoryScreen() {
                 </Text>
                 <Ionicons name="chevron-down" size={14} color={selectedMesera !== null ? NoxColors.text : NoxColors.muted} />
             </TouchableOpacity>
-
 
           </View>
       </View>
@@ -487,7 +487,7 @@ export default function AdminHistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
+  container: { flex: 1, backgroundColor: '#000000', position: 'relative' },
   header: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 15, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   backBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: NoxColors.card, borderWidth: 1, borderColor: NoxColors.border, justifyContent: 'center', alignItems: 'center' },
   summaryReportBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, backgroundColor: 'rgba(16, 185, 129, 0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.25)' },

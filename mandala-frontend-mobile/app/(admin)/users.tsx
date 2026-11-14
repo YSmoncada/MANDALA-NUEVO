@@ -1,3 +1,4 @@
+import RollsRoyceStars from '../../components/RollsRoyceStars';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,7 +7,6 @@ import apiClient from '../../utils/apiClient';
 import { useAuthStore } from '../../store/authStore';
 import { NoxColors } from '../../constants/theme';
 import { useResponsive } from '../../utils/responsive';
-
 
 export default function AdmUsersScreen() {
   const router = useRouter();
@@ -185,6 +185,7 @@ export default function AdmUsersScreen() {
 
   return (
     <View style={styles.container}>
+      <RollsRoyceStars />
       {/* Encabezado Premium */}
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -310,7 +311,7 @@ export default function AdmUsersScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
+  container: { flex: 1, backgroundColor: '#000000', position: 'relative' },
   header: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -327,7 +328,7 @@ const styles = StyleSheet.create({
   brandingNox: { fontSize: 32, fontWeight: '900', color: NoxColors.text, letterSpacing: -1 },
   brandingOS: { color: NoxColors.subtext },
   subtitle: { fontSize: 10, color: NoxColors.muted, fontWeight: '900', letterSpacing: 4, textTransform: 'uppercase' },
-  addBtn: { backgroundColor: NoxColors.aura, width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center', shadowColor: NoxColors.aura, shadowOpacity: 0.5, shadowRadius: 15 },
+  addBtn: { backgroundColor: '#181822', borderWidth: 1.5, borderColor: 'rgba(255, 255, 255, 0.25)', width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
 
   tabsContainer: { flexDirection: 'row', paddingHorizontal: 25, gap: 12, marginBottom: 20, maxWidth: 1100, width: '100%', alignSelf: 'center' },
   tab: { flex: 1, paddingVertical: 14, borderRadius: 18, backgroundColor: NoxColors.card, alignItems: 'center', borderWidth: 1, borderColor: NoxColors.border },

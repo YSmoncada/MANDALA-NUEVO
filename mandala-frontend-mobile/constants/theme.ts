@@ -8,7 +8,7 @@ import { Platform } from 'react-native';
 export const NoxColors = {
   aura: '#FFFFFF',          // Blanco Puro Luxury (Acento principal estilo Login)
   auraSilver: '#E4E4E7',    // Platino plateado para acentos secundarios
-  background: 'transparent', // Fondo transparente para lucir las estrellas Rolls-Royce
+  background: '#000000',    // Negro Absoluto Luxury
   card: '#0E0E12',          // Obsidiana mate premium (Tarjeta idéntica al Login)
   cardSecondary: '#141419', // Superficie secundaria / tarjetas anidadas
   container: '#16161D',     // Superficie oscura para botones e inputs
