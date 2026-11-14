@@ -15,7 +15,8 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "static"
+      "output": "static",
+      "backgroundColor": "#000000"
     },
     "plugins": [
       "expo-router"
