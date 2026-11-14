@@ -2695,15 +2695,14 @@ const styles = StyleSheet.create({
   previewImage: { width: '100%', height: '100%', resizeMode: 'cover' },
 
   previewLoadingOverlay: {
-
-    ...StyleSheet.absoluteFillObject,
-
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.65)',
-
     justifyContent: 'center',
-
     alignItems: 'center',
-
   },
 
   previewUploadingText: { color: NoxColors.aura, fontSize: 12, fontWeight: 'bold' },

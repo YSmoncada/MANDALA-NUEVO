@@ -9,6 +9,7 @@ interface LogoutModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   isLoggingOut?: boolean;
+  userName?: string;
 }
 
 export default function LogoutModal({ visible, onConfirm, onCancel, isLoggingOut = false }: LogoutModalProps) {

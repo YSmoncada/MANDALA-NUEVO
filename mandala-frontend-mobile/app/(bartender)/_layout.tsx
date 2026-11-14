@@ -12,11 +12,19 @@ export default function BartenderLayout() {
   return (
     <Tabs
       tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="BARTENDER" roleSubtitle="Barra & Cocina" />}
-      sceneContainerStyle={{ backgroundColor: '#000000' }}
       screenOptions={{
-        tabBarPosition: isDesktop ? 'right' : 'bottom',
+        tabBarPosition: 'bottom',
         headerShown: false,
         sceneStyle: { backgroundColor: '#000000' },
+        tabBarStyle: isDesktop ? {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          elevation: 0,
+        } : undefined,
       }}
     >
       {/* TAB 1: Monitor de pedidos pendientes */}
@@ -24,7 +32,7 @@ export default function BartenderLayout() {
         name="prep"
         options={{
           title: "Pendientes",
-          tabBarIcon: ({ color }) => <Ionicons name="beer-outline" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="beer-outline" size={24} color={color as string} />,
         }}
       />
 
@@ -33,7 +41,7 @@ export default function BartenderLayout() {
         name="orders"
         options={{
           title: "Pedidos",
-          tabBarIcon: ({ color }) => <Ionicons name="fast-food-outline" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="fast-food-outline" size={24} color={color as string} />,
         }}
       />
 
@@ -42,7 +50,7 @@ export default function BartenderLayout() {
         name="history"
         options={{
           title: "Mis Pedidos",
-          tabBarIcon: ({ color }) => <Ionicons name="receipt-outline" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="receipt-outline" size={24} color={color as string} />,
         }}
       />
 

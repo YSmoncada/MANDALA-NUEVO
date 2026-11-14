@@ -100,11 +100,19 @@ export default function MeseraLayout() {
   return (
     <Tabs
       tabBar={(props) => <NoxSidebarTabBar {...props} roleTitle="SERVICIO" roleSubtitle="Meseros & Atención" />}
-      sceneContainerStyle={{ backgroundColor: '#000000' }}
       screenOptions={{
-        tabBarPosition: isDesktop ? 'right' : 'bottom',
+        tabBarPosition: 'bottom',
         headerShown: false,
         sceneStyle: { backgroundColor: '#000000' },
+        tabBarStyle: isDesktop ? {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          elevation: 0,
+        } : undefined,
       }}
     >
       {/* TAB 1: Realizar pedidos — aparece primero */}
@@ -112,7 +120,7 @@ export default function MeseraLayout() {
         name="orders"
         options={{
           title: "Pedidos",
-          tabBarIcon: ({ color }) => <Ionicons name="fast-food-outline" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="fast-food-outline" size={24} color={color as string} />,
         }}
       />
 
@@ -121,7 +129,7 @@ export default function MeseraLayout() {
         name="history"
         options={{
           title: "Mis Pedidos",
-          tabBarIcon: ({ color }) => <Ionicons name="receipt-outline" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="receipt-outline" size={24} color={color as string} />,
         }}
       />
 

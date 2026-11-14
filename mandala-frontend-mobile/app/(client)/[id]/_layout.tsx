@@ -8,21 +8,20 @@ import { NoxColors } from '../../../constants/theme';
 export default function ClientLayout() {
   return (
     <Tabs 
-      sceneContainerStyle={{ backgroundColor: '#000000' }}
       screenOptions={{
         headerShown: false,
         sceneStyle: { backgroundColor: '#000000' },
         tabBarStyle: styles.tabBar,
-      tabBarActiveTintColor: NoxColors.aura,
-      tabBarInactiveTintColor: NoxColors.subtext,
-      tabBarLabelStyle: styles.tabBarLabel,
-    }}>
+        tabBarActiveTintColor: NoxColors.aura,
+        tabBarInactiveTintColor: NoxColors.subtext,
+        tabBarLabelStyle: styles.tabBarLabel,
+      }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'PEDIR',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "cart" : "cart-outline"} color={color} size={24} />
+            <Ionicons name={focused ? "cart" : "cart-outline"} color={color as string} size={24} />
           ),
         }}
       />
@@ -31,7 +30,7 @@ export default function ClientLayout() {
         options={{
           title: 'MI CUENTA',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "receipt" : "receipt-outline"} color={color} size={24} />
+            <Ionicons name={focused ? "receipt" : "receipt-outline"} color={color as string} size={24} />
           ),
         }}
       />
