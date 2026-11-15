@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NoxOS Studio, Plataformas de Alta Precisión para Bares y Gastrobars</title>
+  <title>NoxOS, Plataforma Integral para Bares, Discotecas y Gastrobars</title>
   <meta name="description" content="Sistemas operativos y experiencias digitales de lujo para bares, discotecas y gastrobars. Cero fugas de licor, despacho en milisegundos y control total de turnos.">
   <link rel="stylesheet" href="./styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,13 +23,12 @@
     <header class="header-nav">
       <a href="#" class="brand-wrapper">
         <span class="brand-logo">NOX<span class="brand-os">OS</span></span>
-        <span class="brand-badge">Studio</span>
+        <span class="brand-badge">Hospitality Core</span>
       </a>
 
       <nav class="nav-links">
-        <a href="#proyectos" class="nav-link">Módulos</a>
-        <a href="#pantallas" class="nav-link">Pantallas en vivo</a>
-        <a href="#beneficios" class="nav-link">Beneficios</a>
+        <a href="#modulos" class="nav-link">Módulos</a>
+        <a href="#ventajas" class="nav-link">Ventajas</a>
         <a href="#contacto" class="nav-link">Contacto</a>
       </nav>
 
@@ -41,125 +40,255 @@
     <!-- Sección Principal Hero -->
     <section class="hero-section">
       <h1 class="hero-headline">
-        Sistemas concebidos para dominar la noche.
+        Ingeniería de alta gama para bares.
       </h1>
 
       <p class="hero-subheadline">
-        Plataformas de ingeniería de alta precisión para bares y gastrobars sin pérdidas.
+        Control de inventario en mililitros, comandas en segundos y blindaje total de caja.
       </p>
 
       <div class="hero-cta-group">
-        <a href="#proyectos" class="btn-primary" style="padding: 12px 28px; font-size: 14px;">Explorar módulos</a>
-        <a href="#pantallas" class="btn-secondary" style="padding: 12px 24px; font-size: 14px;">Ver pantallas en vivo</a>
-      </div>
-
-      <!-- Barra de Métricas Reales del Sistema -->
-      <div class="metrics-strip">
-        <div class="metric-cell">
-          <div class="metric-value">&lt; 80ms</div>
-          <div class="metric-label">Latencia comanda a barra</div>
-        </div>
-        <div class="metric-cell">
-          <div class="metric-value">0%</div>
-          <div class="metric-label">Fugas en conciliación Kardex</div>
-        </div>
-        <div class="metric-cell">
-          <div class="metric-value">100%</div>
-          <div class="metric-label">Blindaje de turnos en caja</div>
-        </div>
-        <div class="metric-cell">
-          <div class="metric-value">Multi-Rol</div>
-          <div class="metric-label">Admin, Bartender, Mesera y QR</div>
-        </div>
+        <a href="#modulos" class="btn-primary" style="padding: 12px 28px; font-size: 14px;">Ver módulos con fotos reales</a>
+        <button class="btn-secondary" onclick="openWhatsApp()" style="padding: 12px 24px; font-size: 14px;">WhatsApp: 321 314 6585</button>
       </div>
     </section>
 
-    <!-- Cabecera de la Sección de Proyectos -->
-    <section id="proyectos">
+    <!-- Sección de Módulos Reales con Fotos y Explicación de Negocio -->
+    <section id="modulos">
       <div class="section-headline-row">
         <div>
-          <h2 class="section-title">El cockpit de proyectos</h2>
-          <p class="section-desc">Selecciona un módulo para explorar su arquitectura, especificaciones técnicas y probar la consola reactiva en vivo.</p>
+          <h2 class="section-title">Módulos y Pantallas del Sistema</h2>
+          <p class="section-desc">Conoce cómo opera la plataforma en cada rincón de tu local: desde la toma del pedido hasta la barra, caja y bodega.</p>
         </div>
       </div>
 
-      <!-- Pestañas de Selección de Proyectos -->
-      <div class="cockpit-tabs">
-        <button class="cockpit-tab-btn active" data-project="noxos">
-          <span class="tab-number">01</span> NoxOS Hospitality Core
-        </button>
-        <button class="cockpit-tab-btn" data-project="client_qr">
-          <span class="tab-number">02</span> Mandala Starlight QR (Clientes)
-        </button>
-        <button class="cockpit-tab-btn" data-project="kds">
-          <span class="tab-number">03</span> Bartender Touch Radar
-        </button>
-        <button class="cockpit-tab-btn" data-project="kardex">
-          <span class="tab-number">04</span> Kardex Liquor Sentinel
-        </button>
-      </div>
+      <div class="showcase-container">
 
-      <!-- Escenario Interactivo del Proyecto -->
-      <div class="project-stage" id="pantallas">
-        
-        <!-- Columna Izquierda: Información Técnica y de Negocio -->
-        <div class="stage-info">
-          <div>
-            <div class="project-badge-row">
-              <span class="badge-tag" id="project-badge-tag">Flagship v2.5</span>
-              <span class="badge-status" id="project-badge-status">En producción</span>
+        <!-- Módulo 1: Punto de Venta POS Rápido -->
+        <article class="showcase-item">
+          <div class="showcase-image-box">
+            <div class="showcase-image-box-topbar">
+              <span class="showcase-screen-tag">
+                <span class="showcase-dot-live"></span>
+                Punto de Venta Táctil
+              </span>
+              <span class="showcase-screen-meta">Caja y Comandera</span>
             </div>
+            <img class="showcase-img" src="./assets/screen_pos_orders.png" alt="Pantalla de punto de venta rápido y toma de pedidos con catálogo de licores y botellas" loading="lazy">
+          </div>
 
-            <h3 class="project-title" id="project-title">NoxOS Hospitality Core</h3>
-            <p class="project-pitch" id="project-pitch">
-              El sistema integral concebido para bares, discotecas y gastrobars de alta demanda. Integra caja rápida con arqueo ciego, control milimétrico de comandas y roles blindados contra pérdidas.
+          <div class="showcase-text-box">
+            <h3 class="showcase-title">Comandas en segundos con fotos reales y selección instantánea</h3>
+            <p class="showcase-desc">
+              Elimina la lentitud y los errores al tomar pedidos en noches de alto flujo. Tu equipo visualiza la carta con fotos de alta resolución y busca cualquier producto al instante.
             </p>
 
-            <div class="capabilities-grid" id="capabilities-list">
-              <!-- Renderizado dinámico desde app.js -->
-            </div>
-          </div>
-
-          <div>
-            <div class="stack-pills" id="stack-list">
-              <!-- Renderizado dinámico desde app.js -->
-            </div>
-
-            <button class="btn-primary" onclick="openWhatsApp()" style="width: 100%;">
-              Solicitar demostración
-            </button>
-          </div>
-        </div>
-
-        <!-- Columna Derecha: Pantalla en Vivo de la Aplicación -->
-        <div class="mockup-window">
-          <div class="mockup-header">
-            <div class="mockup-title-box">
-              <span class="mockup-dot-live"></span>
-              <span class="mockup-screen-title" id="mockup-screen-title">Punto de Venta y Mesas (Caja)</span>
-            </div>
-            <span class="mockup-screen-badge" id="mockup-screen-badge">En vivo, Turno activo</span>
-          </div>
-
-          <div class="mockup-body">
-            <div class="mockup-canvas" id="mockup-canvas">
-              <!-- Renderizado visual interactivo del módulo -->
-            </div>
-
-            <div class="mockup-interactive-bar">
-              <span class="interactive-hint" id="interactive-hint">Toca la acción para ver cómo responde el sistema:</span>
-              <div id="mockup-action-container">
-                <!-- Botón de acción interactivo -->
+            <div class="showcase-features-list">
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Venta ágil de botellas completas o tragos individuales con cálculo automático de precios.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>División inmediata de cuentas por comensal o mesa con un solo toque.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Arqueo ciego en cierre de caja: el cajero entrega el dinero físico a ciegas sin ver el saldo del sistema para evitar manipulaciones.</span>
               </div>
             </div>
+
+            <div class="showcase-highlight-box">
+              Cero filas en caja y atención hasta un 40% más ágil en horas pico.
+            </div>
+
+            <button class="showcase-cta-btn" onclick="openWhatsApp('Punto de Venta POS')">
+              Consultar por WhatsApp este módulo
+            </button>
           </div>
-        </div>
+        </article>
+
+        <!-- Módulo 2: Mapa Interactivo de Mesas (Reversed) -->
+        <article class="showcase-item reversed">
+          <div class="showcase-image-box">
+            <div class="showcase-image-box-topbar">
+              <span class="showcase-screen-tag">
+                <span class="showcase-dot-live"></span>
+                Mapa de Mesas en Vivo
+              </span>
+              <span class="showcase-screen-meta">Salón, VIP y Terrazas</span>
+            </div>
+            <img class="showcase-img" src="./assets/screen_mesas.png" alt="Plano interactivo de mesas con estados en tiempo real" loading="lazy">
+          </div>
+
+          <div class="showcase-text-box">
+            <h3 class="showcase-title">Control visual total: cada mesa y zona VIP en un solo plano</h3>
+            <p class="showcase-desc">
+              Un plano interactivo idéntico a la distribución física de tu establecimiento. De un solo vistazo conoces qué mesas están libres, cuáles consumen y cuáles están por liquidar.
+            </p>
+
+            <div class="showcase-features-list">
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Semáforo de colores por estado: Libre, Ocupada, Comanda pendiente y Por pagar.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Cambio o unión de mesas con un solo clic sin perder ni duplicar el consumo registrado.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Alerta visual permanente de cuentas abiertas para evitar que clientes se retiren sin liquidar.</span>
+              </div>
+            </div>
+
+            <div class="showcase-highlight-box">
+              Cero fugas por mesas no cobradas y rotación inmediata de comensales.
+            </div>
+
+            <button class="showcase-cta-btn" onclick="openWhatsApp('Mapa de Mesas')">
+              Consultar por WhatsApp este módulo
+            </button>
+          </div>
+        </article>
+
+        <!-- Módulo 3: KDS y Radar Táctil para Bartenders -->
+        <article class="showcase-item">
+          <div class="showcase-image-box">
+            <div class="showcase-image-box-topbar">
+              <span class="showcase-screen-tag">
+                <span class="showcase-dot-live"></span>
+                Radar KDS de Barra
+              </span>
+              <span class="showcase-screen-meta">Coctelería y Despacho</span>
+            </div>
+            <img class="showcase-img" src="./assets/screen_bartender.png" alt="Pantalla táctil KDS para bartenders con semáforo de pedidos" loading="lazy">
+          </div>
+
+          <div class="showcase-text-box">
+            <h3 class="showcase-title">Barra rápida sin comandas de papel ni gritos entre meseros</h3>
+            <p class="showcase-desc">
+              Pantalla táctil de alto contraste concebida para el ritmo de los bartenders. En cuanto se registra un trago en el salón o por QR, aparece en la pantalla de barra con contador de minutos.
+            </p>
+
+            <div class="showcase-features-list">
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Recepción instantánea de pedidos con alerta sonora y visual.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Semáforo de tiempo transcurrido para evitar que una mesa espere de más.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Marcación de tragos en un toque ('En Preparación' y 'Despachado') que avisa al mesero.</span>
+              </div>
+            </div>
+
+            <div class="showcase-highlight-box">
+              Cócteles servidos en menos de 3 minutos y barra 100% coordinada.
+            </div>
+
+            <button class="showcase-cta-btn" onclick="openWhatsApp('Comandera de Barra')">
+              Consultar por WhatsApp este módulo
+            </button>
+          </div>
+        </article>
+
+        <!-- Módulo 4: Kardex Liquor Sentinel (Reversed) -->
+        <article class="showcase-item reversed">
+          <div class="showcase-image-box">
+            <div class="showcase-image-box-topbar">
+              <span class="showcase-screen-tag">
+                <span class="showcase-dot-live"></span>
+                Auditoría de Botellas
+              </span>
+              <span class="showcase-screen-meta">Bodega y Kardex</span>
+            </div>
+            <img class="showcase-img" src="./assets/screen_inventory.png" alt="Control de inventario de licores en mililitros y alertas de stock" loading="lazy">
+          </div>
+
+          <div class="showcase-text-box">
+            <h3 class="showcase-title">Control milimétrico de inventario: cada trago descuenta de la botella</h3>
+            <p class="showcase-desc">
+              Detén la fuga silenciosa de licor en tu establecimiento. Cada shot, cóctel o copa registrada descuenta automáticamente los mililitros exactos de la botella en tiempo real.
+            </p>
+
+            <div class="showcase-features-list">
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Descuento automático en mililitros (ml) y unidades con cada venta registrada.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Conciliación estricta de botellas abiertas vs. tragos servidos para evitar 'cortesías' no autorizadas.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Alertas inteligentes de reposición antes de que se agoten tus licores más rentables.</span>
+              </div>
+            </div>
+
+            <div class="showcase-highlight-box">
+              Recupera hasta un 15% de rentabilidad mensual erradicando botellas no cobradas.
+            </div>
+
+            <button class="showcase-cta-btn" onclick="openWhatsApp('Control de Kardex e Inventario')">
+              Consultar por WhatsApp este módulo
+            </button>
+          </div>
+        </article>
+
+        <!-- Módulo 5: Dashboard y Métricas para Dueños -->
+        <article class="showcase-item">
+          <div class="showcase-image-box">
+            <div class="showcase-image-box-topbar">
+              <span class="showcase-screen-tag">
+                <span class="showcase-dot-live"></span>
+                Panel de Propietarios
+              </span>
+              <span class="showcase-screen-meta">Métricas en Vivo</span>
+            </div>
+            <img class="showcase-img" src="./assets/screen_dashboard.png" alt="Dashboard de ventas en tiempo real, métodos de pago y márgenes" loading="lazy">
+          </div>
+
+          <div class="showcase-text-box">
+            <h3 class="showcase-title">Tu negocio en la palma de tu mano, estés donde estés</h3>
+            <p class="showcase-desc">
+              No necesitas pasar la noche de pie en la caja para saber cómo van las ventas. Accede en vivo a los ingresos, métodos de pago y productos estrella desde tu teléfono móvil.
+            </p>
+
+            <div class="showcase-features-list">
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Curva de ventas hora por hora para identificar los picos de facturación de cada jornada.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Desglose transparente por métodos de pago: Efectivo, Nequi, Daviplata, Tarjetas y Transferencias.</span>
+              </div>
+              <div class="feature-point">
+                <span class="feature-check">✓</span>
+                <span>Reportes consolidados automáticos al cierre de turno listos para exportar a contabilidad.</span>
+              </div>
+            </div>
+
+            <div class="showcase-highlight-box">
+              Tranquilidad y control total para el propietario con datos en vivo.
+            </div>
+
+            <button class="showcase-cta-btn" onclick="openWhatsApp('Dashboard y Métricas')">
+              Consultar por WhatsApp este módulo
+            </button>
+          </div>
+        </article>
 
       </div>
     </section>
 
-    <!-- Sección de Beneficios de Negocio para Clientes -->
-    <section id="beneficios" style="margin-bottom: 96px;">
+    <!-- Sección de Ventajas de Negocio para Clientes -->
+    <section id="ventajas" style="margin-bottom: 96px;">
       <div class="section-headline-row">
         <div>
           <h2 class="section-title">Lo que tu negocio gana desde el primer fin de semana</h2>
@@ -220,8 +349,8 @@
         <button class="btn-primary" onclick="openWhatsApp()" style="padding: 12px 28px; font-size: 14px;">
           Escribir por WhatsApp (321 314 6585)
         </button>
-        <button class="btn-secondary" onclick="document.getElementById('pantallas').scrollIntoView({behavior:'smooth'})" style="padding: 12px 24px; font-size: 14px;">
-          Ver pantallas en vivo
+        <button class="btn-secondary" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="padding: 12px 24px; font-size: 14px;">
+          Volver al inicio
         </button>
       </div>
     </section>
@@ -229,15 +358,14 @@
     <!-- Pie de Página -->
     <footer class="site-footer">
       <div>
-        <div class="footer-brand">NoxOS Studio</div>
-        <div class="footer-copy">© 2026 NoxOS y Mandala Systems. Concebido con ingeniería de alta gama.</div>
+        <div class="footer-brand">NoxOS Hospitality Core</div>
+        <div class="footer-copy">© 2026 NoxOS Studio. Plataformas de alta gama para bares y restaurantes.</div>
       </div>
 
       <div class="footer-socials">
-        <a href="#proyectos" class="footer-link">Módulos</a>
-        <a href="#pantallas" class="footer-link">Pantallas</a>
-        <a href="#beneficios" class="footer-link">Beneficios</a>
-        <a href="javascript:openWhatsApp()" class="footer-link">WhatsApp</a>
+        <a href="#modulos" class="footer-link">Módulos</a>
+        <a href="#ventajas" class="footer-link">Ventajas</a>
+        <a href="javascript:openWhatsApp()" class="footer-link">WhatsApp: 321 314 6585</a>
       </div>
     </footer>
 
