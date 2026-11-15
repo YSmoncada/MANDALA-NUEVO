@@ -165,7 +165,7 @@
   const counterCur = document.getElementById('carousel-cur');
 
   let currentSlide = 0;
-  const totalSlides = slides.length || 5;
+  const totalSlides = slides.length || 6;
   let autoPlayTimer = null;
   const AUTOPLAY_DELAY = 6000;
 
