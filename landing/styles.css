@@ -471,11 +471,42 @@ html, body {
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   transition: opacity 0.15s ease;
 }
 
 .showcase-cta-btn:hover {
   opacity: 0.9;
+}
+
+/* Floating WhatsApp Quick Action Button */
+.floating-whatsapp-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: var(--emerald);
+  color: var(--bg-deep);
+  border: 1px solid var(--emerald-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.floating-whatsapp-btn:hover {
+  transform: scale(1.06);
+  opacity: 0.95;
+}
+
+.floating-whatsapp-btn:active {
+  transform: scale(0.96);
 }
 
 /* Call to Action Banner */
