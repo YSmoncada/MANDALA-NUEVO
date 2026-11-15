@@ -153,26 +153,39 @@
   requestAnimationFrame(loop);
 
   /* --------------------------------------------------------------------------
-     2. LUXURY SHOWCASE CAROUSEL ENGINE
+     2. LUXURY SHOWCASE CAROUSEL ENGINE (SMOOTH HARDWARE-ACCELERATED TRACK)
      -------------------------------------------------------------------------- */
+  const track = document.getElementById('carousel-track');
   const slides = document.querySelectorAll('.carousel-slide');
   const tabs = document.querySelectorAll('.carousel-tab-btn');
   const dots = document.querySelectorAll('.carousel-dot');
   const prevBtn = document.getElementById('carousel-prev-btn');
   const nextBtn = document.getElementById('carousel-next-btn');
   const stage = document.getElementById('carousel-stage');
+  const counterCur = document.getElementById('carousel-cur');
 
   let currentSlide = 0;
   const totalSlides = slides.length || 5;
   let autoPlayTimer = null;
-  const AUTOPLAY_DELAY = 6500;
+  const AUTOPLAY_DELAY = 6000;
 
   function goToSlide(index) {
     currentSlide = (index + totalSlides) % totalSlides;
 
+    // Fluid CSS transform on track
+    if (track) {
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+
+    // Update 01 / 05 counter
+    if (counterCur) {
+      counterCur.textContent = String(currentSlide + 1).padStart(2, '0');
+    }
+
     slides.forEach((slide, i) => {
       const isActive = i === currentSlide;
       slide.classList.toggle('active', isActive);
+      slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
     });
 
     tabs.forEach((tab, i) => {
@@ -235,7 +248,7 @@
     }
   });
 
-  // Touch Swipe for Mobile
+  // Touch & Drag Swipe for Mobile and Desktop
   let startX = 0;
   let startY = 0;
   let isSwiping = false;
@@ -290,6 +303,8 @@
     startAutoPlay();
   }
 
+  // Initial setup
+  goToSlide(0);
   startAutoPlay();
 
   /* --------------------------------------------------------------------------

@@ -6,6 +6,7 @@
 DOCUMENTO_MAESTRO_BASES_DATOS.md
 *.png
 !media/**
+!landing/assets/**
 
 # Bases de datos locales
 *.db
