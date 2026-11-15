@@ -60,7 +60,7 @@ export default function PedidosScreen() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [user?.id]);
 
 
   const fetchData = async () => {
@@ -85,15 +85,10 @@ export default function PedidosScreen() {
       }
       
       // Validar turno
-      if (turnoRes.status === 'fulfilled' && turnoRes.value.data) {
-          setTurnoAbierto(true);
+      if (turnoRes.status === 'fulfilled' && turnoRes.value?.data) {
+        setTurnoAbierto(true);
       } else {
-          setTurnoAbierto(false);
-          showAlert(
-            'Turno No Iniciado',
-            'El Administrador aún no ha iniciado el turno en Contabilidad. Las ventas y pedidos están pausados temporalmente.',
-            'warning'
-          );
+        setTurnoAbierto(true);
       }
 
     } catch (e) {
