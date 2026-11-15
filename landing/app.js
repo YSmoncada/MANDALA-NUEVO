@@ -198,8 +198,11 @@
       dot.classList.toggle('active', i === currentSlide);
     });
 
-    if (tabs[currentSlide]) {
-      tabs[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    const tabsContainer = document.querySelector('.carousel-tabs');
+    if (tabsContainer && tabs[currentSlide]) {
+      const activeTab = tabs[currentSlide];
+      const targetScroll = activeTab.offsetLeft - (tabsContainer.clientWidth - activeTab.clientWidth) / 2;
+      tabsContainer.scrollTo({ left: targetScroll, behavior: 'smooth' });
     }
   }
 
@@ -305,7 +308,22 @@
 
   // Initial setup
   goToSlide(0);
-  startAutoPlay();
+
+  // AutoPlay only when carousel is visible in viewport - never hijacks scroll
+  if ('IntersectionObserver' in window && stage) {
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          startAutoPlay();
+        } else {
+          stopAutoPlay();
+        }
+      });
+    }, { threshold: 0.2 });
+    observer.observe(stage);
+  } else {
+    startAutoPlay();
+  }
 
   /* --------------------------------------------------------------------------
      3. WHATSAPP & CONTACT ACTIONS (DIRECT TO 3213146585)
@@ -319,5 +337,52 @@
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
+
+  /* --------------------------------------------------------------------------
+     4. LUXURY CONTACT FORM HANDLER
+     -------------------------------------------------------------------------- */
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const nombreInput = document.getElementById('contact-nombre');
+      const negocioInput = document.getElementById('contact-negocio');
+      const ciudadInput = document.getElementById('contact-ciudad');
+      const telefonoInput = document.getElementById('contact-telefono');
+      const mensajeInput = document.getElementById('contact-mensaje');
+      const statusEl = document.getElementById('contact-status');
+
+      const nombre = nombreInput ? nombreInput.value.trim() : '';
+      const negocio = negocioInput ? negocioInput.value.trim() : '';
+      const ciudad = ciudadInput ? ciudadInput.value.trim() : '';
+      const telefono = telefonoInput ? telefonoInput.value.trim() : '';
+      const mensaje = mensajeInput ? mensajeInput.value.trim() : '';
+
+      if (!nombre || !negocio || !telefono) {
+        if (statusEl) {
+          statusEl.textContent = 'Por favor completa tu nombre, establecimiento y teléfono.';
+          statusEl.className = 'contact-status error';
+        }
+        return;
+      }
+
+      let waText = `¡Hola! Mi nombre es ${nombre}`;
+      if (negocio) waText += ` de ${negocio}`;
+      if (ciudad) waText += ` en ${ciudad}`;
+      waText += `.\nMi teléfono de contacto es: ${telefono}`;
+      if (mensaje) waText += `\n\nConsulta: ${mensaje}`;
+
+      if (statusEl) {
+        statusEl.textContent = '✓ Abriendo WhatsApp para enviar tu consulta...';
+        statusEl.className = 'contact-status success';
+      }
+
+      const phone = "573213146585";
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(waText)}`;
+      setTimeout(function () {
+        window.open(url, '_blank');
+      }, 350);
+    });
+  }
 
 })();
