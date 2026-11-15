@@ -175,7 +175,7 @@
         { title: 'Multi-Medio de Pago', desc: 'Soporte fluido para Efectivo, Nequi, Daviplata y Tarjetas en un solo cierre.' },
         { title: 'Seguridad JWT Blindada', desc: 'Tokens seguros y control de turnos aislados para evitar transacciones fantasmas.' }
       ],
-      stack: ['Python 3.14', 'FastAPI Async', 'SQLAlchemy ORM', 'React Native Web', 'PostgreSQL / SQLite', 'JWT Auth'],
+      stack: ['Caja con arqueo ciego', 'Control anti-fugas', 'Multi-dispositivo táctil', 'Turnos blindados', 'Facturación inmediata'],
       simModuleName: 'NOXOS / CENTRO DE CONTROL',
       simInitialLog: [
         '[TURNO ACTIVO] Iniciado a las 19:00 hrs por admin',
@@ -200,7 +200,7 @@
         { title: 'Despacho Directo a Barra', desc: 'El pedido se envía directamente al KDS del bartender sin intermediarios.' },
         { title: 'Botón Pedir Cuenta', desc: 'Notifica a caja y mesero de forma discreta eliminando señas y esperas.' }
       ],
-      stack: ['HTML5 Modern', 'CSS Rolls-Royce Starlight', 'FastAPI REST API', 'WebSocket / Polling', 'PWA Architecture'],
+      stack: ['Sin descargar apps', 'Carta QR Starlight', 'Carrito en tiempo real', 'Botón pedir cuenta', 'Soporte móvil universal'],
       simModuleName: 'CLIENTE QR / MESA 04',
       simInitialLog: [
         '[CÓDIGO QR ESCANEADO] Mesa 04 conectada a Mandala Web',
@@ -225,7 +225,7 @@
         { title: 'Agrupación de Comandas', desc: 'Visualiza qué mesa ordenó, qué mesero atiende y solicitudes especiales.' },
         { title: 'Historial Inmutable', desc: 'Registro exacto de qué bartender despachó cada cóctel y a qué hora.' }
       ],
-      stack: ['React Native Mobile', 'Expo Cross-Platform', 'Optimistic UI', 'Audio Alert Cue', 'Clean Architecture'],
+      stack: ['Pantalla táctil de barra', 'Semáforo de espera', 'Despacho en 1 toque', 'Cero comandas de papel', 'Control por bartender'],
       simModuleName: 'BARRA PRINCIPAL / RADAR KDS',
       simInitialLog: [
         '[ESTACIÓN ACTIVA] Bartender principal autenticado',
@@ -250,7 +250,7 @@
         { title: 'Alertas de Stock Crítico', desc: 'Avisos antes de que se agoten las botellas de mayor rotación.' },
         { title: 'Cálculo de Margen Neto', desc: 'Análisis del costo por trago vs precio de venta para maximizar utilidad.' }
       ],
-      stack: ['SQLAlchemy Triggers', 'Python Decimal Math', 'ACID Transactions', 'Inventory Ledger', 'EDA Analytics'],
+      stack: ['Deducción automática por trago', 'Alertas de botellas críticas', 'Auditoría anti-robo', 'Cálculo de margen y utilidad'],
       simModuleName: 'KARDEX / SENTINEL AUDIT',
       simInitialLog: [
         '[INVENTARIO SINCRONIZADO] 84 referencias auditadas en bodega',
@@ -422,9 +422,10 @@
      3. WHATSAPP & DEMO ACTIONS
      -------------------------------------------------------------------------- */
   window.openWhatsApp = function () {
-    const phone = "573000000000"; // Reemplazable por el del usuario
-    const msg = encodeURIComponent("¡Hola! Vi el showcase de NoxOS y me gustaría agendar una demostración en vivo de la plataforma para mi negocio.");
+    const phone = "573213146585";
+    const msg = encodeURIComponent("¡Hola! Vi la plataforma NoxOS y me gustaría agendar una demostración en vivo para mi negocio.");
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
 
 })();
+
