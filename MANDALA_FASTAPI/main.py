@@ -93,6 +93,13 @@ for mp in possible_media_paths:
         logger.info(f"Carpeta media montada desde: {mp}")
         break
 
+# Montar landing page y showcase de proyectos (Rolls-Royce Starlight)
+landing_dir = os.path.join(os.path.dirname(current_dir), "landing")
+if os.path.exists(landing_dir):
+    app.mount("/showcase", StaticFiles(directory=landing_dir, html=True), name="showcase")
+    app.mount("/landing", StaticFiles(directory=landing_dir, html=True), name="landing")
+    logger.info(f"Showcase montado exitosamente desde: {landing_dir}")
+
 # Incluir rutas
 app.include_router(auth.router, prefix="/api", tags=["auth"])
 app.include_router(pedidos.router, prefix="/api/pedidos", tags=["pedidos"])

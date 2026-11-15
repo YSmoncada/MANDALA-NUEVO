@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoxOS Studio, Plataformas de Alta Precisión para Bares y Gastrobars</title>
+  <meta name="description" content="Sistemas operativos y experiencias digitales de lujo para bares, discotecas y gastrobars. Cero fugas de licor, despacho en milisegundos y control total de turnos.">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Techo Estrellado Rolls-Royce Starlight Canvas -->
+  <canvas id="starlight-canvas" aria-hidden="true"></canvas>
+  <div class="starlight-vignette"></div>
+
+  <!-- Contenedor Principal de la Página -->
+  <div class="app-container">
+
+    <!-- Navegación Superior -->
+    <header class="header-nav">
+      <a href="#" class="brand-wrapper">
+        <span class="brand-logo">NOX<span class="brand-os">OS</span></span>
+        <span class="brand-badge">Studio</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#proyectos" class="nav-link">Proyectos</a>
+        <a href="#simulador" class="nav-link">Simulador</a>
+        <a href="#ecosistema" class="nav-link">Ecosistema</a>
+        <a href="#contacto" class="nav-link">Contacto</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn-primary" onclick="openWhatsApp()">Agendar demo</button>
+      </div>
+    </header>
+
+    <!-- Sección Principal Hero -->
+    <section class="hero-section">
+      <h1 class="hero-headline">
+        Sistemas concebidos para dominar la noche.
+      </h1>
+
+      <p class="hero-subheadline">
+        Plataformas de ingeniería de alta precisión para bares y gastrobars sin pérdidas.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#proyectos" class="btn-primary" style="padding: 12px 28px; font-size: 14px;">Explorar proyectos</a>
+        <a href="#simulador" class="btn-secondary" style="padding: 12px 24px; font-size: 14px;">Probar simulador</a>
+      </div>
+
+      <!-- Barra de Métricas Reales del Sistema -->
+      <div class="metrics-strip">
+        <div class="metric-cell">
+          <div class="metric-value">&lt; 80ms</div>
+          <div class="metric-label">Latencia comanda a barra</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-value">0%</div>
+          <div class="metric-label">Fugas en conciliación Kardex</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-value">100%</div>
+          <div class="metric-label">Blindaje de turnos en caja</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-value">Multi-Rol</div>
+          <div class="metric-label">Admin, Bartender, Mesera y QR</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cabecera de la Sección de Proyectos -->
+    <section id="proyectos">
+      <div class="section-headline-row">
+        <div>
+          <h2 class="section-title">El cockpit de proyectos</h2>
+          <p class="section-desc">Selecciona un módulo para explorar su arquitectura, especificaciones técnicas y probar la consola reactiva en vivo.</p>
+        </div>
+      </div>
+
+      <!-- Pestañas de Selección de Proyectos -->
+      <div class="cockpit-tabs">
+        <button class="cockpit-tab-btn active" data-project="noxos">
+          <span class="tab-number">01</span> NoxOS Hospitality Core
+        </button>
+        <button class="cockpit-tab-btn" data-project="client_qr">
+          <span class="tab-number">02</span> Mandala Starlight QR (Clientes)
+        </button>
+        <button class="cockpit-tab-btn" data-project="kds">
+          <span class="tab-number">03</span> Bartender Touch Radar
+        </button>
+        <button class="cockpit-tab-btn" data-project="kardex">
+          <span class="tab-number">04</span> Kardex Liquor Sentinel
+        </button>
+      </div>
+
+      <!-- Escenario Interactivo del Proyecto -->
+      <div class="project-stage" id="simulador">
+        
+        <!-- Columna Izquierda: Información Técnica y de Negocio -->
+        <div class="stage-info">
+          <div>
+            <div class="project-badge-row">
+              <span class="badge-tag" id="project-badge-tag">Flagship v2.5</span>
+              <span class="badge-status" id="project-badge-status">En producción</span>
+            </div>
+
+            <h3 class="project-title" id="project-title">NoxOS Hospitality Core</h3>
+            <p class="project-pitch" id="project-pitch">
+              El sistema integral concebido para bares, discotecas y gastrobars de alta demanda. Integra caja rápida con arqueo ciego, control milimétrico de comandas y roles blindados contra pérdidas.
+            </p>
+
+            <div class="capabilities-grid" id="capabilities-list">
+              <!-- Renderizado dinámico desde app.js -->
+            </div>
+          </div>
+
+          <div>
+            <div class="stack-pills" id="stack-list">
+              <!-- Renderizado dinámico desde app.js -->
+            </div>
+
+            <button class="btn-primary" onclick="openWhatsApp()" style="width: 100%;">
+              Solicitar demostración
+            </button>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Consola Simuladora Interactiva -->
+        <div class="stage-console">
+          <div class="console-topbar">
+            <span class="console-title">Live console, realtime engine</span>
+            <span class="console-status">Online</span>
+          </div>
+
+          <div class="console-body">
+            <div class="sim-screen">
+              <div class="sim-header">
+                <span class="sim-module-name" id="sim-module-name">NoxOS Centro de Control</span>
+                <span class="sim-time">60 FPS</span>
+              </div>
+              <div class="sim-log-area" id="sim-log-area">
+                <!-- Logs interactivos renderizados dinámicamente -->
+              </div>
+            </div>
+
+            <div class="sim-controls">
+              <span style="font-size: 11px; color: var(--text-muted);">Acciones en vivo del simulador:</span>
+              <div class="sim-actions-row" id="sim-actions-row">
+                <!-- Botones interactivos renderizados dinámicamente -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Sección de Ecosistema & Arquitectura -->
+    <section id="ecosistema" style="margin-bottom: 96px;">
+      <div class="section-headline-row">
+        <div>
+          <h2 class="section-title">Ingeniería robusta sin compromisos</h2>
+          <p class="section-desc">Diseñado para soportar noches de máxima saturación sin caídas, lentitud o descuadres de dinero.</p>
+        </div>
+      </div>
+
+      <div class="projects-grid">
+        <div class="grid-card">
+          <div>
+            <h3 class="card-title">FastAPI y Python 3.14</h3>
+            <p class="card-desc">
+              Poder asíncrono con tiempos de respuesta por debajo de 40 milisegundos. SQLAlchemy ORM estructurado con transacciones atómicas para que cada peso y cada trago queden grabados sin fallas.
+            </p>
+          </div>
+          <div class="card-footer">
+            <span class="card-tech">Python, Async, JWT</span>
+            <span class="card-link">Núcleo</span>
+          </div>
+        </div>
+
+        <div class="grid-card">
+          <div>
+            <h3 class="card-title">React Native y Expo Web</h3>
+            <p class="card-desc">
+              Una sola base de código para teléfonos Android, iOS, tablets táctiles de barra y pantallas de escritorio. Interfaz Black & White Luxury con animaciones fluidas y sin saturación visual.
+            </p>
+          </div>
+          <div class="card-footer">
+            <span class="card-tech">React Native, Web, Expo</span>
+            <span class="card-link">Cross-Platform</span>
+          </div>
+        </div>
+
+        <div class="grid-card">
+          <div>
+            <h3 class="card-title">Exploratory Data Analytics (EDA)</h3>
+            <p class="card-desc">
+              Panel analítico para administradores y dueños. Descubre tus horas pico de mayor facturación, tragos más rentables, ticket promedio por mesa y rotación de clientes en tiempo real.
+            </p>
+          </div>
+          <div class="card-footer">
+            <span class="card-tech">Data Intelligence, Metrics</span>
+            <span class="card-link">Intelligence</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Banner Final CTA -->
+    <section id="contacto" class="cta-banner">
+      <h2 class="cta-title">Lleva la tecnología de tu negocio al siguiente nivel</h2>
+      <p class="cta-subtext">
+        Moderniza la experiencia de tus clientes, detén las fugas de dinero e inventario y dale a tu equipo una herramienta de trabajo que disfruten usar.
+      </p>
+
+      <div class="cta-btn-row">
+        <button class="btn-primary" onclick="openWhatsApp()" style="padding: 12px 28px; font-size: 14px;">
+          Contactar por WhatsApp
+        </button>
+        <button class="btn-secondary" onclick="document.getElementById('simulador').scrollIntoView({behavior:'smooth'})" style="padding: 12px 24px; font-size: 14px;">
+          Probar simulador en vivo
+        </button>
+      </div>
+    </section>
+
+    <!-- Pie de Página -->
+    <footer class="site-footer">
+      <div>
+        <div class="footer-brand">NoxOS Studio</div>
+        <div class="footer-copy">© 2026 NoxOS y Mandala Systems. Concebido con ingeniería de alta gama.</div>
+      </div>
+
+      <div class="footer-socials">
+        <a href="#proyectos" class="footer-link">Proyectos</a>
+        <a href="#simulador" class="footer-link">Simulador</a>
+        <a href="javascript:openWhatsApp()" class="footer-link">WhatsApp</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
