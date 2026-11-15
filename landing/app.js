@@ -153,13 +153,138 @@
   requestAnimationFrame(loop);
 
   /* --------------------------------------------------------------------------
-     2. WHATSAPP & DEMO ACTIONS
+     2. LUXURY SHOWCASE CAROUSEL ENGINE
+     -------------------------------------------------------------------------- */
+  const track = document.getElementById('carousel-track');
+  const tabs = document.querySelectorAll('.carousel-tab-btn');
+  const dots = document.querySelectorAll('.carousel-dot');
+  const prevBtn = document.getElementById('carousel-prev-btn');
+  const nextBtn = document.getElementById('carousel-next-btn');
+  const viewport = document.getElementById('carousel-viewport');
+
+  let currentSlide = 0;
+  const totalSlides = tabs.length || 5;
+  let autoPlayTimer = null;
+  const AUTOPLAY_DELAY = 6000;
+
+  function goToSlide(index) {
+    currentSlide = (index + totalSlides) % totalSlides;
+
+    if (track) {
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+
+    tabs.forEach((tab, i) => {
+      const isActive = i === currentSlide;
+      tab.classList.toggle('active', isActive);
+      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentSlide);
+    });
+
+    if (tabs[currentSlide]) {
+      tabs[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      goToSlide(currentSlide - 1);
+      resetAutoPlay();
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      goToSlide(currentSlide + 1);
+      resetAutoPlay();
+    });
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+      const slideIndex = parseInt(this.getAttribute('data-slide'), 10);
+      if (!isNaN(slideIndex)) {
+        goToSlide(slideIndex);
+        resetAutoPlay();
+      }
+    });
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', function () {
+      const slideIndex = parseInt(this.getAttribute('data-slide'), 10);
+      if (!isNaN(slideIndex)) {
+        goToSlide(slideIndex);
+        resetAutoPlay();
+      }
+    });
+  });
+
+  // Touch Swipe for Mobile
+  let startX = 0;
+  let isSwiping = false;
+
+  if (viewport) {
+    viewport.addEventListener('touchstart', function (e) {
+      if (e.touches && e.touches.length > 0) {
+        startX = e.touches[0].clientX;
+        isSwiping = true;
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchend', function (e) {
+      if (!isSwiping) return;
+      isSwiping = false;
+      const endX = e.changedTouches[0].clientX;
+      const diffX = startX - endX;
+
+      if (Math.abs(diffX) > 40) {
+        if (diffX > 0) {
+          goToSlide(currentSlide + 1);
+        } else {
+          goToSlide(currentSlide - 1);
+        }
+        resetAutoPlay();
+      }
+    }, { passive: true });
+
+    // Pause autoplay on hover
+    viewport.addEventListener('mouseenter', stopAutoPlay);
+    viewport.addEventListener('mouseleave', startAutoPlay);
+  }
+
+  function startAutoPlay() {
+    stopAutoPlay();
+    autoPlayTimer = setInterval(function () {
+      goToSlide(currentSlide + 1);
+    }, AUTOPLAY_DELAY);
+  }
+
+  function stopAutoPlay() {
+    if (autoPlayTimer) {
+      clearInterval(autoPlayTimer);
+      autoPlayTimer = null;
+    }
+  }
+
+  function resetAutoPlay() {
+    stopAutoPlay();
+    startAutoPlay();
+  }
+
+  startAutoPlay();
+
+  /* --------------------------------------------------------------------------
+     3. WHATSAPP & CONTACT ACTIONS (DIRECT TO 3213146585)
      -------------------------------------------------------------------------- */
   window.openWhatsApp = function (modulo) {
     const phone = "573213146585";
-    let text = "¡Hola! Vi la plataforma NoxOS y me gustaría agendar una demostración en vivo para mi bar/restaurante.";
+    let text = "¡Hola! Vi la plataforma NoxOS y me gustaría consultar información para mi bar/restaurante.";
     if (modulo) {
-      text = `¡Hola! Me interesó mucho el módulo de ${modulo} de NoxOS y me gustaría ver una demostración en vivo para mi negocio.`;
+      text = `¡Hola! Me interesó el módulo de ${modulo} de NoxOS y me gustaría consultar información para mi negocio.`;
     }
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');

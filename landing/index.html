@@ -33,7 +33,7 @@
       </nav>
 
       <div class="nav-actions">
-        <button class="btn-primary" onclick="openWhatsApp()">Agendar demo</button>
+        <button class="btn-primary" onclick="openWhatsApp()">Contactar</button>
       </div>
     </header>
 
@@ -48,7 +48,7 @@
       </p>
 
       <div class="hero-cta-group">
-        <a href="#modulos" class="btn-primary" style="padding: 12px 28px; font-size: 14px;">Ver módulos con fotos reales</a>
+        <a href="#modulos" class="btn-primary" style="padding: 12px 28px; font-size: 14px;">Ver módulos en el carrusel</a>
         <button class="btn-secondary" onclick="openWhatsApp()" style="padding: 12px 24px; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
@@ -58,252 +58,295 @@
       </div>
     </section>
 
-    <!-- Sección de Módulos Reales con Fotos y Explicación de Negocio -->
+    <!-- Sección de Carrusel Visual de la Aplicación -->
     <section id="modulos">
       <div class="section-headline-row">
         <div>
-          <h2 class="section-title">Módulos y Pantallas del Sistema</h2>
-          <p class="section-desc">Conoce cómo opera la plataforma en cada rincón de tu local: desde la toma del pedido hasta la barra, caja y bodega.</p>
+          <h2 class="section-title">Módulos del Sistema</h2>
+          <p class="section-desc">Explora cada pantalla de la plataforma: desde la toma de pedidos hasta la barra, caja y bodega.</p>
+        </div>
+        <div class="carousel-nav-arrows">
+          <button class="carousel-arrow-btn" id="carousel-prev-btn" aria-label="Módulo anterior">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <button class="carousel-arrow-btn" id="carousel-next-btn" aria-label="Siguiente módulo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <div class="showcase-container">
+      <!-- Pestañas de Navegación del Carrusel -->
+      <div class="carousel-tabs" role="tablist" aria-label="Navegación de módulos">
+        <button class="carousel-tab-btn active" role="tab" aria-selected="true" data-slide="0">
+          <span class="tab-index">01</span> Punto de Venta POS
+        </button>
+        <button class="carousel-tab-btn" role="tab" aria-selected="false" data-slide="1">
+          <span class="tab-index">02</span> Mapa de Mesas
+        </button>
+        <button class="carousel-tab-btn" role="tab" aria-selected="false" data-slide="2">
+          <span class="tab-index">03</span> Radar de Barra
+        </button>
+        <button class="carousel-tab-btn" role="tab" aria-selected="false" data-slide="3">
+          <span class="tab-index">04</span> Kardex de Licor
+        </button>
+        <button class="carousel-tab-btn" role="tab" aria-selected="false" data-slide="4">
+          <span class="tab-index">05</span> Panel de Ventas
+        </button>
+      </div>
 
-        <!-- Módulo 1: Punto de Venta POS Rápido -->
-        <article class="showcase-item">
-          <div class="showcase-image-box">
-            <div class="showcase-image-box-topbar">
-              <span class="showcase-screen-tag">
-                <span class="showcase-dot-live"></span>
-                Punto de Venta Táctil
-              </span>
-              <span class="showcase-screen-meta">Caja y Comandera</span>
-            </div>
-            <img class="showcase-img" src="./assets/screen_pos_orders.png" alt="Pantalla de punto de venta rápido y toma de pedidos con catálogo de licores y botellas" loading="lazy">
-          </div>
+      <!-- Visor y Pista del Carrusel -->
+      <div class="carousel-viewport" id="carousel-viewport">
+        <div class="carousel-track" id="carousel-track">
 
-          <div class="showcase-text-box">
-            <h3 class="showcase-title">Comandas en segundos con fotos reales y selección instantánea</h3>
-            <p class="showcase-desc">
-              Elimina la lentitud y los errores al tomar pedidos en noches de alto flujo. Tu equipo visualiza la carta con fotos de alta resolución y busca cualquier producto al instante.
-            </p>
-
-            <div class="showcase-features-list">
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Venta ágil de botellas completas o tragos individuales con cálculo automático de precios.</span>
+          <!-- Diapositiva 1: Punto de Venta POS Rápido -->
+          <article class="carousel-slide">
+            <div class="showcase-image-box">
+              <div class="showcase-image-box-topbar">
+                <span class="showcase-screen-tag">
+                  <span class="showcase-dot-live"></span>
+                  Punto de Venta Táctil
+                </span>
+                <span class="showcase-screen-meta">Caja y Comandera</span>
               </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>División inmediata de cuentas por comensal o mesa con un solo toque.</span>
-              </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Arqueo ciego en cierre de caja: el cajero entrega el dinero físico a ciegas sin ver el saldo del sistema para evitar manipulaciones.</span>
-              </div>
-            </div>
-
-            <div class="showcase-highlight-box">
-              Cero filas en caja y atención hasta un 40% más ágil en horas pico.
+              <img class="showcase-img" src="./assets/screen_pos_orders.png" alt="Pantalla de punto de venta rápido y toma de pedidos con catálogo de licores y botellas" loading="lazy">
             </div>
 
-            <button class="showcase-cta-btn" onclick="openWhatsApp('Punto de Venta POS')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              <span>Pedir demo por WhatsApp</span>
-            </button>
-          </div>
-        </article>
+            <div class="showcase-text-box">
+              <h3 class="showcase-title">Comandas en segundos con fotos reales y selección instantánea</h3>
+              <p class="showcase-desc">
+                Elimina la lentitud y los errores al tomar pedidos en noches de alto flujo. Tu equipo visualiza la carta con fotos de alta resolución y busca cualquier producto al instante.
+              </p>
 
-        <!-- Módulo 2: Mapa Interactivo de Mesas (Reversed) -->
-        <article class="showcase-item reversed">
-          <div class="showcase-image-box">
-            <div class="showcase-image-box-topbar">
-              <span class="showcase-screen-tag">
-                <span class="showcase-dot-live"></span>
-                Mapa de Mesas en Vivo
-              </span>
-              <span class="showcase-screen-meta">Salón, VIP y Terrazas</span>
+              <div class="showcase-features-list">
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Venta ágil de botellas completas o tragos individuales con cálculo automático de precios.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>División inmediata de cuentas por comensal o mesa con un solo toque.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Arqueo ciego en cierre de caja: el cajero entrega el dinero físico a ciegas sin ver el saldo del sistema para evitar manipulaciones.</span>
+                </div>
+              </div>
+
+              <div class="showcase-highlight-box">
+                Cero filas en caja y atención hasta un 40% más ágil en horas pico.
+              </div>
+
+              <button class="showcase-cta-btn" onclick="openWhatsApp('Punto de Venta POS')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                <span>Hablar por WhatsApp</span>
+              </button>
             </div>
-            <img class="showcase-img" src="./assets/screen_mesas.png" alt="Plano interactivo de mesas con estados en tiempo real" loading="lazy">
-          </div>
+          </article>
 
-          <div class="showcase-text-box">
-            <h3 class="showcase-title">Control visual total: cada mesa y zona VIP en un solo plano</h3>
-            <p class="showcase-desc">
-              Un plano interactivo idéntico a la distribución física de tu establecimiento. De un solo vistazo conoces qué mesas están libres, cuáles consumen y cuáles están por liquidar.
-            </p>
-
-            <div class="showcase-features-list">
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Semáforo de colores por estado: Libre, Ocupada, Comanda pendiente y Por pagar.</span>
+          <!-- Diapositiva 2: Mapa Interactivo de Mesas -->
+          <article class="carousel-slide">
+            <div class="showcase-image-box">
+              <div class="showcase-image-box-topbar">
+                <span class="showcase-screen-tag">
+                  <span class="showcase-dot-live"></span>
+                  Mapa de Mesas en Vivo
+                </span>
+                <span class="showcase-screen-meta">Salón, VIP y Terrazas</span>
               </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Cambio o unión de mesas con un solo clic sin perder ni duplicar el consumo registrado.</span>
-              </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Alerta visual permanente de cuentas abiertas para evitar que clientes se retiren sin liquidar.</span>
-              </div>
-            </div>
-
-            <div class="showcase-highlight-box">
-              Cero fugas por mesas no cobradas y rotación inmediata de comensales.
-            </div>
-
-            <button class="showcase-cta-btn" onclick="openWhatsApp('Mapa de Mesas')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              <span>Pedir demo por WhatsApp</span>
-            </button>
-          </div>
-        </article>
-
-        <!-- Módulo 3: KDS y Radar Táctil para Bartenders -->
-        <article class="showcase-item">
-          <div class="showcase-image-box">
-            <div class="showcase-image-box-topbar">
-              <span class="showcase-screen-tag">
-                <span class="showcase-dot-live"></span>
-                Radar KDS de Barra
-              </span>
-              <span class="showcase-screen-meta">Coctelería y Despacho</span>
-            </div>
-            <img class="showcase-img" src="./assets/screen_bartender.png" alt="Pantalla táctil KDS para bartenders con semáforo de pedidos" loading="lazy">
-          </div>
-
-          <div class="showcase-text-box">
-            <h3 class="showcase-title">Barra rápida sin comandas de papel ni gritos entre meseros</h3>
-            <p class="showcase-desc">
-              Pantalla táctil de alto contraste concebida para el ritmo de los bartenders. En cuanto se registra un trago en el salón o por QR, aparece en la pantalla de barra con contador de minutos.
-            </p>
-
-            <div class="showcase-features-list">
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Recepción instantánea de pedidos con alerta sonora y visual.</span>
-              </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Semáforo de tiempo transcurrido para evitar que una mesa espere de más.</span>
-              </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Marcación de tragos en un toque ('En Preparación' y 'Despachado') que avisa al mesero.</span>
-              </div>
+              <img class="showcase-img" src="./assets/screen_mesas.png" alt="Plano interactivo de mesas con estados en tiempo real" loading="lazy">
             </div>
 
-            <div class="showcase-highlight-box">
-              Cócteles servidos en menos de 3 minutos y barra 100% coordinada.
-            </div>
+            <div class="showcase-text-box">
+              <h3 class="showcase-title">Control visual total: cada mesa y zona VIP en un solo plano</h3>
+              <p class="showcase-desc">
+                Un plano interactivo idéntico a la distribución física de tu establecimiento. De un solo vistazo conoces qué mesas están libres, cuáles consumen y cuáles están por liquidar.
+              </p>
 
-            <button class="showcase-cta-btn" onclick="openWhatsApp('Comandera de Barra')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              <span>Pedir demo por WhatsApp</span>
-            </button>
-          </div>
-        </article>
-
-        <!-- Módulo 4: Kardex Liquor Sentinel (Reversed) -->
-        <article class="showcase-item reversed">
-          <div class="showcase-image-box">
-            <div class="showcase-image-box-topbar">
-              <span class="showcase-screen-tag">
-                <span class="showcase-dot-live"></span>
-                Auditoría de Botellas
-              </span>
-              <span class="showcase-screen-meta">Bodega y Kardex</span>
-            </div>
-            <img class="showcase-img" src="./assets/screen_inventory.png" alt="Control de inventario de licores en mililitros y alertas de stock" loading="lazy">
-          </div>
-
-          <div class="showcase-text-box">
-            <h3 class="showcase-title">Control milimétrico de inventario: cada trago descuenta de la botella</h3>
-            <p class="showcase-desc">
-              Detén la fuga silenciosa de licor en tu establecimiento. Cada shot, cóctel o copa registrada descuenta automáticamente los mililitros exactos de la botella en tiempo real.
-            </p>
-
-            <div class="showcase-features-list">
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Descuento automático en mililitros (ml) y unidades con cada venta registrada.</span>
+              <div class="showcase-features-list">
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Semáforo de colores por estado: Libre, Ocupada, Comanda pendiente y Por pagar.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Cambio o unión de mesas con un solo clic sin perder ni duplicar el consumo registrado.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Alerta visual permanente de cuentas abiertas para evitar que clientes se retiren sin liquidar.</span>
+                </div>
               </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Conciliación estricta de botellas abiertas vs. tragos servidos para evitar 'cortesías' no autorizadas.</span>
+
+              <div class="showcase-highlight-box">
+                Cero fugas por mesas no cobradas y rotación inmediata de comensales.
               </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Alertas inteligentes de reposición antes de que se agoten tus licores más rentables.</span>
+
+              <button class="showcase-cta-btn" onclick="openWhatsApp('Mapa de Mesas')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                <span>Hablar por WhatsApp</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Diapositiva 3: Radar KDS para Bartenders -->
+          <article class="carousel-slide">
+            <div class="showcase-image-box">
+              <div class="showcase-image-box-topbar">
+                <span class="showcase-screen-tag">
+                  <span class="showcase-dot-live"></span>
+                  Radar KDS de Barra
+                </span>
+                <span class="showcase-screen-meta">Coctelería y Despacho</span>
               </div>
+              <img class="showcase-img" src="./assets/screen_bartender.png" alt="Pantalla táctil KDS para bartenders con semáforo de pedidos" loading="lazy">
             </div>
 
-            <div class="showcase-highlight-box">
-              Recupera hasta un 15% de rentabilidad mensual erradicando botellas no cobradas.
-            </div>
+            <div class="showcase-text-box">
+              <h3 class="showcase-title">Barra rápida sin comandas de papel ni gritos entre meseros</h3>
+              <p class="showcase-desc">
+                Pantalla táctil de alto contraste concebida para el ritmo de los bartenders. En cuanto se registra un trago en el salón o por QR, aparece en la pantalla de barra con contador de minutos.
+              </p>
 
-            <button class="showcase-cta-btn" onclick="openWhatsApp('Control de Kardex e Inventario')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              <span>Pedir demo por WhatsApp</span>
-            </button>
-          </div>
-        </article>
-
-        <!-- Módulo 5: Dashboard y Métricas para Dueños -->
-        <article class="showcase-item">
-          <div class="showcase-image-box">
-            <div class="showcase-image-box-topbar">
-              <span class="showcase-screen-tag">
-                <span class="showcase-dot-live"></span>
-                Panel de Propietarios
-              </span>
-              <span class="showcase-screen-meta">Métricas en Vivo</span>
-            </div>
-            <img class="showcase-img" src="./assets/screen_dashboard.png" alt="Dashboard de ventas en tiempo real, métodos de pago y márgenes" loading="lazy">
-          </div>
-
-          <div class="showcase-text-box">
-            <h3 class="showcase-title">Tu negocio en la palma de tu mano, estés donde estés</h3>
-            <p class="showcase-desc">
-              No necesitas pasar la noche de pie en la caja para saber cómo van las ventas. Accede en vivo a los ingresos, métodos de pago y productos estrella desde tu teléfono móvil.
-            </p>
-
-            <div class="showcase-features-list">
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Curva de ventas hora por hora para identificar los picos de facturación de cada jornada.</span>
+              <div class="showcase-features-list">
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Recepción instantánea de pedidos con alerta sonora y visual.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Semáforo de tiempo transcurrido para evitar que una mesa espere de más.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Marcación de tragos en un toque ('En Preparación' y 'Despachado') que avisa al mesero.</span>
+                </div>
               </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Desglose transparente por métodos de pago: Efectivo, Nequi, Daviplata, Tarjetas y Transferencias.</span>
+
+              <div class="showcase-highlight-box">
+                Cócteles servidos en menos de 3 minutos y barra 100% coordinada.
               </div>
-              <div class="feature-point">
-                <span class="feature-check">✓</span>
-                <span>Reportes consolidados automáticos al cierre de turno listos para exportar a contabilidad.</span>
+
+              <button class="showcase-cta-btn" onclick="openWhatsApp('Comandera de Barra')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                <span>Hablar por WhatsApp</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Diapositiva 4: Kardex Liquor Sentinel -->
+          <article class="carousel-slide">
+            <div class="showcase-image-box">
+              <div class="showcase-image-box-topbar">
+                <span class="showcase-screen-tag">
+                  <span class="showcase-dot-live"></span>
+                  Auditoría de Botellas
+                </span>
+                <span class="showcase-screen-meta">Bodega y Kardex</span>
               </div>
+              <img class="showcase-img" src="./assets/screen_inventory.png" alt="Control de inventario de licores en mililitros y alertas de stock" loading="lazy">
             </div>
 
-            <div class="showcase-highlight-box">
-              Tranquilidad y control total para el propietario con datos en vivo.
+            <div class="showcase-text-box">
+              <h3 class="showcase-title">Control milimétrico de inventario: cada trago descuenta de la botella</h3>
+              <p class="showcase-desc">
+                Detén la fuga silenciosa de licor en tu establecimiento. Cada shot, cóctel o copa registrada descuenta automáticamente los mililitros exactos de la botella en tiempo real.
+              </p>
+
+              <div class="showcase-features-list">
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Descuento automático en mililitros (ml) y unidades con cada venta registrada.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Conciliación estricta de botellas abiertas vs. tragos servidos para evitar 'cortesías' no autorizadas.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Alertas inteligentes de reposición antes de que se agoten tus licores más rentables.</span>
+                </div>
+              </div>
+
+              <div class="showcase-highlight-box">
+                Recupera hasta un 15% de rentabilidad mensual erradicando botellas no cobradas.
+              </div>
+
+              <button class="showcase-cta-btn" onclick="openWhatsApp('Control de Kardex e Inventario')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                <span>Hablar por WhatsApp</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Diapositiva 5: Dashboard y Métricas para Dueños -->
+          <article class="carousel-slide">
+            <div class="showcase-image-box">
+              <div class="showcase-image-box-topbar">
+                <span class="showcase-screen-tag">
+                  <span class="showcase-dot-live"></span>
+                  Panel de Propietarios
+                </span>
+                <span class="showcase-screen-meta">Métricas en Vivo</span>
+              </div>
+              <img class="showcase-img" src="./assets/screen_dashboard.png" alt="Dashboard de ventas en tiempo real, métodos de pago y márgenes" loading="lazy">
             </div>
 
-            <button class="showcase-cta-btn" onclick="openWhatsApp('Dashboard y Métricas')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
-              <span>Pedir demo por WhatsApp</span>
-            </button>
-          </div>
-        </article>
+            <div class="showcase-text-box">
+              <h3 class="showcase-title">Tu negocio en la palma de tu mano, estés donde estés</h3>
+              <p class="showcase-desc">
+                No necesitas pasar la noche de pie en la caja para saber cómo van las ventas. Accede en vivo a los ingresos, métodos de pago y productos estrella desde tu teléfono móvil.
+              </p>
 
+              <div class="showcase-features-list">
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Curva de ventas hora por hora para identificar los picos de facturación de cada jornada.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Desglose transparente por métodos de pago: Efectivo, Nequi, Daviplata, Tarjetas y Transferencias.</span>
+                </div>
+                <div class="feature-point">
+                  <span class="feature-check">✓</span>
+                  <span>Reportes consolidados automáticos al cierre de turno listos para exportar a contabilidad.</span>
+                </div>
+              </div>
+
+              <div class="showcase-highlight-box">
+                Tranquilidad y control total para el propietario con datos en vivo.
+              </div>
+
+              <button class="showcase-cta-btn" onclick="openWhatsApp('Dashboard y Métricas')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                <span>Hablar por WhatsApp</span>
+              </button>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- Indicadores de Diapositiva (Dots) -->
+      <div class="carousel-dots" role="tablist" aria-label="Indicadores de diapositiva">
+        <button class="carousel-dot active" aria-label="Ir a diapositiva 1" data-slide="0"></button>
+        <button class="carousel-dot" aria-label="Ir a diapositiva 2" data-slide="1"></button>
+        <button class="carousel-dot" aria-label="Ir a diapositiva 3" data-slide="2"></button>
+        <button class="carousel-dot" aria-label="Ir a diapositiva 4" data-slide="3"></button>
+        <button class="carousel-dot" aria-label="Ir a diapositiva 5" data-slide="4"></button>
       </div>
     </section>
 
