@@ -655,6 +655,32 @@ html, body {
   background-color: var(--bg-card-inner);
 }
 
+/* Cinematic Zoom Focus on Hub Slide (Módulos & Ajustes) */
+.showcase-img-hub {
+  transform-origin: 50% 86%;
+  transform: scale(1.72);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.showcase-image-box:hover .showcase-img-hub {
+  transform: scale(1.8);
+}
+
+.carousel-slide[data-slide-index="5"].active .showcase-img-hub {
+  animation: cinematicHubZoomIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cinematicHubZoomIn {
+  0% {
+    transform: scale(1.25);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1.72);
+    opacity: 1;
+  }
+}
+
 /* Text Explanation Box */
 .showcase-text-box {
   display: flex;
