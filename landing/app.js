@@ -155,24 +155,25 @@
   /* --------------------------------------------------------------------------
      2. LUXURY SHOWCASE CAROUSEL ENGINE
      -------------------------------------------------------------------------- */
-  const track = document.getElementById('carousel-track');
+  const slides = document.querySelectorAll('.carousel-slide');
   const tabs = document.querySelectorAll('.carousel-tab-btn');
   const dots = document.querySelectorAll('.carousel-dot');
   const prevBtn = document.getElementById('carousel-prev-btn');
   const nextBtn = document.getElementById('carousel-next-btn');
-  const viewport = document.getElementById('carousel-viewport');
+  const stage = document.getElementById('carousel-stage');
 
   let currentSlide = 0;
-  const totalSlides = tabs.length || 5;
+  const totalSlides = slides.length || 5;
   let autoPlayTimer = null;
-  const AUTOPLAY_DELAY = 6000;
+  const AUTOPLAY_DELAY = 6500;
 
   function goToSlide(index) {
     currentSlide = (index + totalSlides) % totalSlides;
 
-    if (track) {
-      track.style.transform = `translateX(-${currentSlide * 100}%)`;
-    }
+    slides.forEach((slide, i) => {
+      const isActive = i === currentSlide;
+      slide.classList.toggle('active', isActive);
+    });
 
     tabs.forEach((tab, i) => {
       const isActive = i === currentSlide;
@@ -223,25 +224,40 @@
     });
   });
 
+  // Keyboard navigation
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') {
+      goToSlide(currentSlide + 1);
+      resetAutoPlay();
+    } else if (e.key === 'ArrowLeft') {
+      goToSlide(currentSlide - 1);
+      resetAutoPlay();
+    }
+  });
+
   // Touch Swipe for Mobile
   let startX = 0;
+  let startY = 0;
   let isSwiping = false;
 
-  if (viewport) {
-    viewport.addEventListener('touchstart', function (e) {
+  if (stage) {
+    stage.addEventListener('touchstart', function (e) {
       if (e.touches && e.touches.length > 0) {
         startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
         isSwiping = true;
       }
     }, { passive: true });
 
-    viewport.addEventListener('touchend', function (e) {
+    stage.addEventListener('touchend', function (e) {
       if (!isSwiping) return;
       isSwiping = false;
       const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
       const diffX = startX - endX;
+      const diffY = startY - endY;
 
-      if (Math.abs(diffX) > 40) {
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
         if (diffX > 0) {
           goToSlide(currentSlide + 1);
         } else {
@@ -251,9 +267,8 @@
       }
     }, { passive: true });
 
-    // Pause autoplay on hover
-    viewport.addEventListener('mouseenter', stopAutoPlay);
-    viewport.addEventListener('mouseleave', startAutoPlay);
+    stage.addEventListener('mouseenter', stopAutoPlay);
+    stage.addEventListener('mouseleave', startAutoPlay);
   }
 
   function startAutoPlay() {
