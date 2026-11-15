@@ -277,7 +277,7 @@ html, body {
 /* Section Header */
 .section-headline-row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 48px;
   flex-wrap: wrap;
