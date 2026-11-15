@@ -22,12 +22,21 @@
   --emerald-glow: rgba(16, 185, 129, 0.16);
   --emerald-dim: rgba(16, 185, 129, 0.08);
 
+  /* Amber & Rose Accents */
+  --amber: #F59E0B;
+  --amber-dim: rgba(245, 158, 11, 0.12);
+  --amber-border: rgba(245, 158, 11, 0.28);
+  --rose: #EF4444;
+  --rose-dim: rgba(239, 68, 68, 0.12);
+  --rose-border: rgba(239, 68, 68, 0.28);
+
   /* Hairlines & Borders */
   --border-subtle: rgba(244, 244, 246, 0.06);
   --border-card: rgba(244, 244, 246, 0.08);
   --border-highlight: rgba(244, 244, 246, 0.16);
   --border-active: rgba(244, 244, 246, 0.32);
   --hairline-specular: rgba(244, 244, 246, 0.24);
+  --gauge-track: rgba(244, 244, 246, 0.08);
 
   /* Button Translucencies */
   --btn-secondary-bg: rgba(244, 244, 246, 0.04);
@@ -221,7 +230,7 @@ html, body {
 
 .btn-secondary:hover {
   background-color: var(--btn-secondary-hover);
-  border-color: var(--border-highlight);
+  border-color: var(--border-active);
 }
 
 .btn-secondary:disabled {
@@ -234,26 +243,6 @@ html, body {
   padding-top: 80px;
   padding-bottom: 64px;
   text-align: center;
-}
-
-.hero-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  background-color: var(--tag-bg);
-  border: 1px solid var(--border-highlight);
-  border-radius: 9999px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 28px;
-}
-
-.hero-tag-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--emerald);
 }
 
 .hero-headline {
@@ -397,7 +386,7 @@ html, body {
 /* Main Project Card Stage */
 .project-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   gap: 28px;
   background-color: var(--bg-card);
   border: 1px solid var(--border-card);
@@ -498,7 +487,6 @@ html, body {
 }
 
 .stack-pill {
-  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-secondary);
   background-color: var(--tag-pill-bg);
@@ -507,39 +495,53 @@ html, body {
   border: 1px solid var(--border-subtle);
 }
 
-/* Live Simulator Console */
-.stage-console {
+/* ==========================================================================
+   VISUAL APP PREVIEW WINDOW (Replaces Developer Terminal)
+   ========================================================================== */
+.mockup-window {
   display: flex;
   flex-direction: column;
   background-color: var(--bg-deep);
   border: 1px solid var(--border-highlight);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  min-height: 480px;
 }
 
-.console-topbar {
+.mockup-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 16px 20px;
   background-color: var(--bg-surface);
   border-bottom: 1px solid var(--border-card);
 }
 
-.console-title {
-  font-size: 12px;
+.mockup-title-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mockup-dot-live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--emerald);
+}
+
+.mockup-screen-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mockup-screen-badge {
+  font-size: 11px;
   color: var(--text-muted);
 }
 
-.console-status {
-  font-size: 11px;
-  color: var(--emerald);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.console-body {
+.mockup-body {
   padding: 24px;
   flex: 1;
   display: flex;
@@ -547,86 +549,334 @@ html, body {
   justify-content: space-between;
 }
 
-.sim-screen {
+.mockup-canvas {
+  flex: 1;
   background-color: var(--bg-card-inner);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-md);
   padding: 20px;
-  min-height: 220px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.sim-header {
+/* 1. POS Grid Styles */
+.pos-stats-strip {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border-subtle);
-  padding-bottom: 12px;
   margin-bottom: 16px;
 }
 
-.sim-module-name {
+.pos-stat-item {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pos-stat-val {
+  color: var(--emerald);
+  font-weight: 700;
+}
+
+.pos-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pos-table-card {
+  padding: 12px 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pos-table-card.pending {
+  border-color: var(--amber-border);
+  background-color: var(--amber-dim);
+}
+
+.pos-table-card.paid {
+  border-color: var(--emerald-border);
+  background-color: var(--emerald-dim);
+}
+
+.pos-table-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pos-table-num {
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.pos-table-badge {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: var(--tag-pill-bg);
+  color: var(--text-secondary);
+}
+
+.pos-table-badge.pending {
+  background-color: var(--amber);
+  color: var(--text-inverse);
+  font-weight: 700;
+}
+
+.pos-table-badge.paid {
+  background-color: var(--emerald);
+  color: var(--text-inverse);
+  font-weight: 700;
+}
+
+.pos-table-amount {
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.sim-time {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-muted);
+/* 2. Client QR Menu Styles */
+.qr-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 16px;
 }
 
-.sim-log-area {
-  font-family: var(--font-mono);
+.qr-table-indicator {
   font-size: 12px;
-  line-height: 1.6;
-  color: var(--text-secondary);
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-.sim-controls {
-  margin-top: 20px;
+.qr-product-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.qr-prod-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  background-color: var(--bg-card-inner);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.qr-prod-details {
+  flex: 1;
+}
+
+.qr-prod-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.qr-prod-price {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.qr-add-btn {
+  background-color: var(--tag-bg);
+  border: 1px solid var(--border-highlight);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 11px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.qr-add-btn:hover {
+  background-color: var(--text-primary);
+  color: var(--text-inverse);
+}
+
+.qr-cart-summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-sm);
+  margin-top: 12px;
+}
+
+.qr-cart-total {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* 3. Bartender KDS Ticket Styles */
+.kds-tickets-container {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.sim-actions-row {
+.kds-ticket-card {
+  padding: 12px 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kds-ticket-card.urgent {
+  border-color: var(--amber-border);
+}
+
+.kds-ticket-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kds-ticket-head {
+  display: flex;
+  align-items: center;
   gap: 8px;
 }
 
-.sim-btn {
-  flex: 1;
+.kds-ticket-mesa {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.kds-ticket-timer {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--emerald);
+}
+
+.kds-ticket-timer.urgent {
+  color: var(--amber);
+}
+
+.kds-ticket-items {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* 4. Kardex Sentinel Inventory Styles */
+.kardex-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kardex-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.kardex-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.kardex-prod-title {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.kardex-prod-qty {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.kardex-track {
+  width: 100%;
+  height: 6px;
+  background-color: var(--gauge-track);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.kardex-fill {
+  height: 100%;
+  background-color: var(--emerald);
+  border-radius: 3px;
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.kardex-fill.warning {
+  background-color: var(--rose);
+}
+
+/* Interactive Action Bar */
+.mockup-interactive-bar {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.interactive-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.interactive-action-btn {
   font-family: var(--font-main);
   font-size: 12px;
   font-weight: 700;
-  padding: 12px;
+  padding: 12px 20px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-highlight);
-  background-color: var(--btn-secondary-bg);
-  color: var(--text-primary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.sim-btn:hover {
-  background-color: var(--btn-secondary-hover);
-  border-color: var(--border-active);
-}
-
-.sim-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.sim-btn.primary {
+  border: 1px solid var(--border-active);
   background-color: var(--text-primary);
   color: var(--text-inverse);
-  border-color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.interactive-action-btn:hover {
+  opacity: 0.9;
+}
+
+.interactive-action-btn.success {
+  background-color: var(--emerald);
+  color: var(--text-inverse);
+  border-color: var(--emerald);
 }
 
 /* Architecture Cards */
@@ -677,7 +927,6 @@ html, body {
 }
 
 .card-tech {
-  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-muted);
 }

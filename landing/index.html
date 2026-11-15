@@ -27,8 +27,8 @@
       </a>
 
       <nav class="nav-links">
-        <a href="#proyectos" class="nav-link">Proyectos</a>
-        <a href="#simulador" class="nav-link">Simulador</a>
+        <a href="#proyectos" class="nav-link">Módulos</a>
+        <a href="#pantallas" class="nav-link">Pantallas en vivo</a>
         <a href="#beneficios" class="nav-link">Beneficios</a>
         <a href="#contacto" class="nav-link">Contacto</a>
       </nav>
@@ -49,8 +49,8 @@
       </p>
 
       <div class="hero-cta-group">
-        <a href="#proyectos" class="btn-primary" style="padding: 12px 28px; font-size: 14px;">Explorar proyectos</a>
-        <a href="#simulador" class="btn-secondary" style="padding: 12px 24px; font-size: 14px;">Probar simulador</a>
+        <a href="#proyectos" class="btn-primary" style="padding: 12px 28px; font-size: 14px;">Explorar módulos</a>
+        <a href="#pantallas" class="btn-secondary" style="padding: 12px 24px; font-size: 14px;">Ver pantallas en vivo</a>
       </div>
 
       <!-- Barra de Métricas Reales del Sistema -->
@@ -100,7 +100,7 @@
       </div>
 
       <!-- Escenario Interactivo del Proyecto -->
-      <div class="project-stage" id="simulador">
+      <div class="project-stage" id="pantallas">
         
         <!-- Columna Izquierda: Información Técnica y de Negocio -->
         <div class="stage-info">
@@ -131,28 +131,25 @@
           </div>
         </div>
 
-        <!-- Columna Derecha: Consola Simuladora Interactiva -->
-        <div class="stage-console">
-          <div class="console-topbar">
-            <span class="console-title">Live console, realtime engine</span>
-            <span class="console-status">Online</span>
+        <!-- Columna Derecha: Pantalla en Vivo de la Aplicación -->
+        <div class="mockup-window">
+          <div class="mockup-header">
+            <div class="mockup-title-box">
+              <span class="mockup-dot-live"></span>
+              <span class="mockup-screen-title" id="mockup-screen-title">Punto de Venta y Mesas (Caja)</span>
+            </div>
+            <span class="mockup-screen-badge" id="mockup-screen-badge">En vivo, Turno activo</span>
           </div>
 
-          <div class="console-body">
-            <div class="sim-screen">
-              <div class="sim-header">
-                <span class="sim-module-name" id="sim-module-name">NoxOS Centro de Control</span>
-                <span class="sim-time">60 FPS</span>
-              </div>
-              <div class="sim-log-area" id="sim-log-area">
-                <!-- Logs interactivos renderizados dinámicamente -->
-              </div>
+          <div class="mockup-body">
+            <div class="mockup-canvas" id="mockup-canvas">
+              <!-- Renderizado visual interactivo del módulo -->
             </div>
 
-            <div class="sim-controls">
-              <span style="font-size: 11px; color: var(--text-muted);">Acciones en vivo del simulador:</span>
-              <div class="sim-actions-row" id="sim-actions-row">
-                <!-- Botones interactivos renderizados dinámicamente -->
+            <div class="mockup-interactive-bar">
+              <span class="interactive-hint" id="interactive-hint">Toca la acción para ver cómo responde el sistema:</span>
+              <div id="mockup-action-container">
+                <!-- Botón de acción interactivo -->
               </div>
             </div>
           </div>
@@ -223,8 +220,8 @@
         <button class="btn-primary" onclick="openWhatsApp()" style="padding: 12px 28px; font-size: 14px;">
           Escribir por WhatsApp (321 314 6585)
         </button>
-        <button class="btn-secondary" onclick="document.getElementById('simulador').scrollIntoView({behavior:'smooth'})" style="padding: 12px 24px; font-size: 14px;">
-          Probar simulador en vivo
+        <button class="btn-secondary" onclick="document.getElementById('pantallas').scrollIntoView({behavior:'smooth'})" style="padding: 12px 24px; font-size: 14px;">
+          Ver pantallas en vivo
         </button>
       </div>
     </section>
@@ -237,8 +234,8 @@
       </div>
 
       <div class="footer-socials">
-        <a href="#proyectos" class="footer-link">Proyectos</a>
-        <a href="#simulador" class="footer-link">Simulador</a>
+        <a href="#proyectos" class="footer-link">Módulos</a>
+        <a href="#pantallas" class="footer-link">Pantallas</a>
         <a href="#beneficios" class="footer-link">Beneficios</a>
         <a href="javascript:openWhatsApp()" class="footer-link">WhatsApp</a>
       </div>
