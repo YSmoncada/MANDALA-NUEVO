@@ -12,17 +12,17 @@ from db.database import engine
 def aplicar_indices():
     indices = [
         # 1. Índice compuesto respetando la Regla del Prefijo Izquierdo (Leftmost Prefix Rule)
-        # Optimiza: WHERE turno_id = :t AND estado = :e  (y también consultas que solo filtren por turno_id)
-        ("idx_pedidos_turno_estado", "CREATE INDEX IF NOT EXISTS idx_pedidos_turno_estado ON pedidos (turno_id, estado);"),
+        # Optimiza: WHERE turno_id = :t AND estado_id = :e  (y también consultas que solo filtren por turno_id)
+        ("idx_pedidos_turno_estado", "CREATE INDEX IF NOT EXISTS idx_pedidos_turno_estado ON pedidos (turno_id, estado_id);"),
         
         # 2. Índice Cubriente (Covering Index) para Arqueo de Caja
-        # Optimiza: SELECT SUM(total) FROM pedidos WHERE turno_id = :t AND estado != :e
+        # Optimiza: SELECT SUM(total) FROM pedidos WHERE turno_id = :t AND estado_id != :e
         # Permite responder la consulta 100% en memoria B-Tree sin tocar el archivo de datos (Heap Fetches: 0)
-        ("idx_pedidos_cierre_cubriente", "CREATE INDEX IF NOT EXISTS idx_pedidos_cierre_cubriente ON pedidos (turno_id, estado, total);"),
+        ("idx_pedidos_cierre_cubriente", "CREATE INDEX IF NOT EXISTS idx_pedidos_cierre_cubriente ON pedidos (turno_id, estado_id, total);"),
         
         # 3. Índice para filtrado temporal SARGable en Analítica y Dashboard
-        # Optimiza: WHERE fecha_hora >= :inicio AND fecha_hora < :fin AND estado != 5
-        ("idx_pedidos_fecha_estado", "CREATE INDEX IF NOT EXISTS idx_pedidos_fecha_estado ON pedidos (fecha_hora, estado);"),
+        # Optimiza: WHERE fecha_hora >= :inicio AND fecha_hora < :fin AND estado_id != 5
+        ("idx_pedidos_fecha_estado", "CREATE INDEX IF NOT EXISTS idx_pedidos_fecha_estado ON pedidos (fecha_hora, estado_id);"),
         
         # 4. Índice de búsqueda de detalles de pedidos
         ("idx_pedido_prod_lookup", "CREATE INDEX IF NOT EXISTS idx_pedido_prod_lookup ON pedido_productos (pedido_id, producto_id);"),

@@ -128,7 +128,7 @@ def demo_pilar_2():
     print("  Consulta: Arqueo de Ventas del Turno (SELECT SUM(total) FROM pedidos WHERE turno_id = ? AND estado != ?)")
     
     with engine.connect() as conn:
-        explain_sql = text("EXPLAIN QUERY PLAN SELECT SUM(total) FROM pedidos WHERE turno_id = 1 AND estado != 6;")
+        explain_sql = text("EXPLAIN QUERY PLAN SELECT SUM(total) FROM pedidos WHERE turno_id = 1 AND estado_id != 6;")
         plan = conn.execute(explain_sql).fetchall()
         print("  [Plan de Ejecución del Optimizador]:")
         for row in plan:
