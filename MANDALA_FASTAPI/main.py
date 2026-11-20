@@ -110,6 +110,7 @@ app.include_router(config.router, prefix="/api/config", tags=["config"])
 app.include_router(contabilidad.router, prefix="/api/contabilidad", tags=["contabilidad"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
 app.include_router(analytics.router, prefix="/analytics", tags=["analytics_fallback"])
+app.include_router(menu_cliente.router, prefix="/api", tags=["menu_cliente_api"])
 app.include_router(menu_cliente.router, tags=["menu_cliente"])
 
 # Fallback por si el frontend hace peticiones a la raíz sin /api
