@@ -1,6 +1,6 @@
 """
 ================================================================================
-TEST DE ESTRÉS Y CONCURRENCIA AISLADO: "EL RETO DE LA ÚLTIMA BOTELLA"
+TEST DE CONCURRENCIA Y CONTROL TRANSACCIONAL: "EL RETO DE LA ÚLTIMA BOTELLA"
 Proyecto MANDALA (NoxOS) — Asignatura de Bases de Datos
 ================================================================================
 Demuestra empíricamente la prevención del antipatrón "Lost Update" (Sobreventa)
@@ -57,7 +57,7 @@ def preparar_escenario():
 
 def ejecutar_test_concurrencia():
     print("="*74)
-    print("      TEST AISLADO DE CONCURRENCIA: 'LA ÚLTIMA BOTELLA' (NoxOS)")
+    print("      TEST DE CONCURRENCIA: 'LA ÚLTIMA BOTELLA' (NoxOS)")
     print("="*74)
     print(f" Motor DB Activo:  {'PostgreSQL' if 'postgres' in SQLALCHEMY_DATABASE_URL else 'SQLite (Local)'}")
     print(f" Producto Demo:    '{NOMBRE_PRODUCTO}'")
