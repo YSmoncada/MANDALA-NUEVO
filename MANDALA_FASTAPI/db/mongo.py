@@ -13,6 +13,22 @@ from typing import Optional
 
 logger = logging.getLogger("mandala.mongo")
 
+# Cargar automáticamente variables de entorno desde .env si existe
+_env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+if os.path.exists(_env_path):
+    try:
+        with open(_env_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip('"').strip("'")
+                    if k not in os.environ:
+                        os.environ[k] = v
+    except Exception as e:
+        logger.debug(f"No se pudo parsear .env: {e}")
+
 # URI configurable vía variable de entorno (soporta local o MongoDB Atlas en la nube)
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
 DB_NAME = os.getenv("MONGODB_DB_NAME", "mandala_nosql")

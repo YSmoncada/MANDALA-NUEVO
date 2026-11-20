@@ -271,30 +271,5 @@
         "comentario": "Sabe a verano, me encanta en cóctel."
       }
     ]
-  },
-  {
-    "_id": 9,
-    "nombre": "lola",
-    "precio": 5000000.0,
-    "categoria": "Licores",
-    "categoria_id": 2,
-    "activo": true,
-    "imagen": "https://res.cloudinary.com/dakfgzabb/image/upload/v1793063707/obamfddsrbmzvnwdgjq3.jpg",
-    "descripcion": "Producto selecto de nuestra categoría Licores.",
-    "detalles_bebida": {
-      "presentacion": "Porción estándar"
-    },
-    "ingredientes": [
-      "Ingredientes seleccionados de la casa"
-    ],
-    "maridaje": [
-      "Pregunte a su mesero por las mejores sugerencias"
-    ],
-    "tags": [
-      "licores",
-      "gastrobar",
-      "mandala"
-    ],
-    "reviews_destacadas": []
   }
 ]
